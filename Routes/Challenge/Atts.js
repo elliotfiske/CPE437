@@ -15,11 +15,16 @@ router.get('/:attId', function(req, res) {
          }
          else {
             if (vld.checkPrsOK(result[0].ownerId)) {
-               delete result[0].ownerId;
-               res.json(result[0]);
-               cnn.release();
+               res.json({
+                  challengeURI: 'Chls/' + result[0].challengeName,
+                  duration: result[0].duration,
+                  score: result[0].score,
+                  startTime: result[0].startTime,
+                  state: result[0].state
+               });
             }
          }
+         cnn.release();
       });
    });
 });
@@ -34,16 +39,20 @@ router.put('/:attId', function(req, res) {
       function(err, result) {
          if (!result.length) {
             res.status(404).send();
+            cnn.release();
          }
          else {
             if (vld.checkPrsOK(result[0].ownerId)
-             && vld.check(result[0].state === 2, Tags.attNotClosable)) {
+             && vld.check(result[0].state !== 1, Tags.attNotClosable)
+             && vld.check(result[0].state !== 0, Tags.addClosed)) {
                cnn.query('update Attempt set state = 1 where id = ?', [req.params.attId],
                function(err, result) {
                   res.end(); // failed update?
+                  cnn.release();
                });
-               cnn.release();
             }
+            else
+               cnn.release();
          }
       });
    });
@@ -81,14 +90,18 @@ router.post("/:attId/Stps", function(req, res) {
                               if (err)
                                  console.log("Error writing changed step to DB: "
                                   + JSON.stringify(step.output));
+                              cnn.release();
                            });
                         }
                      });
                   }, 0);
-                  res.end();
+                  res.location(router.baseURL + '/' + step.attemptId + '/Stps/'
+                   + step.id).end();
+                  cnn.release();
                });
             }
-            cnn.release();
+            else
+               cnn.release();
          });
       });
 });
@@ -102,7 +115,7 @@ router.get("/:attId/Stps/:stpId", function(req, res) {
       function(err, result) {
          if (vld.check(result.length, Tags.notFound)
           && vld.checkPrsOK(result[0].ownerId))
-            res.json({input: result[0].input, output: result[0].output});
+            res.json({input: result[0].input, result: JSON.parse(result[0].result)});
          cnn.release();
       });
    });

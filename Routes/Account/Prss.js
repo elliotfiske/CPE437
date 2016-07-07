@@ -32,20 +32,20 @@ router.post('/', function(req, res) {
 
    // This chain seems like it will always return the last test, not false if any fail
    // This can be seen by an attempt to post an admin with no AU
-   if (vld.hasFields(body, ["email", "lastName", "role"])
+   if (vld.hasFields(body, ["email", "lastName", "role", "password"])
     && vld.chain(body.role == 0 || admin, Tags.noPermission)
-    .check(body.role >= 0, Tags.badValue, ["role"]))
+    .check(body.role >= 0 && body.role < 3, Tags.badValue, ["role"])
+    && vld.check(body.termsAccepted || admin, Tags.noTerms)) {
       connections.getConnection(res,
       function(cnn) {
          cnn.query('SELECT * from Person where email = ?', body.email,
          function(err, result) {
             if (req.validator.check(!result.length, Tags.dupEmail)) {
-               body.termsAccepted = body.termsAccepted && new Date();
-               console.log("Inserting " + JSON.stringify(body));
+               body.termsAccepted = new Date();
                cnn.query('INSERT INTO Person SET ?', body,
                function(err, result) {
                   if (err)
-                     res.status(400).json(err);
+                     res.status(500).json(err);
                   else
                      res.location(router.baseURL + '/' + result.insertId).end();
                   cnn.release();
@@ -54,6 +54,7 @@ router.post('/', function(req, res) {
                cnn.release();
          });
       });
+   }
 });
 
 router.get('/:id', function(req, res) {
@@ -62,7 +63,7 @@ router.get('/:id', function(req, res) {
    if (vld.checkPrsOK(req.params.id)) {
       connections.getConnection(res,
       function(cnn) {
-         cnn.query('select * from Person where id = ?', [req.params.id],
+         cnn.query('select email, firstName, lastName, whenRegistered, role, termsAccepted from Person where id = ?', [req.params.id],
          function(err, prsArr) {
             if (vld.check(prsArr.length, Tags.notFound))
                res.json(prsArr);
@@ -75,15 +76,34 @@ router.get('/:id', function(req, res) {
 router.put('/:id', function(req, res) {
    var vld = req.validator;
    var body = req.body;
+   var admin = req.session && req.session.isAdmin();
 
-   if (vld.checkPrsOK(req.params.id)) {
+   if (vld.checkPrsOK(req.params.id)
+    && vld.check(body.role === undefined || admin, Tags.noPermission)
+    && vld.check(body.password === undefined || body.oldPassword || admin, Tags.noOldPwd)) {
       connections.getConnection(res,
       function(cnn) {
-         cnn.query('Update Person SET ? WHERE id = ?', [body, req.params.id],
+         cnn.query('SELECT * FROM Person WHERE id = ?', [req.params.id, body.oldPassword],
          function(err, prsArr) {
-            if (vld.check(prsArr.affectedRows, Tags.notFound))
-               res.status(200).end();
-            cnn.release();
+            if (err) {
+               res.status(500).end();
+               cnn.release();
+            }
+            else if (vld.check(prsArr[0].password === body.oldPassword || admin, Tags.oldPwdMismatch)) {
+               delete body.oldPassword;
+               cnn.query('Update Person SET ? WHERE id = ?', [body, req.params.id],
+               function(err, prsArr) {
+                  if (err) {
+                     res.status(500).end();
+                  }
+                  else if (vld.check(prsArr.affectedRows, Tags.notFound))
+                     res.status(200).end();
+               
+                  cnn.release();
+               });
+            }
+            else
+               cnn.release();
          });
       });
    }
@@ -94,9 +114,10 @@ router.delete('/:id', function(req, res) {
 
    if (vld.checkAdmin())
       connections.getConnection(res, function(cnn) {
-         cnn.query('DELETE from Person where id = 1', [req.params.id],
-         function (err) {
-            res.end();
+         cnn.query('DELETE from Person where id = ?', [req.params.id],
+         function (err, result) {
+            if (vld.check(result.affectedRows, Tags.notFound))
+               res.end();
             cnn.release();
          });
       });
@@ -109,7 +130,7 @@ router.get('/:id/Atts', function(req, res) {
       query = 'SELECT * from Attempt where ownerId = ? and state = 2';
       params = [req.params.id];
       if (req.query.challengeName) {
-         query += 'and challengeName = ?';
+         query += ' and challengeName = ?';
          params.push(req.query.challengeName);
       }
 
@@ -118,6 +139,8 @@ router.get('/:id/Atts', function(req, res) {
          cnn.query(query, params,
          function(err, result) {
             res.json(result);
+
+            cnn.release();
          });
       });
 });
@@ -135,13 +158,15 @@ router.post('/:id/Atts', function(req, res) {
          function(err, result) {
             if (vld.check(result.length, Tags.badChlName)) {
                chl = result[0];
-               cnn.query('SELECT * from Attempt where state = 1 and ownerId = ? '
+               cnn.query('SELECT * from Attempt where state = 2 and ownerId = ? '
                 + 'and challengeName = ?',  [owner, chlName],
                function(err, result) {
-                  if (vld.check(!result.length, Tags.incompAttempt)) {
+                  console.log(result);
+                  if (vld.check(result.length === 0, Tags.incompAttempt)) {
                      cnn.query('SELECT * from Attempt where ownerId = ? '
                       + 'and challengeName = ?',  [owner, chlName],
                      function(err, result) {
+                        console.log(result);
                         if (vld.check(result.length < chl.attsAllowed, Tags.excessAtts)) {
                            var attempt = {
                               ownerId: owner,

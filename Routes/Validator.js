@@ -24,7 +24,7 @@ Validator.Tags = {
    attNotClosable: "attNotClosable",// Attempt not in a closable state
    attClosed: "attClosed",          // Attempt is alread closed
    excessAtts: "excessAtts",        // Too many attempts for this challenge.
-   oldPwdMismatach: "oldPwdMismatch"// Incorrect old password.
+   oldPwdMismatch: "oldPwdMismatch"// Incorrect old password.
 }
 
 Validator.prototype.ok = function() {return !this.errors.length;}
