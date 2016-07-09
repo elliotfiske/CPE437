@@ -69,7 +69,7 @@ router.post("/:attId/Stps", function(req, res) {
          function(err, result) {
             result = result.length && result[0];  // Get just first line
             if (vld.check(result, Tags.notFound)
-             && vld.checkPrsOK(req.session.id)
+             && vld.checkPrsOK(result.ownerId)
              && vld.check(result.state === 2, Tags.attClosed)) {
                var step = {attemptId: req.params.attId, input: req.body.input}
                cnn.query('insert into Step set ?', step,
