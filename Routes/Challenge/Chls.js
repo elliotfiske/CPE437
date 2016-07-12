@@ -15,7 +15,7 @@ router.get('/', function(req, res) {
 });
 
 router.post('/', function(req, res) {
-   if (req.validator.checkAdmin() && req.validator.hasFields(req.body, ["name"])) {
+   if (req.validator.checkAdminOrTeacher() && req.validator.hasFields(req.body, ["name"])) {
       connections.getConnection(res, function(cnn) {
          cnn.query('SELECT * from Challenge where name = ?', req.body.name,
          function(err, result) {
@@ -51,6 +51,21 @@ router.get('/:name', function(req, res) {
    });
 });
 
+router.get('/:name/Atts', function(req, res) {
+   connections.getConnection(res, function(cnn) {
+      var query = 'SELECT id, ? as challengeURI, ownerId, duration, score, startTime, state from Attempt where challengeName = ? ORDER BY startTime ASC';
+      var params = ['Chls/' + req.params.name, req.params.name];
 
+      if (req.query.limit) {
+         query += ' LIMIT ?';
+         params.push(parseInt(req.query.limit));
+      }
+
+      cnn.query(query, params, function(err, result) {
+         res.json(result);
+         cnn.release();
+      });
+   });
+});
 
 module.exports = router;

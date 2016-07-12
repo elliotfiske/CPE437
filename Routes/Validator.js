@@ -63,6 +63,11 @@ Validator.prototype.checkAdmin = function() {
     Validator.Tags.noPermission);
 }
 
+Validator.prototype.checkAdminOrTeacher = function() {
+   return this.check(this.session && (this.session.isAdmin() || this.session.isTeacher()),
+    Validator.Tags.noPermission);
+}
+
 // Validate that AU is the specified person or is an admin
 Validator.prototype.checkPrsOK = function(prsId) {
 
