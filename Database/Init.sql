@@ -41,3 +41,21 @@ create table Step (
     result varchar(1024),
     Constraint FKAttemptId FOREIGN KEY(attemptId) REFERENCES Attempt(id) on delete cascade
 );
+
+create table Course (
+    name VARCHAR(30) PRIMARY KEY,
+    ownerId int(11) not null,
+    Constraint FKCourseOwnerId Foreign key(ownerId) references Person(id)
+    on delete cascade
+);
+
+create table Enrollment (
+    enrId INT(11) AUTO_INCREMENT PRIMARY KEY,
+    prsId INT(11) NOT NULL,
+    courseName VARCHAR(30) NOT NULL,
+    whenEnrolled DATETIME not null,
+    Constraint FKEnrollmentStudentId Foreign key(prsId) references Person(id)
+    on delete cascade,
+    Constraint FKEnrollmentCourse Foreign key(courseName) references Course(name)
+    on delete cascade
+);

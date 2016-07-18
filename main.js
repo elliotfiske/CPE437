@@ -40,6 +40,7 @@ app.use('/Prss', require('./Routes/Account/Prss'));
 app.use('/Ssns', require('./Routes/Account/Ssns'));
 app.use('/Chls', require('./Routes/Challenge/Chls'));
 app.use('/Atts', require('./Routes/Challenge/Atts'));
+app.use('/Crss', require('./Routes/Course/Crss'));
 
 
 app.delete('/DB', function(req, res) {
@@ -59,6 +60,12 @@ app.delete('/DB', function(req, res) {
             cnn.query('delete from Person', callback);
          },
          function(callback){
+            cnn.query('delete from Course', callback);
+         },
+         function(callback){
+            cnn.query('delete from Enrollment', callback);
+         },
+         function(callback){
             cnn.query('alter table Step auto_increment = 1', callback);
          },
          function(callback){
@@ -66,6 +73,9 @@ app.delete('/DB', function(req, res) {
          },
          function(callback){
             cnn.query('alter table Person auto_increment = 1', callback);
+         },
+         function(callback){
+            cnn.query('alter table Enrollment auto_increment = 1', callback);
          },
          function(callback){
             cnn.query('INSERT INTO Person (id, firstName, lastName, email,' +

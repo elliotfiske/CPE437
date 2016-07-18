@@ -26,7 +26,7 @@ router.post('/', function(req, res) {
             }
             else if (req.validator.check(!result.length, Tags.dupName)) {
                cnn.query('INSERT INTO Challenge SET ?', req.body, function(err, result) {
-                  res.location(router.baseURL + '/' + result.insertId).send(200).end();
+                  res.location(router.baseURL + '/' + req.body.name).send(200).end();
                   cnn.release();
                });
             }
@@ -53,18 +53,31 @@ router.get('/:name', function(req, res) {
 
 router.get('/:name/Atts', function(req, res) {
    connections.getConnection(res, function(cnn) {
-      var query = 'SELECT id, ? as challengeURI, ownerId, duration, score, startTime, state from Attempt where challengeName = ? ORDER BY startTime ASC';
-      var params = ['Chls/' + req.params.name, req.params.name];
+      function getResult() {
+         var query = 'SELECT id, ? as challengeURI, ownerId, duration, score, startTime, state from Attempt where challengeName = ? ORDER BY startTime DESC';
+         var params = ['Chls/' + req.params.name, req.params.name];
 
-      if (req.query.limit) {
-         query += ' LIMIT ?';
-         params.push(parseInt(req.query.limit));
+         if (req.query.limit) {
+            query += ' LIMIT ?';
+            params.push(parseInt(req.query.limit));
+         }
+
+         cnn.query(query, params, function(err, result) {
+            res.json(result);
+            cnn.release();
+         });
       }
 
-      cnn.query(query, params, function(err, result) {
-         res.json(result);
-         cnn.release();
-      });
+      if (req.session.isAdmin()) {
+         getResult();
+      }
+      else {
+         cnn.query('SELECT * FROM Attempt WHERE challengeName = ? AND ownerId = ?', [req.params.name, req.session.id], function(err, result) {
+            if (req.validator.check(result.length, Tags.noPermission)) {
+               getResult();
+            }
+         });
+      }
    });
 });
 

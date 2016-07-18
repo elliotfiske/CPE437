@@ -33,27 +33,23 @@ router.get('/:attId', function(req, res) {
 // validator.  And the cnn needs closing.
 router.put('/:attId', function(req, res) {
    var vld = req.validator;
+   console.log('aybb')
 
    connections.getConnection(res, function(cnn) {
       cnn.query('select * from Attempt where id = ?', [req.params.attId],
       function(err, result) {
-         if (!result.length) {
-            res.status(404).send();
-            cnn.release();
-         }
-         else {
-            if (vld.checkPrsOK(result[0].ownerId)
-             && vld.check(result[0].state !== 1, Tags.attNotClosable)
-             && vld.check(result[0].state !== 0, Tags.addClosed)) {
-               cnn.query('update Attempt set state = 1 where id = ?', [req.params.attId],
-               function(err, result) {
-                  res.end(); // failed update?
-                  cnn.release();
-               });
-            }
-            else
+         if (vld.check(result.length, Tags.notFound)
+          && vld.checkPrsOK(result[0].ownerId)
+          && vld.check(result[0].state !== 1, Tags.attNotClosable)
+          && vld.check(result[0].state !== 0, Tags.addClosed)) {
+            cnn.query('update Attempt set state = 1 where id = ?', [req.params.attId],
+            function(err, result) {
+               res.end(); // failed update?
                cnn.release();
+            });
          }
+         else
+            cnn.release();
       });
    });
 });

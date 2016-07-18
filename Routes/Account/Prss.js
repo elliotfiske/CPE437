@@ -161,12 +161,10 @@ router.post('/:id/Atts', function(req, res) {
                cnn.query('SELECT * from Attempt where state = 2 and ownerId = ? '
                 + 'and challengeName = ?',  [owner, chlName],
                function(err, result) {
-                  console.log(result);
                   if (vld.check(result.length === 0, Tags.incompAttempt)) {
                      cnn.query('SELECT * from Attempt where ownerId = ? '
                       + 'and challengeName = ?',  [owner, chlName],
                      function(err, result) {
-                        console.log(result);
                         if (vld.check(result.length < chl.attsAllowed, Tags.excessAtts)) {
                            var attempt = {
                               ownerId: owner,
