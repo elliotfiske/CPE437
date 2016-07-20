@@ -21,17 +21,19 @@ app.config(['$stateProvider', '$urlRouterProvider',
          templateUrl: 'Login/login.template.html',
          controller: 'loginController',
       })
+      .state('crss', {
+         url: '/Prss/{prsId}/Crss',
+         templateUrl: 'Courses/crss.template.html',
+         controller: 'crssController'
+      })
+      .state('crs', {
+         url: '/Crss/{courseName}',
+         templateUrl: 'Courses/crs.template.html',
+         controller: 'crsController'
+      })
       .state('atts', {
          url: '/Prss/{prsId}',
          templateUrl: 'Attempts/atts.template.html',
-         controller: 'attsController',
-         resolve: {
-            atts: ['$q', '$http', '$stateParams', function($q, http, prms) {
-               return http.get('/Prss/' + prms.prsId + "/Atts")
-               .then(function(response) {
-                  return $q.resolve(response.data)
-               });
-            }]
-         }
+         controller: 'attsController'
       })
    }]);

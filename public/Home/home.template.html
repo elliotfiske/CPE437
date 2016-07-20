@@ -1,4 +1,6 @@
 <div class="text-center">
-<button ng-click='goToLogin()' class="btn btn-primary">Login</button>
-<button ng-click='goToRegister()' class="btn btn-primary">Register</button>
+<button ng-click='goToLogin()' class="btn btn-primary" ng-disabled="loggedUser">Login</button>
+<button ng-click='goToRegister()' class="btn btn-primary" ng-disabled="loggedUser">Register</button><br /><br />
+<button ng-click='goToAttempts()' class="btn btn-primary" ng-disabled="!loggedUser">Attempts</button>
+<button ng-click='goToCourses()' class="btn btn-primary" ng-show="loggedUser && loggedUser.role > 0">Courses</button>
 </div>

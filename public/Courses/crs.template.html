@@ -1,0 +1,14 @@
+<div>
+<h1>Course {{ courseName }}</h1>
+<h3>Enrollments</h3>
+<div ng-repeat="enr in enrs">
+{{ enr.email }} <a ng-click="deleteEnrollment(enr.enrId)" style="cursor:pointer;">Remove</a>
+</div>
+<form>
+   <h3>Add new Enrollment</h3>
+   <input type="text" placeholder="Course name" ng-model="email" />
+   <button class="btn btn-primary" ng-click="addEnrollment()">Submit</button>
+   <h4 class="bg-danger" ng-repeat="error in errors" style="padding: 10px;">
+      {{ error }}
+   </h4>
+</form>

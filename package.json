@@ -13,7 +13,7 @@
   "devDependencies": {},
   "scripts": {
     "test": "node main.js",
-    "start": "nodemon main.js"
+    "start": "node main.js"
   },
   "author": [
     "Johnathan Nicholson",

@@ -100,8 +100,10 @@ router.post('/:name/Enrs', function(req, res) {
          cnn.query('INSERT INTO Enrollment (prsId, courseName, whenEnrolled) VALUES (?, ?, ?)',
             [req.body.prsId, req.params.name, new Date()], function(err, result) {
             if (err) {
-               console.log(err);
-               res.status(400).end();
+               if (vld.check(err.code !== 'ER_DUP_ENTRY', Tags.dupName)) {
+                  console.log(err);
+                  res.status(400).end();
+               }
             }
             else {
                res.location(router.baseURL + '/' + req.params.name + '/Enrs/'
@@ -146,7 +148,7 @@ router.get('/:name/Enrs', function(req, res) {
                'WHERE enr.courseName = ?'
             ];
             if (req.query.full) {
-               queryArr[0] += ', lastName, firstName';
+               queryArr[0] += ', lastName, firstName, email';
                queryArr[1] += ' INNER JOIN Person p ON p.id = prsId'
             }
             cnn.query(queryArr.join(' '), [req.params.name], function(err, result) {

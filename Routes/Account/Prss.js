@@ -63,7 +63,7 @@ router.get('/:id', function(req, res) {
    if (vld.checkPrsOK(req.params.id)) {
       connections.getConnection(res,
       function(cnn) {
-         cnn.query('select email, firstName, lastName, whenRegistered, role, termsAccepted from Person where id = ?', [req.params.id],
+         cnn.query('select id, email, firstName, lastName, whenRegistered, role, termsAccepted from Person where id = ?', [req.params.id],
          function(err, prsArr) {
             if (vld.check(prsArr.length, Tags.notFound))
                res.json(prsArr);
@@ -123,11 +123,29 @@ router.delete('/:id', function(req, res) {
       });
 });
 
+router.get('/:id/Crss', function(req, res) {
+   var query, qryParams;
+
+   if (req.validator.checkPrsOK(req.params.id))
+      query = 'SELECT * from Course where ownerId = ?';
+      params = [req.params.id];
+
+      connections.getConnection(res,
+      function(cnn) {
+         cnn.query(query, params,
+         function(err, result) {
+            res.json(result);
+
+            cnn.release();
+         });
+      });
+});
+
 router.get('/:id/Atts', function(req, res) {
    var query, qryParams;
 
    if (req.validator.checkPrsOK(req.params.id))
-      query = 'SELECT * from Attempt where ownerId = ? and state = 2';
+      query = 'SELECT * from Attempt where ownerId = ?';
       params = [req.params.id];
       if (req.query.challengeName) {
          query += ' and challengeName = ?';

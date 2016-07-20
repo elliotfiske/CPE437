@@ -1,4 +1,4 @@
-app.controller('registerController', ['$scope', '$state', '$http', function(scope, $state, $http) {
+app.controller('registerController', ['$scope', '$state', '$http', 'login', function(scope, $state, $http, login) {
    scope.user = {role: 0};
    scope.errors = [];
 
