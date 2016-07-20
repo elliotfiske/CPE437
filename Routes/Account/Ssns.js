@@ -23,8 +23,8 @@ router.post('/', function(req, res) {
    var cookie;
 
    connections.getConnection(res, function(cnn) {
-      cnn.query('SELECT * from Person where email = ?', [req.body.email], function(err, result) {
-         if (req.validator.check(result.length && result[0].password === req.body.password && result[0].password !== '*', Tags.badLogin)) {
+      cnn.query('select * from Person where email = ?', [req.body.email], function(err, result) {
+         if (req.validator.check(result.length && result[0].password === req.body.password, Tags.badLogin)) {
             cookie = ssnUtil.makeSession(result[0], res);
             res.location(router.baseURL + '/'  + cookie).end();
          }
@@ -40,5 +40,13 @@ router.delete('/:cookie', function(req, res, next) {
        res.sendStatus(200);
    }
 });
+
+router.get('/:cookie', function(req, res, next) {
+   var cookie = req.params.cookie;
+   var vld = req.validator;
+   if (vld.checkPrsOK(ssnUtil.sessions[cookie].id)) {
+      res.json({prsId: req.session.id});
+   }
+})
 
 module.exports = router;

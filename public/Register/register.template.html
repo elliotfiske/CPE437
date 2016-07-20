@@ -1,5 +1,7 @@
 <div>
-   <form>
+   <form class="col-sm-6 col-sm-offset-3">
+      <button type="button" class="btn" ng-click="goBack()">< Back</button><br />
+      <br />
       <fieldset class="form-group">
         <label>Email address</label>
         <input type="email" class="form-control" placeholder="Enter email" ng-model="user.email">
@@ -27,7 +29,11 @@
        </label>
      </div>
 
-  <button type="button" class="btn btn-primary" ng-click="registerUser()"
+    <button type="button" class="btn btn-primary" ng-click="registerUser()"
   ng-disabled="!user.termsAccepted || user.password !== confPass">Submit</button>
+    <button type="button" class="btn btn-secondary" ng-click="goBack()">Cancel</button>
+    <h4 class="bg-danger" ng-repeat="error in errors" style="padding: 10px;">
+    {{ error }}
+  </h4>
 </form>
 </div>
