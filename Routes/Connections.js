@@ -11,7 +11,7 @@ var Connections = function() {
    poolCfg.port = env.OPENSHIFT_MYSQL_DB_PORT || poolCfg.port;
    poolCfg.database = env.OPENSHIFT_GEAR_NAME || poolCfg.database;
 
-   poolCfg.connectionLimit = Connections.PoolSize;
+   poolCfg.connectionLimit = 1;//Connections.PoolSize;
    this.pool = mysql.createPool(poolCfg);
 };
 
