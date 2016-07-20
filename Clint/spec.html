@@ -386,6 +386,136 @@
 				},
 			}
 		},
+		'Attempt Resources': {
+			'Atts/{attId}': {
+				'get': {
+					desc: 'Retrieve Att-specific info. AU must be owner or admin.',
+					return: {
+						example: {
+							challengeURI: 'URI of challenge',
+							ownerId: 'prsId',
+							duration: '-1 if incomplete',
+							score: '-1 if in progress or quit',
+							startTime: 'in ms since epoch',
+							state: 'complete(0), quit(1), progress(2)'
+						}
+					}
+				},
+				'put': {
+					desc: 'No parameters. A PUT operation will quit the attempt',
+					return: {
+						desc: 'OK on success, or errors on failure'
+					}
+				}
+			},
+			'Atts/{attId}/Stps': {
+				'post': {
+					desc: 'Post a new step to the attempt. Must be in progress',
+					params: {
+						input: 'JSON string specifying input'
+					},
+					return: {
+						location: 'Atts/{attId}/Stps/{stpId}'
+					}
+				}
+			},
+			'Atts/{attId}/Stps/{stpId}': {
+				get: {
+					desc: 'Get the result of the indicated step',
+					return: {
+						example: {
+							input: 'Input for step',
+							result: 'JSON result or null if processing'
+						}
+					}
+				}
+			}
+		},
+		'Course Resources': {
+			'Crss': {
+				post: {
+					desc: 'Create a new course. AU must be teacher or admin, who will become owner',
+					params: {
+						name: '* Unique name for course'
+					},
+					return: {
+						loation: 'Crss/{name}'
+					}
+				}
+			},
+			'Crss/{name}': {
+				put: {
+					desc: 'Update Crs information. AU must be owner of course or admin.',
+					params: {
+						name: 'New name. Must not collide with other courses',
+						ownerId: 'New owner. Requires Admin AU'
+					}
+				},
+				delete: {
+					desc: 'Delete course and all associated Enrollments. AU must be owner or admin.'
+				}
+			},
+			'Crss/{name}/Enrs': {
+				post: {
+					desc: 'Add Enrollment to the course. Error if already enrolled. AU must be enrolled person, course owner, or admin.',
+					params: {
+						prsId: 'Person to enroll'
+					},
+					return: {
+						location: 'Crss/{name}/Enrs/{enrId}'
+					}
+				},
+				get: {
+					desc: 'Get all enrollments for the course',
+					params: {
+						full: '(Optional) Include email, firstName, lastName'
+					},
+					return: {
+						example: [{
+							enrId: 10,
+							whenEnrolled: 'timestamp',
+							prsId: 1,
+							email: 'Person1@email.com',
+							firstName: 'first',
+							lastName: 'last'
+						}]
+					}
+				}
+			},
+			'Crss/{name}/Enrs/{enrId}': {
+				get: {
+					desc: 'Get Enrollment information. AU must be course owner, person enrolled, or admin',
+					return: {
+						example: [{
+							enrId: 10,
+							whenEnrolled: 'timestamp',
+							prsId: 1,
+							email: 'Person1@email.com',
+							firstName: 'first',
+							lastName: 'last'
+						}]
+					}
+				},
+				delete: {
+					desc: 'AU must be course owner or admin'
+				}
+			},
+		},
+		'Testing': {
+			'DB': {
+				delete: {
+					desc: 'Clear all content from DB, reset autoincrement to 1, and add the Admin user (see return). AU must be admin.',
+					return: {
+						example: {
+							email: 'Admin@11.com',
+							firstName: 'Admin',
+							lastName: 'IAM',
+							password: 'password'
+						}
+					}
+				}
+			}
+		} 
 	};
 
 	function stringify(obj) {
@@ -445,142 +575,6 @@
 		spec.append($('<hr>'))
 	}
 	</script>
-
-<h2>Resources for <span style="font-variant: normal"><span style="font-style: normal">Attempts</span></span></h2>
-<h3>Atts/&lt;AttId&gt;</h3>
-<p>GET</p>
-<p>Retrieve Att-specific info. AU must be Att owner or
-admin. Returns</p>
-<p><i>challengeURI </i><span style="font-variant: normal"><span style="font-style: normal">URI
-of the challenge being played, e.g. Chls/&lt;challengeName&gt;</span></span></p>
-<p><i>ownerId </i><span style="font-variant: normal"><span style="font-style: normal">ID
-of the Person making the attempt</span></span></p>
-<p><i>duration </i><span style="font-variant: normal"><span style="font-style: normal">Number
-of seconds duration, if attempt is complete, -1</span></span><span style="font-variant: normal">
-</span><span style="font-variant: normal"><span style="font-style: normal">otherwise</span></span></p>
-<p><i>score </i><span style="font-variant: normal"><span style="font-style: normal">Final
-score, if attempt was a success, -1 it's still in progress or was a
-quit</span></span></p>
-<p><i>startTime </i><span style="font-variant: normal"><span style="font-style: normal">Time
-of attempt start, in mS since epoch</span></span></p>
-<p><i>state </i><span style="font-variant: normal"><span style="font-style: normal">One
-of completed(0), quit(1), or in progress(2).</span></span></p>
-<p><br/>
-<br/>
-
-</p>
-<p style="font-variant: normal; font-style: normal">PUT</p>
-<p style="font-variant: normal; font-style: normal">No
-parameters needed; the only PUT operation on this resource is a quit.
-Returns OK on success, or list of errors, per usual, on failure. AU
-must be Att owner or admin. Att must be non-<i>completed. </i>
-</p>
-<h3>Atts/&lt;AttId&gt;/Stps</h3>
-<p style="font-variant: normal; font-style: normal">POST</p>
-<p><span style="font-variant: normal"><span style="font-style: normal">Post
-a new</span></span><span style="font-variant: normal"> </span><span style="font-variant: normal"><span style="font-style: normal">step</span></span><span style="font-variant: normal">
-</span><span style="font-variant: normal"><span style="font-style: normal">to
-the attempt. Fails if attempt is complete or quitted. AU must be
-owner of Att.</span></span></p>
-<p><i>input:</i> <span style="font-variant: normal"><span style="font-style: normal">A
-JSON string specifying the user's input for the current step of the
-challenge. Format is challenge-specific.</span></span>
-</p>
-<h3 style="font-variant: normal; font-style: normal">
-Atts/&lt;AttId&gt;/Stps/&lt;StpId&gt;</h3>
-<p style="font-variant: normal; font-style: normal">GET</p>
-<p style="font-variant: normal; font-style: normal">Get
-the result of the indicated step.
-</p>
-<p><i>input:</i> <span style="font-variant: normal"><span style="font-style: normal">A
-JSON string specifying the user's input for the current step of the
-challenge. Format is challenge-specific. </span></span>
-</p>
-<p><i>result </i><span style="font-variant: normal"><span style="font-style: normal">A
-JSON string specifying the result of the Step. Format is challenge
-specific.</span></span><span style="font-variant: normal"> </span><span style="font-variant: normal"><span style="font-style: normal">Null
-if CHS is still generating a result.</span></span></p>
-<h2><font color="#00ae00">Resources for
-Courses</font></h2>
-<h2><font color="#00ae00">Crss</font></h2>
-<p><font color="#00ae00">POST</font></p>
-<p><font color="#00ae00">Add a new course. AU must be
-teacher or admin, and will become owner of course. Course name must
-be unique. Fields are:</font></p>
-<p><font color="#00ae00"><i>name </i><span style="font-variant: normal"><span style="font-style: normal">Name
-of course.</span></span></font></p>
-<h2><font color="#00ae00">Crss/&lt;crsName&gt;</font></h2>
-<p><font color="#00ae00">PUT</font></p>
-<p><font color="#00ae00">Update Crs information. AU must
-be owner of course or admin. Body has field(s):</font></p>
-<p><font color="#00ae00"><i>name </i><span style="font-variant: normal"><span style="font-style: normal">New
-name for course. Must not collide with any existing course names.</span></span></font></p>
-<p><font color="#00ae00"><i>ownerId </i><span style="font-variant: normal"><span style="font-style: normal">Owner
-of course. Change to this requires admin AU.</span></span></font></p>
-<p><br/>
-<br/>
-
-</p>
-<p><font color="#00ae00">DELETE</font></p>
-<p><font color="#00ae00">Delete the Crs and all associated
-Enrs. AU must be owner of course or admin.</font></p>
-<h3><font color="#00ae00">Crss/&lt;crsName&gt;/Enrs</font></h3>
-<p><font color="#00ae00">Enrs represents enrollments
-(enrs) in the course in question.</font></p>
-<p><font color="#00ae00">POST</font></p>
-<p><font color="#00ae00">Add an Enr to the course. Error
-if the Prs in question is already enrolled. AU must be person
-enrolled, course owner, or admin. Fields are:</font></p>
-<p><font color="#00ae00"><i>prsId</i><span style="font-variant: normal">
-</span><span style="font-variant: normal"><span style="font-style: normal">Person
-to enroll</span></span></font></p>
-<p><br/>
-<br/>
-
-</p>
-<p><font color="#00ae00"><span style="font-variant: normal"><span style="font-style: normal">GET</span></span><span style="font-variant: normal">
-</span><span style="font-variant: normal"><span style="font-style: normal">full</span></span></font></p>
-<p><font color="#00ae00"><span style="font-variant: normal"><span style="font-style: normal">Get
-all Enrs for the course.</span></span><span style="font-variant: normal">
-</span><span style="font-variant: normal"><span style="font-style: normal">AU
-must be course owner or admin</span></span><span style="font-variant: normal">
-</span><span style="font-variant: normal"><span style="font-style: normal">Fields
-are:</span></span></font></p>
-<p style="font-variant: normal; font-style: normal"><font color="#00ae00"><i>enrId
-</i>ID of the enrollment</font></p>
-<p style="font-variant: normal; font-style: normal"><font color="#00ae00"><i>whenEnrolled
-</i>date of the enrollment</font></p>
-<p><font color="#00ae00"><i>prsId </i><span style="font-variant: normal"><span style="font-style: normal">ID
-of enrolled Prs</span></span></font></p>
-<p style="font-variant: normal; font-style: normal"><font color="#00ae00">plus,
-if &quot;full&quot; is given</font></p>
-<p><font color="#00ae00"><i>lastName </i><span style="font-variant: normal"><span style="font-style: normal">last
-name of Prs</span></span></font></p>
-<p><font color="#00ae00"><i>firstName </i><span style="font-variant: normal"><span style="font-style: normal">first
-name of Prs</span></span></font></p>
-<h3><font color="#00ae00">Crss/&lt;crsName&gt;/Enrs/&lt;enrId&gt;</font></h3>
-<p><font color="#00ae00">GET</font></p>
-<p><font color="#00ae00">Gets the enrollment. Same fields
-as for Crss/{crsName}/Enrs GET with &quot;full&quot; query param. AU
-must be course owner, person enrolled under this enr, or admin</font></p>
-<p><br/>
-<br/>
-
-</p>
-<p><font color="#00ae00">DELETE</font></p>
-<p><font color="#00ae00">Drops the enrollment. AU must be
-course owner or admin.</font></p>
-<h2>Special DB Resource for Testing
-Purposes</h2>
-<h3>DB</h3>
-<p style="font-variant: normal; font-style: normal">DELETE</p>
-<p style="font-variant: normal; font-style: normal">Clear
-all content from the database, reset all autoincrement IDs to 1, and
-add back one Person, an admin named Admin IAM with email <font color="#ff0000">admin@</font><font color="#ff0000">11.com</font>
-and password &quot;password&quot;. Clear all current sessions. AU
-must be an admin.</p>
-
-
 
 	</div>
 </body>
