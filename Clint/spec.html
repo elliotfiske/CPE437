@@ -67,7 +67,6 @@
 	}
 	table tr:first-child td {
 		font-size: 12px;
-		border-bottom: 1px solid #aaa;
 	}
 
 	td .desc {
@@ -82,6 +81,9 @@
 
 	td .location:before {
 		content: "Location: ";
+	}
+	table tr {
+		border-bottom: 1px solid #aaa;
 	}
 	</style>
 </head>
@@ -225,6 +227,119 @@
 				'delete': {
 					desc: 'Delete the person in question, including all Attempts. Requires Admin AU'
 				},
+			},
+			'Prss/{prsId}/Atts': {
+				'get': {
+					desc: 'Get an array of all Atts for the specified person, optionally narrowed down to one challenge. AU must be person in question or Admin',
+					params: {
+						challengeName: 'Name of challenge',
+					},
+					return: {
+						example: [{
+							challengeURI: 'URI of challenge',
+							ownerId: 'prsId',
+							duration: '-1 if incomplete',
+							score: '-1 if in progress or quit',
+							startTime: 'in ms since epoch',
+							state: 'complete(0), quit(1), progress(2)'
+						}]
+					}
+				},
+				'post': {
+					desc: 'Start a new attempt if possible. There must be none in progress and the limit of allowed Atts must not be exhausted.',
+					params: {
+						challengeName: '* Challenge to start'
+					},
+					return: {
+						location: 'Prss/{prsId}',
+					}
+				}
+			}
+		},
+		'Session Management': {
+			'Ssns': {
+				'get': {
+					desc: 'Returns a list of all active sessions. Must be Admin AU',
+					return: {
+						example: [{
+							cookie: 'unique cookie',
+							prsId: 'Person logged in',
+							loginTime: 'Timestamp of login'
+						}]
+					}
+				},
+				'post': {
+					desc: 'Generate a browser-session cookie to permit access for 2 hours. Indicated person becomes the AU.',
+					params: {
+						email: 'Email of person logging in',
+						password: 'Users password'
+					},
+					return: {
+						desc: '400/No Permission on failure',
+						location: 'Ssns/{cookie}'
+					}
+				}
+			},
+			'Ssns/{cookie}': {
+				delete: {
+					desc: 'Log out the specified Session. AU must be owner of Ssn or Admin'
+				}
+			}
+		},
+		'Challenge Resources': {
+			'Chls': {
+				'get': {
+					desc: 'Return a list of challenges in the system',
+					return: {
+						example: [{
+							name: 'Challenge name',
+							description: 'Description'
+						}]
+					}
+				},
+				'post': {
+					desc: 'Create a new challenge. Teacher or Admin AU',
+					params: {
+						name: '* Name of challenge',
+						description: '* Description',
+						attsAllowed: '* max # of attempts'
+					},
+					return: {
+						desc: 'Person id will be registered as the owner',
+						location: 'Chls/{name}'
+					}
+				}
+			},
+			'Chls/{name}': {
+				'get': {
+					desc: 'Get information about challenge',
+					return: {
+						example: {
+							description: 'Description of challenge and rules',
+							attsAllowed: 'Number of attempts allowed'
+						}
+					}
+				}
+			},
+			'Chls/{name}/Atts': {
+				'get': {
+					desc: 'Get info on Attempts. AU must be someone who has attempted the Challenge or admin.',
+					params: {
+						limit: 'Optional'
+					},
+					return: {
+						desc: 'Ordered by reverse order of start time',
+						example: [{
+							id: 'Attempt id',
+							challengeURI: 'URI of challenge',
+							ownerId: 'prsId',
+							duration: '-1 if incomplete',
+							score: '-1 if in progress or quit',
+							startTime: 'in ms since epoch',
+							state: 'complete(0), quit(1), progress(2)'
+						}]
+					}
+				}
 			}
 		},
 		'Shop Item Management': {
@@ -326,121 +441,11 @@
 				table.append(row);
 			}
 		}
+
+		spec.append($('<hr>'))
 	}
 	</script>
 
-<h5>Prss/&lt;prsId&gt;/Atts</h5>
-<p>Each person has zero or more challenge attempts (Atts)
-that are currently in progress.</p>
-<p>GET challengeName=&lt;name of challenge&gt;</p>
-<p>Returns an array of any in-progress Atts for the
-specified Person, optionally narrowed down to Atts only for a
-specific challenge. AU must be person in question or admin. <span style="font-variant: normal"><font color="#ff0000"><span style="font-style: normal">Returns
-an array of zero or more attempts</span></font></span><span style="font-variant: normal"><span style="font-style: normal">,
-in same form as for Atts/&lt;AttId&gt; GET</span></span></p>
-<p><br/>
-<br/>
-
-</p>
-<p>POST</p>
-<p>Creates a new Att for this Person, on the specified
-challenge. Fails if an unfinished Att for the indicated challenge is
-still in progress, or if the number of allowed Atts for this
-challenge has been exhausted. New Att is in progress until completed
-by a final answer or by quitting.</p>
-<p><i>challengeName </i><span style="font-variant: normal"><span style="font-style: normal">Unique
-name of the Chl for which this Attem</span></span></p>
-<h3><em><span>Ssns</span></em></h3>
-<p><em><span style="font-variant: normal"><span><span style="font-style: normal">Login
-sessions (Ssns)</span></span></span></em><em><span style="font-variant: normal"><span>
-</span></span></em><em><span style="font-variant: normal"><span><span style="font-style: normal">are
-required for most service</span></span></span></em><em><span style="font-variant: normal"><span>
-</span></span></em><em><span style="font-variant: normal"><span><span style="font-style: normal">access.
-A user obtains one via POST to Ssns.</span></span></span></em></p>
-<p>GET
-</p>
-<p>Returns a list of all active sessions. Admin-privileged
-AU required. Returns array of</p>
-<p style="margin-left: 0.49in"><i>cookie </i><span style="font-variant: normal"><span style="font-style: normal">Unique
-c</span></span>ookie value for session</p>
-<p style="margin-left: 0.49in"><i>prsId</i> <span style="font-variant: normal"><span style="font-style: normal">ID</span></span><span style="font-variant: normal">
-</span><span style="font-variant: normal"><span style="font-style: normal">of
-Person logged in</span></span></p>
-<p style="margin-left: 0.49in"><i>loginTime </i>Date and
-time of login</p>
-<p style="margin-left: 0.49in"><br/>
-<br/>
-
-</p>
-<p><em><span style="font-variant: normal"><span><span style="font-style: normal">POST</span></span></span></em></p>
-<p><em><span style="font-variant: normal"><span><span style="font-style: normal">A
-successful POST</span></span></span></em><em><span style="font-variant: normal"><span>
-</span></span></em><em><span style="font-variant: normal"><span><span style="font-style: normal">generates
-a browser-session cookie that will permit continued access for 2</span></span></span></em><em><span style="font-variant: normal"><span>
-</span></span></em><em><span style="font-variant: normal"><span><span style="font-style: normal">hours.
-Indicated Person becomes the AU. An unsuccesful POST</span></span></span></em><em><span style="font-variant: normal"><span>
-</span></span></em><em><span style="font-variant: normal"><span><span style="font-style: normal">results
-in</span></span></span></em><em><span style="font-variant: normal"><span>
-</span></span></em><em><span style="font-variant: normal"><span><span style="font-style: normal">a</span></span></span></em><em><span style="font-variant: normal"><span>
-</span></span></em><em><span style="font-variant: normal"><span><span style="font-style: normal">400/No
-Permission</span></span></span></em><em><span style="font-variant: normal"><span>
-</span></span></em><em><span style="font-variant: normal"><span><span style="font-style: normal">error
-code, with no further information.</span></span></span></em></p>
-<p style="margin-left: 0.49in"><em><span><i>email</i></span></em><span>
-Email of user requesting login</span></p>
-<p style="margin-left: 0.49in"><i>password</i> Password of
-user</p>
-<h3>Ssns/&lt;cookie&gt;</h3>
-<p>DELETE</p>
-<p align="left" style="font-variant: normal; font-style: normal">
-Log out the specified Ssn. AU must be owner of Ssn or admin.</p>
-<p align="left"><br/>
-<br/>
-
-</p>
-<h2 style="font-variant: normal; font-style: normal">
-Resources for Challenges</h2>
-<p style="font-variant: normal; font-style: normal">The
-following resources allow starting and playing challenges, and
-retrieving histories of prior attempts.</p>
-<h3>Chls</h3>
-<p>GET</p>
-<p style="font-variant: normal; font-style: normal">Any AU
-is acceptable. Return, for each challenge in the system:</p>
-<p style="margin-left: 0.49in"><i>name </i><span style="font-variant: normal"><span style="font-style: normal">Name
-of the challenge</span></span></p>
-<p style="margin-left: 0.49in"><i>description </i><span style="font-variant: normal"><span style="font-style: normal">Description
-of the challenge.</span></span></p>
-<p style="font-variant: normal; font-style: normal">POST</p>
-<p><span style="font-variant: normal"><span style="font-style: normal">Create
-a new challenge. Fields as for GET, plus </span></span><i>attsAllowed</i><span style="font-variant: normal"><span style="font-style: normal">.
-Admin </span></span><span style="font-variant: normal"><font color="#0047ff"><span style="font-style: normal">or
-Teacher </span></font></span><span style="font-variant: normal"><span style="font-style: normal">AU
-required. Error if challenge of the same name already exists.</span></span></p>
-<h3 style="font-variant: normal; font-style: normal">
-Chls/&lt;challengeName&gt;</h3>
-<p style="font-variant: normal; font-style: normal">GET</p>
-<p style="font-variant: normal; font-style: normal"><i>description
-</i>A description of the challenge, including rules regarding how to
-play it.</p>
-<p><i>attsAllowed </i><span style="font-variant: normal"><span style="font-style: normal">Number
-of Atts permitted per student.</span></span></p>
-<p><br/>
-<br/>
-
-</p>
-<h2><font color="#0099ff">V2 Resources for
-Challenges</font></h2>
-<h3><font color="#0099ff">Chls/&lt;challengeName&gt;/Atts</font></h3>
-<p><font color="#0099ff">GET limit=&lt;num&gt;</font></p>
-<p><font color="#0099ff">Get information on Atts for this
-Chl. AU must be among those who have attempted the Chl or admin. If
-limit is provided, return at most the most recent &lt;num&gt;
-attempts. Return an array (possibly empty) of Attempts listed in
-reverse order of starting time, with each element having the same
-information as in Atts/&lt;attId&gt; GET, plus an <i>id</i><span style="font-variant: normal">
-</span><span style="font-variant: normal"><span style="font-style: normal">field
-giving the Id of the Att.</span></span></font></p>
 <h2>Resources for <span style="font-variant: normal"><span style="font-style: normal">Attempts</span></span></h2>
 <h3>Atts/&lt;AttId&gt;</h3>
 <p>GET</p>
