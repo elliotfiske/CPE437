@@ -11,11 +11,11 @@ var Connections = function() {
    poolCfg.port = env.OPENSHIFT_MYSQL_DB_PORT || poolCfg.port;
    poolCfg.database = env.OPENSHIFT_GEAR_NAME || poolCfg.database;
 
-   poolCfg.connectionLimit = 1;//Connections.PoolSize;
+   poolCfg.connectionLimit = Connections.PoolSize;
    this.pool = mysql.createPool(poolCfg);
 };
 
-Connections.PoolSize = 5;
+Connections.PoolSize = 1;
 
 // Return a connection, possibly augmented for deadlock
 // retry (so don't just get it straight from pool).
