@@ -3,7 +3,7 @@ app.controller('attsController',
  function(scope, $state, $http, attStateFilter, uibM, login) {
    scope.atts = {};
 
-   if (!scope.loggedUser) {
+   if (!login.isLoggedIn()) {
       $state.go('home');
    }
 
@@ -58,6 +58,22 @@ app.controller('attsController',
 
    scope.checkAtt = function(attId) {
       console.log("Check att " + attId);
+   }
+
+   scope.quitAtt = function(attId) {
+      var confirm = uibM.open({
+         templateUrl: 'Courses/confirmDelete.html',
+         scope: scope,
+         size: 'sm'
+      });
+      confirm.result.then(function(confirmed) {
+         if (confirmed) {
+            $http.put('Atts/' + attId)
+            .then(function(res) {
+               return scope.refreshAtts();
+            });
+         }
+      })
    }
 
    scope.getAttColor = function(att) {

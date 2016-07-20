@@ -6,6 +6,8 @@
         <div ng-class="getAttColor(att)" ng-repeat="att in attempts | orderBy:'startTime'" style="margin-bottom: 10px;">
            <input type="button" class="btn" ng-click="checkAtt(att.id)"
             value = "{{chl}}"></input>
+           <input type="button" class="btn" ng-click="quitAtt(att.id)"
+            value = "Quit"></input>
             <span class="pull-right">
             {{att.startTime | date:'short'}}
             </span>

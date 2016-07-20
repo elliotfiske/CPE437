@@ -3,7 +3,7 @@ app.controller('crsController',
  function(scope, $state, $stateParams, $http, attStateFilter, uibM, login) {
    scope.courseName = $stateParams.courseName;
 
-   if (!scope.loggedUser) {
+   if (!login.isLoggedIn()) {
       $state.go('home');
    }
 
