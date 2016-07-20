@@ -76,6 +76,9 @@ router.get('/:name/Atts', function(req, res) {
             if (req.validator.check(result.length, Tags.noPermission)) {
                getResult();
             }
+            else {
+               cnn.release();
+            }
          });
       }
    });

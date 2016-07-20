@@ -15,7 +15,7 @@ var Connections = function() {
    this.pool = mysql.createPool(poolCfg);
 };
 
-Connections.PoolSize = 1;
+Connections.PoolSize = 10;
 
 // Return a connection, possibly augmented for deadlock
 // retry (so don't just get it straight from pool).

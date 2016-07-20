@@ -18,9 +18,9 @@ router.get('/:attId', function(req, res) {
             if (vld.checkPrsOK(result[0].ownerId)) {
                delete result[0].ownerId;
                res.json(result[0]);
-               cnn.release();
             }
          }
+         cnn.release();
       });
    });
 });
@@ -37,7 +37,10 @@ router.put('/:attId', function(req, res) {
             cnn.query('update Attempt set state = 1 where id = ?', [req.params.attId],
             function(err, result) {
                res.end(); // failed update?
+               cnn.release();
             });
+         }
+         else {
             cnn.release();
          }
       });
