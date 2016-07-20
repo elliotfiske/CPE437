@@ -1,0 +1,380 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+	<title>Incentivizer REST Specification</title>
+</head>
+<body>
+	<h1>Incentivizer REST Specification</h1>
+	<sub>Elliot Fiske, Thomas Steinke, and Enoch Tsui</sub>
+<h1 lang="zxx" class="western" align="center">Challenge REST Service</h1>
+<p lang="zxx" align="center">Copyright 2013-2016, Clinton Staley</p>
+<h2 lang="zxx" class="western">Overview</h2>
+<p lang="zxx">The Challenge REST Service (CHS) provides the interface
+needed for a student to play one or more of a set of academic
+<i>challenge</i>s, each of which is uniquely identified by a
+c<i>hallenge name.</i><span style="font-variant: normal"> </span>Each
+student may make one or more <i>attempt</i>s at a challenge, with the
+maximum number allowed determined by the challenge. Each attempt may
+in turn involve one or more <i>step</i>s, each comprising an input
+from the student, and a response from CHS. (E.g an answer to a
+puzzle, and an indication of whether the answer is right or not.)</p>
+<h2 lang="zxx" class="western">General Points</h2>
+<p lang="zxx">The following design points apply across the document.</p>
+<ol>
+	<li/>
+<p lang="zxx">All resource URLs are prefixed by &lt;Root&gt;/
+	(e.g. http://cstaley.csc.calpoly.edu:8080/Prss 
+	</p>
+	<li/>
+<p lang="zxx">All resources accept and provide only JSON body
+	content.</p>
+	<li/>
+<p lang="zxx">All GET parameters are optional unless given in
+	bold.</p>
+	<li/>
+<p lang="zxx">Absent documentation to the contrary, all DELETE
+	calls, POST, and PUT calls return, via JSON body content, a list of
+	JSON objects describing any errors that occured, if the HTTP
+	response is not 200. Per REST standards, 200 results return empty
+	body for DELETE. Error objects are of form {tag: &lt;errorTag&gt;,
+	params: &lt;params&gt;} where errorTag is a string tag identifying
+	the error, and params is a possibly-empty array of additional values
+	needed to fill in details about the error. E.g. {tag:
+	&quot;missingField&quot;, params: [&quot;lastName&quot;]}</p>
+	<li/>
+<p lang="zxx">All resource-creating POST calls return the
+	newly created resource as a URI via the Location response header,
+	not in the response body. The respose body for such POSTs is
+	reserved for error information, per point 4.</p>
+	<li/>
+<p lang="zxx">GET calls return either OK and the specified
+	information in the body, or BAD_REQUEST and a list of error strings.</p>
+	<li/>
+<p lang="zxx">Fields of JSON content for POST and PUT calls
+	are assumed to be strings, booleans, ints, or doubles without
+	further documentation where obvious by their name or intent. In
+	nonobvious cases, the type is given explicitly in the docs.</p>
+	<li/>
+<p lang="zxx">All access requires authentication via login; no
+	resources are public except for Prss/POST (for initial
+	registration), and Ssns/POST (to log in). Other resources may be
+	restricted based on admin status of Authenticated User (AU). The
+	default restriction is to allow only access relevant to the AU,
+	unless AU is admin, in which case access to any Person's info is
+	allowed.</p>
+</ol>
+<h2 lang="zxx" class="western">Resources for User Management,
+including Registration</h2>
+<h5 lang="zxx" class="western">Prss</h5>
+<p lang="zxx">Collection of all current students or other users.</p>
+<p lang="zxx">GET email<span style="font-weight: normal">=&lt;email</span>
+<span style="font-weight: normal">or email</span> <span style="font-weight: normal">prefix&gt;</span></p>
+<p lang="zxx">Returns list of all Persons, as resource URLs. Limits
+to Persons with specified email or email prefix, if applicable. No
+data for other than the AU is returned in any event, unless the AU is
+an admin. Data per person:</p>
+<p lang="zxx"><i>email</i> principal string identifier, unique across
+all Persons</p>
+<p lang="zxx">id <span style="font-variant: normal"><span style="font-style: normal">id
+of person with said email, so that URI would be</span></span><span style="font-variant: normal">
+</span><span style="font-variant: normal"><span style="font-style: normal">Prss/&lt;id&gt;</span></span></p>
+<p lang="zxx">POST 
+</p>
+<p lang="zxx">Adds a new Person, returning newly added Person. No AU
+required.</p>
+<p lang="zxx" style="margin-left: 0.49in"><i>email </i><span style="font-variant: normal"><span style="font-style: normal">unique
+Email for new person</span></span></p>
+<p lang="zxx" style="margin-left: 0.49in"><i>firstName</i></p>
+<p lang="zxx" style="margin-left: 0.49in"><i>lastName</i></p>
+<p lang="zxx" style="margin-left: 0.49in"><i>password</i></p>
+<p lang="zxx" style="margin-left: 0.49in"><i>role </i><span style="font-variant: normal"><span style="font-style: normal">0
+for student, 1 for teacher, 2 for admin</span></span></p>
+<p lang="zxx" style="margin-left: 0.49in"><i>termsAccepted </i><span style="font-variant: normal"><span style="font-style: normal">Were
+site terms and conditions accepted?</span></span></p>
+<p lang="zxx" style="margin-left: 0.49in"><br/>
+<br/>
+
+</p>
+<p lang="zxx" style="font-variant: normal; font-style: normal">Email
+and lastName required. Error if email is nonunique. Error if terms
+were not accepted and AU is not admin. Error if role is not student
+unless AU is admin. Missing password allowed only if AU is admin, in
+which case a blocking password is recorded, preventing further access
+to the account.</p>
+<h5 lang="zxx" class="western"><em><span style="font-variant: normal"><span lang="zxx"><span style="font-style: normal">Prss/&lt;prsId&gt;</span></span></span></em></h5>
+<p lang="zxx"><em><span style="font-variant: normal"><span lang="zxx"><span style="font-style: normal">GET</span></span></span></em></p>
+<p lang="zxx"><em><span style="font-variant: normal"><span lang="zxx"><span style="font-style: normal">Returns
+object for Person &lt;prsId&gt;, with fields as specified in POST</span></span></span></em><em><span style="font-variant: normal"><span lang="zxx">
+</span></span></em><em><span style="font-variant: normal"><span lang="zxx"><span style="font-style: normal">for
+Prss,</span></span></span></em><span lang="zxx"> p</span><em><span style="font-variant: normal"><span lang="zxx"><span style="font-style: normal">lus
+</span></span></span></em><em><span lang="zxx">whenRegistered</span></em><em><span style="font-variant: normal"><span lang="zxx"><span style="font-style: normal">,
+less</span></span></span></em><span lang="zxx"> </span><span lang="zxx"><i>password.</i></span><span lang="zxx">
+</span><span style="font-variant: normal"><span lang="zxx"><span style="font-style: normal">AU
+must be Person in question or admin.</span></span></span></p>
+<p lang="zxx"><br/>
+<br/>
+
+</p>
+<p lang="zxx">PUT</p>
+<p lang="zxx"><span lang="zxx">Update Person &lt;prsId&gt;, with body
+giving an object with one or more of </span><em><span lang="zxx">firstName,
+lastName, password, role.</span></em><span lang="zxx"> All changes
+require the AU be the Person in question, or an admin. Role changes
+require an admin. Unless AU is admin, an additional field </span><em><span lang="zxx">oldPassword</span></em><span lang="zxx">
+is required for changing </span><em><span lang="zxx">password. </span></em>
+</p>
+<p lang="zxx"><br/>
+<br/>
+
+</p>
+<p lang="zxx">DELETE</p>
+<p lang="zxx">Delete the Person in question, including all Attempts
+played by Person. Requires admin AU.</p>
+<h5 lang="zxx" class="western">Prss/&lt;prsId&gt;/Atts</h5>
+<p lang="zxx">Each person has zero or more challenge attempts (Atts)
+that are currently in progress.</p>
+<p lang="zxx">GET challengeName=&lt;name of challenge&gt;</p>
+<p lang="zxx">Returns an array of any in-progress Atts for the
+specified Person, optionally narrowed down to Atts only for a
+specific challenge. AU must be person in question or admin. <span style="font-variant: normal"><font color="#ff0000"><span style="font-style: normal">Returns
+an array of zero or more attempts</span></font></span><span style="font-variant: normal"><span style="font-style: normal">,
+in same form as for Atts/&lt;AttId&gt; GET</span></span></p>
+<p lang="zxx"><br/>
+<br/>
+
+</p>
+<p lang="zxx">POST</p>
+<p lang="zxx">Creates a new Att for this Person, on the specified
+challenge. Fails if an unfinished Att for the indicated challenge is
+still in progress, or if the number of allowed Atts for this
+challenge has been exhausted. New Att is in progress until completed
+by a final answer or by quitting.</p>
+<p lang="zxx"><i>challengeName </i><span style="font-variant: normal"><span style="font-style: normal">Unique
+name of the Chl for which this Attem</span></span></p>
+<h3 lang="zxx" class="western"><em><span lang="zxx">Ssns</span></em></h3>
+<p lang="zxx"><em><span style="font-variant: normal"><span lang="zxx"><span style="font-style: normal">Login
+sessions (Ssns)</span></span></span></em><em><span style="font-variant: normal"><span lang="zxx">
+</span></span></em><em><span style="font-variant: normal"><span lang="zxx"><span style="font-style: normal">are
+required for most service</span></span></span></em><em><span style="font-variant: normal"><span lang="zxx">
+</span></span></em><em><span style="font-variant: normal"><span lang="zxx"><span style="font-style: normal">access.
+A user obtains one via POST to Ssns.</span></span></span></em></p>
+<p lang="zxx">GET 
+</p>
+<p lang="zxx">Returns a list of all active sessions. Admin-privileged
+AU required. Returns array of</p>
+<p lang="zxx" style="margin-left: 0.49in"><i>cookie </i><span style="font-variant: normal"><span style="font-style: normal">Unique
+c</span></span>ookie value for session</p>
+<p lang="zxx" style="margin-left: 0.49in"><i>prsId</i> <span style="font-variant: normal"><span style="font-style: normal">ID</span></span><span style="font-variant: normal">
+</span><span style="font-variant: normal"><span style="font-style: normal">of
+Person logged in</span></span></p>
+<p lang="zxx" style="margin-left: 0.49in"><i>loginTime </i>Date and
+time of login</p>
+<p lang="zxx" style="margin-left: 0.49in"><br/>
+<br/>
+
+</p>
+<p lang="zxx"><em><span style="font-variant: normal"><span lang="zxx"><span style="font-style: normal">POST</span></span></span></em></p>
+<p lang="zxx"><em><span style="font-variant: normal"><span lang="zxx"><span style="font-style: normal">A
+successful POST</span></span></span></em><em><span style="font-variant: normal"><span lang="zxx">
+</span></span></em><em><span style="font-variant: normal"><span lang="zxx"><span style="font-style: normal">generates
+a browser-session cookie that will permit continued access for 2</span></span></span></em><em><span style="font-variant: normal"><span lang="zxx">
+</span></span></em><em><span style="font-variant: normal"><span lang="zxx"><span style="font-style: normal">hours.
+Indicated Person becomes the AU. An unsuccesful POST</span></span></span></em><em><span style="font-variant: normal"><span lang="zxx">
+</span></span></em><em><span style="font-variant: normal"><span lang="zxx"><span style="font-style: normal">results
+in</span></span></span></em><em><span style="font-variant: normal"><span lang="zxx">
+</span></span></em><em><span style="font-variant: normal"><span lang="zxx"><span style="font-style: normal">a</span></span></span></em><em><span style="font-variant: normal"><span lang="zxx">
+</span></span></em><em><span style="font-variant: normal"><span lang="zxx"><span style="font-style: normal">400/No
+Permission</span></span></span></em><em><span style="font-variant: normal"><span lang="zxx">
+</span></span></em><em><span style="font-variant: normal"><span lang="zxx"><span style="font-style: normal">error
+code, with no further information.</span></span></span></em></p>
+<p lang="zxx" style="margin-left: 0.49in"><em><span lang="zxx"><i>email</i></span></em><span lang="zxx">
+Email of user requesting login</span></p>
+<p lang="zxx" style="margin-left: 0.49in"><i>password</i> Password of
+user</p>
+<h3 lang="zxx" class="western">Ssns/&lt;cookie&gt;</h3>
+<p lang="zxx">DELETE</p>
+<p lang="zxx" align="left" style="font-variant: normal; font-style: normal">
+Log out the specified Ssn. AU must be owner of Ssn or admin.</p>
+<p lang="zxx" align="left"><br/>
+<br/>
+
+</p>
+<h2 lang="zxx" class="western" style="font-variant: normal; font-style: normal">
+Resources for Challenges</h2>
+<p lang="zxx" style="font-variant: normal; font-style: normal">The
+following resources allow starting and playing challenges, and
+retrieving histories of prior attempts.</p>
+<h3 lang="zxx" class="western">Chls</h3>
+<p lang="zxx">GET</p>
+<p lang="zxx" style="font-variant: normal; font-style: normal">Any AU
+is acceptable. Return, for each challenge in the system:</p>
+<p lang="zxx" style="margin-left: 0.49in"><i>name </i><span style="font-variant: normal"><span style="font-style: normal">Name
+of the challenge</span></span></p>
+<p lang="zxx" style="margin-left: 0.49in"><i>description </i><span style="font-variant: normal"><span style="font-style: normal">Description
+of the challenge.</span></span></p>
+<p lang="zxx" style="font-variant: normal; font-style: normal">POST</p>
+<p lang="zxx"><span style="font-variant: normal"><span style="font-style: normal">Create
+a new challenge. Fields as for GET, plus </span></span><i>attsAllowed</i><span style="font-variant: normal"><span style="font-style: normal">.
+Admin </span></span><span style="font-variant: normal"><font color="#0047ff"><span style="font-style: normal">or
+Teacher </span></font></span><span style="font-variant: normal"><span style="font-style: normal">AU
+required. Error if challenge of the same name already exists.</span></span></p>
+<h3 lang="zxx" class="western" style="font-variant: normal; font-style: normal">
+Chls/&lt;challengeName&gt;</h3>
+<p lang="zxx" style="font-variant: normal; font-style: normal">GET</p>
+<p lang="zxx" style="font-variant: normal; font-style: normal"><i>description
+</i>A description of the challenge, including rules regarding how to
+play it.</p>
+<p lang="zxx"><i>attsAllowed </i><span style="font-variant: normal"><span style="font-style: normal">Number
+of Atts permitted per student.</span></span></p>
+<p lang="zxx"><br/>
+<br/>
+
+</p>
+<h2 lang="zxx" class="western"><font color="#0099ff">V2 Resources for
+Challenges</font></h2>
+<h3 lang="zxx" class="western"><font color="#0099ff">Chls/&lt;challengeName&gt;/Atts</font></h3>
+<p lang="zxx"><font color="#0099ff">GET limit=&lt;num&gt;</font></p>
+<p lang="zxx"><font color="#0099ff">Get information on Atts for this
+Chl. AU must be among those who have attempted the Chl or admin. If
+limit is provided, return at most the most recent &lt;num&gt;
+attempts. Return an array (possibly empty) of Attempts listed in
+reverse order of starting time, with each element having the same
+information as in Atts/&lt;attId&gt; GET, plus an <i>id</i><span style="font-variant: normal">
+</span><span style="font-variant: normal"><span style="font-style: normal">field
+giving the Id of the Att.</span></span></font></p>
+<h2 lang="zxx" class="western">Resources for <span style="font-variant: normal"><span style="font-style: normal">Attempts</span></span></h2>
+<h3 lang="zxx" class="western">Atts/&lt;AttId&gt;</h3>
+<p lang="zxx">GET</p>
+<p lang="zxx">Retrieve Att-specific info. AU must be Att owner or
+admin. Returns</p>
+<p lang="zxx"><i>challengeURI </i><span style="font-variant: normal"><span style="font-style: normal">URI
+of the challenge being played, e.g. Chls/&lt;challengeName&gt;</span></span></p>
+<p lang="zxx"><i>ownerId </i><span style="font-variant: normal"><span style="font-style: normal">ID
+of the Person making the attempt</span></span></p>
+<p lang="zxx"><i>duration </i><span style="font-variant: normal"><span style="font-style: normal">Number
+of seconds duration, if attempt is complete, -1</span></span><span style="font-variant: normal">
+</span><span style="font-variant: normal"><span style="font-style: normal">otherwise</span></span></p>
+<p lang="zxx"><i>score </i><span style="font-variant: normal"><span style="font-style: normal">Final
+score, if attempt was a success, -1 it's still in progress or was a
+quit</span></span></p>
+<p lang="zxx"><i>startTime </i><span style="font-variant: normal"><span style="font-style: normal">Time
+of attempt start, in mS since epoch</span></span></p>
+<p lang="zxx"><i>state </i><span style="font-variant: normal"><span style="font-style: normal">One
+of completed(0), quit(1), or in progress(2).</span></span></p>
+<p lang="zxx"><br/>
+<br/>
+
+</p>
+<p lang="zxx" style="font-variant: normal; font-style: normal">PUT</p>
+<p lang="zxx" style="font-variant: normal; font-style: normal">No
+parameters needed; the only PUT operation on this resource is a quit.
+Returns OK on success, or list of errors, per usual, on failure. AU
+must be Att owner or admin. Att must be non-<i>completed. </i>
+</p>
+<h3 lang="zxx" class="western">Atts/&lt;AttId&gt;/Stps</h3>
+<p lang="zxx" style="font-variant: normal; font-style: normal">POST</p>
+<p lang="zxx"><span style="font-variant: normal"><span style="font-style: normal">Post
+a new</span></span><span style="font-variant: normal"> </span><span style="font-variant: normal"><span style="font-style: normal">step</span></span><span style="font-variant: normal">
+</span><span style="font-variant: normal"><span style="font-style: normal">to
+the attempt. Fails if attempt is complete or quitted. AU must be
+owner of Att.</span></span></p>
+<p lang="zxx"><i>input:</i> <span style="font-variant: normal"><span style="font-style: normal">A
+JSON string specifying the user's input for the current step of the
+challenge. Format is challenge-specific.</span></span> 
+</p>
+<h3 lang="zxx" class="western" style="font-variant: normal; font-style: normal">
+Atts/&lt;AttId&gt;/Stps/&lt;StpId&gt;</h3>
+<p lang="zxx" style="font-variant: normal; font-style: normal">GET</p>
+<p lang="zxx" style="font-variant: normal; font-style: normal">Get
+the result of the indicated step. 
+</p>
+<p lang="zxx"><i>input:</i> <span style="font-variant: normal"><span style="font-style: normal">A
+JSON string specifying the user's input for the current step of the
+challenge. Format is challenge-specific. </span></span>
+</p>
+<p lang="zxx"><i>result </i><span style="font-variant: normal"><span style="font-style: normal">A
+JSON string specifying the result of the Step. Format is challenge
+specific.</span></span><span style="font-variant: normal"> </span><span style="font-variant: normal"><span style="font-style: normal">Null
+if CHS is still generating a result.</span></span></p>
+<h2 lang="zxx" class="western"><font color="#00ae00">Resources for
+Courses</font></h2>
+<h2 lang="zxx" class="western"><font color="#00ae00">Crss</font></h2>
+<p lang="zxx"><font color="#00ae00">POST</font></p>
+<p lang="zxx"><font color="#00ae00">Add a new course. AU must be
+teacher or admin, and will become owner of course. Course name must
+be unique. Fields are:</font></p>
+<p lang="zxx"><font color="#00ae00"><i>name </i><span style="font-variant: normal"><span style="font-style: normal">Name
+of course.</span></span></font></p>
+<h2 lang="zxx" class="western"><font color="#00ae00">Crss/&lt;crsName&gt;</font></h2>
+<p lang="zxx"><font color="#00ae00">PUT</font></p>
+<p lang="zxx"><font color="#00ae00">Update Crs information. AU must
+be owner of course or admin. Body has field(s):</font></p>
+<p lang="zxx"><font color="#00ae00"><i>name </i><span style="font-variant: normal"><span style="font-style: normal">New
+name for course. Must not collide with any existing course names.</span></span></font></p>
+<p lang="zxx"><font color="#00ae00"><i>ownerId </i><span style="font-variant: normal"><span style="font-style: normal">Owner
+of course. Change to this requires admin AU.</span></span></font></p>
+<p lang="zxx"><br/>
+<br/>
+
+</p>
+<p lang="zxx"><font color="#00ae00">DELETE</font></p>
+<p lang="zxx"><font color="#00ae00">Delete the Crs and all associated
+Enrs. AU must be owner of course or admin.</font></p>
+<h3 lang="zxx" class="western"><font color="#00ae00">Crss/&lt;crsName&gt;/Enrs</font></h3>
+<p lang="zxx"><font color="#00ae00">Enrs represents enrollments
+(enrs) in the course in question.</font></p>
+<p lang="zxx"><font color="#00ae00">POST</font></p>
+<p lang="zxx"><font color="#00ae00">Add an Enr to the course. Error
+if the Prs in question is already enrolled. AU must be person
+enrolled, course owner, or admin. Fields are:</font></p>
+<p lang="zxx"><font color="#00ae00"><i>prsId</i><span style="font-variant: normal">
+</span><span style="font-variant: normal"><span style="font-style: normal">Person
+to enroll</span></span></font></p>
+<p lang="zxx"><br/>
+<br/>
+
+</p>
+<p lang="zxx"><font color="#00ae00"><span style="font-variant: normal"><span style="font-style: normal">GET</span></span><span style="font-variant: normal">
+</span><span style="font-variant: normal"><span style="font-style: normal">full</span></span></font></p>
+<p lang="zxx"><font color="#00ae00"><span style="font-variant: normal"><span style="font-style: normal">Get
+all Enrs for the course.</span></span><span style="font-variant: normal">
+</span><span style="font-variant: normal"><span style="font-style: normal">AU
+must be course owner or admin</span></span><span style="font-variant: normal">
+</span><span style="font-variant: normal"><span style="font-style: normal">Fields
+are:</span></span></font></p>
+<p lang="zxx" style="font-variant: normal; font-style: normal"><font color="#00ae00"><i>enrId
+</i>ID of the enrollment</font></p>
+<p lang="zxx" style="font-variant: normal; font-style: normal"><font color="#00ae00"><i>whenEnrolled
+</i>date of the enrollment</font></p>
+<p lang="zxx"><font color="#00ae00"><i>prsId </i><span style="font-variant: normal"><span style="font-style: normal">ID
+of enrolled Prs</span></span></font></p>
+<p lang="zxx" style="font-variant: normal; font-style: normal"><font color="#00ae00">plus,
+if &quot;full&quot; is given</font></p>
+<p lang="zxx"><font color="#00ae00"><i>lastName </i><span style="font-variant: normal"><span style="font-style: normal">last
+name of Prs</span></span></font></p>
+<p lang="zxx"><font color="#00ae00"><i>firstName </i><span style="font-variant: normal"><span style="font-style: normal">first
+name of Prs</span></span></font></p>
+<h3 lang="zxx" class="western"><font color="#00ae00">Crss/&lt;crsName&gt;/Enrs/&lt;enrId&gt;</font></h3>
+<p lang="zxx"><font color="#00ae00">GET</font></p>
+<p lang="zxx"><font color="#00ae00">Gets the enrollment. Same fields
+as for Crss/{crsName}/Enrs GET with &quot;full&quot; query param. AU
+must be course owner, person enrolled under this enr, or admin</font></p>
+<p lang="zxx"><br/>
+<br/>
+
+</p>
+<p lang="zxx"><font color="#00ae00">DELETE</font></p>
+<p lang="zxx"><font color="#00ae00">Drops the enrollment. AU must be
+course owner or admin.</font></p>
+<h2 lang="zxx" class="western">Special DB Resource for Testing
+Purposes</h2>
+<h3 lang="zxx" class="western">DB</h3>
+<p lang="zxx" style="font-variant: normal; font-style: normal">DELETE</p>
+<p lang="zxx" style="font-variant: normal; font-style: normal">Clear
+all content from the database, reset all autoincrement IDs to 1, and
+add back one Person, an admin named Admin IAM with email <font color="#ff0000">admin@</font><font color="#ff0000">11.com</font>
+and password &quot;password&quot;. Clear all current sessions. AU
+must be an admin.</p>
+</body>
+</html>
