@@ -50,7 +50,7 @@
 		font-family: monospace;
 	}
 	table td {
-		padding: 5px;
+		padding: 10px 5px;
 		border-left: 1px solid #aaa;
 		font-size: 12px;
 	}
@@ -60,11 +60,28 @@
 		border: none;
 	}
 	table td:nth-child(2) {
-		width: 30%;
+		width: 20%;
+	}
+	table td:nth-child(4) {
+		vertical-align: top;
 	}
 	table tr:first-child td {
 		font-size: 12px;
 		border-bottom: 1px solid #aaa;
+	}
+
+	td .desc {
+		border-bottom: 1px solid #aaa;
+		padding-bottom: 10px;
+	}
+
+	td .location {
+		background: #ccc;
+		padding: 5px;
+	}
+
+	td .location:before {
+		content: "Location: ";
 	}
 	</style>
 </head>
@@ -101,7 +118,7 @@
 	<p>The following design points apply across the document.</p>
 	<ol>
 		<li/>
-	<p>All resource URLs are prefixed by &lt;Root&gt;/
+	<p>All resource URLs are prefixed by {Root}/
 		(e.g. http://cstaley.csc.calpoly.edu:8080/Prss 
 		</p>
 		<li/>
@@ -115,8 +132,8 @@
 		calls, POST, and PUT calls return, via JSON body content, a list of
 		JSON objects describing any errors that occured, if the HTTP
 		response is not 200. Per REST standards, 200 results return empty
-		body for DELETE. Error objects are of form {tag: &lt;errorTag&gt;,
-		params: &lt;params&gt;} where errorTag is a string tag identifying
+		body for DELETE. Error objects are of form {tag: errorTag,
+		params: params} where errorTag is a string tag identifying
 		the error, and params is a possibly-empty array of additional values
 		needed to fill in details about the error. E.g. {tag:
 		&quot;missingField&quot;, params: [&quot;lastName&quot;]}</p>
@@ -162,19 +179,68 @@
 						params: {
 							email: '(Optional) Email of user to find',
 						},
-						return: [{
-							email: 'email of user'
-						}]
+						return: {
+							example: [{
+								email: 'email of user'
+							}]
+						}
+					},
+					'post': {
+						desc: 'Add a new person, returning newly added person.',
+						params: {
+							email: '* (Unique) Email of user',
+							lastName: '* Last name',
+							firstName: 'First name',
+							password: 'Password (required for non-admin',
+							role: '0 for student, 1 for teacher, 2 for admin',
+							termsAccepted: 'Were T&C accepted?'
+						},
+						return: {
+							location: 'Prss/{prsId}',
+						}
 					}
+				},
+				'Prss/{prsid}': {
+					'get': {
+						desc: 'Return object for Person prsId. AU must be person in question or admin',
+						return: {
+							example: {
+								email: '(Unique) Email of user',
+								lastName: 'Last name',
+								firstName: 'First name',
+								role: '0 for student, 1 for teacher, 2 for admin',
+								whenRegistered: 'timestamp of registration',
+								termsAccepted: 'Were T&C accepted?'
+							}
+						}
+					},
+					'put': {
+						desc: 'Update person prsId',
+						params: {
+							firstName: 'First name',
+							lastName: 'Last name',
+							password: 'Password',
+							oldPassword: 'Required if changing password',
+							role: '* 0, 1, or 2 (Requires admin AU)',
+						}
+					},
+					'delete': {
+						desc: 'Delete the person in question, including all Attempts. Requires Admin AU'
+					},
 				}
 			}
 		}
 	];
 
 	function stringify(obj) {
-		var str = JSON.stringify(obj);
+		var str = JSON.stringify(obj) || '';
 
-		return str.replace(/([,\[\{])/g, '$1<br>').replace(/([\}\]])/g, '<br>$1').replace(/<br>"/g, "<br>&nbsp;&nbsp;&nbsp;&nbsp;\"");
+		return str
+			.replace(/([\[\{])/g, '$1<br>')
+			.replace(/,([\"\{}])/g, ',<br>$1')
+			.replace(/([\}\]])/g, '<br>$1')
+			.replace(/<br>"/g, "<br>&nbsp;&nbsp;&nbsp;&nbsp;\"")
+			.replace(/("[a-zA-Z]*":")\* (.*?")/g, "<span style='color: red'>$1$2</span>");
 	}
 
 	var spec = $('#spec');
@@ -198,10 +264,23 @@
 				var endpoint = section.endpoints[url][method];
 
 				var row = $('<tr class=' + method + '></tr>');
-				row.append($('<td>' + url + '</td>'));
+				row.append($('<td>' + method.toUpperCase() + ' ' + url + '</td>'));
 				row.append($('<td>' + endpoint.desc + '</td>'));
 				row.append($('<td>' + stringify(endpoint.params) + '</td>'));
-				row.append($('<td>' + stringify(endpoint.return) + '</td>'));
+
+				var result = $('<td></td>');
+				var returnInfo = endpoint.return || {};
+				if (returnInfo.desc) {
+					result.append($('<div class="desc">' + returnInfo.desc + '</div>'));
+				}
+				if (returnInfo.location) {
+					result.append($('<div class="location">' + returnInfo.location + '</div>'));
+				}
+				if (returnInfo.example) {
+					result.append($('<div class="return">' + stringify(returnInfo.example) + '</div>'));
+				}
+
+				row.append(result);
 
 				table.append(row);
 			}
@@ -209,73 +288,6 @@
 	}
 	</script>
 
-<h2>Resources for User Management,
-including Registration</h2>
-<h5>Prss</h5>
-<p>Collection of all current students or other users.</p>
-<p>GET email<span style="font-weight: normal">=&lt;email</span>
-<span style="font-weight: normal">or email</span> <span style="font-weight: normal">prefix&gt;</span></p>
-<p>Returns list of all Persons, as resource URLs. Limits
-to Persons with specified email or email prefix, if applicable. No
-data for other than the AU is returned in any event, unless the AU is
-an admin. Data per person:</p>
-<p><i>email</i> principal string identifier, unique across
-all Persons</p>
-<p>id <span style="font-variant: normal"><span style="font-style: normal">id
-of person with said email, so that URI would be</span></span><span style="font-variant: normal">
-</span><span style="font-variant: normal"><span style="font-style: normal">Prss/&lt;id&gt;</span></span></p>
-<p>POST 
-</p>
-<p>Adds a new Person, returning newly added Person. No AU
-required.</p>
-<p style="margin-left: 0.49in"><i>email </i><span style="font-variant: normal"><span style="font-style: normal">unique
-Email for new person</span></span></p>
-<p style="margin-left: 0.49in"><i>firstName</i></p>
-<p style="margin-left: 0.49in"><i>lastName</i></p>
-<p style="margin-left: 0.49in"><i>password</i></p>
-<p style="margin-left: 0.49in"><i>role </i><span style="font-variant: normal"><span style="font-style: normal">0
-for student, 1 for teacher, 2 for admin</span></span></p>
-<p style="margin-left: 0.49in"><i>termsAccepted </i><span style="font-variant: normal"><span style="font-style: normal">Were
-site terms and conditions accepted?</span></span></p>
-<p style="margin-left: 0.49in"><br/>
-<br/>
-
-</p>
-<p style="font-variant: normal; font-style: normal">Email
-and lastName required. Error if email is nonunique. Error if terms
-were not accepted and AU is not admin. Error if role is not student
-unless AU is admin. Missing password allowed only if AU is admin, in
-which case a blocking password is recorded, preventing further access
-to the account.</p>
-<h5><em><span style="font-variant: normal"><span><span style="font-style: normal">Prss/&lt;prsId&gt;</span></span></span></em></h5>
-<p><em><span style="font-variant: normal"><span><span style="font-style: normal">GET</span></span></span></em></p>
-<p><em><span style="font-variant: normal"><span><span style="font-style: normal">Returns
-object for Person &lt;prsId&gt;, with fields as specified in POST</span></span></span></em><em><span style="font-variant: normal"><span>
-</span></span></em><em><span style="font-variant: normal"><span><span style="font-style: normal">for
-Prss,</span></span></span></em><span> p</span><em><span style="font-variant: normal"><span><span style="font-style: normal">lus
-</span></span></span></em><em><span>whenRegistered</span></em><em><span style="font-variant: normal"><span><span style="font-style: normal">,
-less</span></span></span></em><span> </span><span><i>password.</i></span><span>
-</span><span style="font-variant: normal"><span><span style="font-style: normal">AU
-must be Person in question or admin.</span></span></span></p>
-<p><br/>
-<br/>
-
-</p>
-<p>PUT</p>
-<p><span>Update Person &lt;prsId&gt;, with body
-giving an object with one or more of </span><em><span>firstName,
-lastName, password, role.</span></em><span> All changes
-require the AU be the Person in question, or an admin. Role changes
-require an admin. Unless AU is admin, an additional field </span><em><span>oldPassword</span></em><span>
-is required for changing </span><em><span>password. </span></em>
-</p>
-<p><br/>
-<br/>
-
-</p>
-<p>DELETE</p>
-<p>Delete the Person in question, including all Attempts
-played by Person. Requires admin AU.</p>
 <h5>Prss/&lt;prsId&gt;/Atts</h5>
 <p>Each person has zero or more challenge attempts (Atts)
 that are currently in progress.</p>
