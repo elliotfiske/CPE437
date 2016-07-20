@@ -1,0 +1,15 @@
+<div>
+   <input type="button" ng-click="startNewAtt()" class="btn btn-primary inline-block"
+    value="Start new Attempt"></input>
+   <div ng-repeat="att in atts">
+      <div class="panel" ng-class="getAttColor(att)">
+         <input type="button" class="btn" ng-click="checkAtt(att.id)"
+          value = "{{att.challengeName}}""</input>
+         <div class="panel-body">
+            State: {{att.state | attState}}<br/>
+            Start Time: {{att.startTime | date:'short'}}<br/>
+            Score: {{att.score >= 0 ? att.score : "n/a"}}<br/>
+         </div>
+      </div>
+   </div>
+</div>

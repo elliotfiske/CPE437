@@ -54,6 +54,7 @@ create table Enrollment (
     prsId INT(11) NOT NULL,
     courseName VARCHAR(30) NOT NULL,
     whenEnrolled DATETIME not null,
+    UNIQUE KEY (prsId, courseName),
     Constraint FKEnrollmentStudentId Foreign key(prsId) references Person(id)
     on delete cascade,
     Constraint FKEnrollmentCourse Foreign key(courseName) references Course(name)
