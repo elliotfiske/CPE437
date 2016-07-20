@@ -119,7 +119,7 @@
 	<ol>
 		<li/>
 	<p>All resource URLs are prefixed by {Root}/
-		(e.g. http://cstaley.csc.calpoly.edu:8080/Prss 
+		(e.g. http://cstaley.csc.calpoly.edu:8080/Prss
 		</p>
 		<li/>
 	<p>All resources accept and provide only JSON body
@@ -226,7 +226,51 @@
 					desc: 'Delete the person in question, including all Attempts. Requires Admin AU'
 				},
 			}
-		}
+		},
+		'Shop Item Management': {
+			'Crss/{crsid}/Itms': {
+				'get': {
+					desc: 'Return a list of all the available items to purchase for a particular course. AU must be enrolled in the course, owner of the course, or admin.',
+					return: {
+						example: [
+							{
+								name: '5 points extra credit',
+								cost: 5,
+								purchased: false
+							},
+							{
+								name: 'Final exemption',
+								cost: 100,
+								purchased: true
+							}
+					]
+					}
+				},
+				'post': {
+					desc: 'Add a new shop item, returning newly added shop item.',
+					params: {
+						name: '* (Unique) Name of item',
+						cost: 'Cost in credits for the item'
+					},
+					return: {
+						location: 'Crss/{crsid}/Itms/{itmId}',
+					}
+				}
+			},
+			'Crss/{crsid}/Itms/{itmId}': {
+				'put': {
+					desc: 'Update item itmId',
+					params: {
+						name: '* name of item (requires admin or course owner)',
+						cost: '* cost of item (requires admin or course owner)',
+						purchased: 'True if AU has purchased item, false otherwise. No refunds (going from false->true), unless admin or course owner.'
+					}
+				},
+				'delete': {
+					desc: 'Delete the item in question. Requires Admin AU'
+				},
+			}
+		},
 	};
 
 	function stringify(obj) {
@@ -246,13 +290,13 @@
 
 		spec.append($('<h4>' + topic + '</h4>'));
 
-		var table = $('<table><thead>' + 
-		'	<tr>' + 
-		'		<td>URL</td>' + 
-		'		<td>Description</td>' + 
-		'		<td>Parameters</td>' + 
-		'		<td>Response</td>' + 
-		'	</tr>' + 
+		var table = $('<table><thead>' +
+		'	<tr>' +
+		'		<td>URL</td>' +
+		'		<td>Description</td>' +
+		'		<td>Parameters</td>' +
+		'		<td>Response</td>' +
+		'	</tr>' +
 		'</thead></table>');
 		spec.append(table);
 
@@ -313,7 +357,7 @@ sessions (Ssns)</span></span></span></em><em><span style="font-variant: normal">
 required for most service</span></span></span></em><em><span style="font-variant: normal"><span>
 </span></span></em><em><span style="font-variant: normal"><span><span style="font-style: normal">access.
 A user obtains one via POST to Ssns.</span></span></span></em></p>
-<p>GET 
+<p>GET
 </p>
 <p>Returns a list of all active sessions. Admin-privileged
 AU required. Returns array of</p>
@@ -435,13 +479,13 @@ the attempt. Fails if attempt is complete or quitted. AU must be
 owner of Att.</span></span></p>
 <p><i>input:</i> <span style="font-variant: normal"><span style="font-style: normal">A
 JSON string specifying the user's input for the current step of the
-challenge. Format is challenge-specific.</span></span> 
+challenge. Format is challenge-specific.</span></span>
 </p>
 <h3 style="font-variant: normal; font-style: normal">
 Atts/&lt;AttId&gt;/Stps/&lt;StpId&gt;</h3>
 <p style="font-variant: normal; font-style: normal">GET</p>
 <p style="font-variant: normal; font-style: normal">Get
-the result of the indicated step. 
+the result of the indicated step.
 </p>
 <p><i>input:</i> <span style="font-variant: normal"><span style="font-style: normal">A
 JSON string specifying the user's input for the current step of the
@@ -530,7 +574,7 @@ all content from the database, reset all autoincrement IDs to 1, and
 add back one Person, an admin named Admin IAM with email <font color="#ff0000">admin@</font><font color="#ff0000">11.com</font>
 and password &quot;password&quot;. Clear all current sessions. AU
 must be an admin.</p>
-	
+
 
 
 	</div>
