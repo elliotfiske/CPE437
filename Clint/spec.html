@@ -169,68 +169,65 @@
 	<div id="spec"></div>
 
 	<script type='text/javascript'>
-	var specification = [
-		{
-			desc: 'User Management',
-			endpoints: {
-				'Prss': {
-					'get': {
-						desc: 'Return a list of all persons as resource URLs, potentially filtered by email. Does not return any users other than the AU unless AU is admin.',
-						params: {
-							email: '(Optional) Email of user to find',
-						},
-						return: {
-							example: [{
-								email: 'email of user'
-							}]
-						}
+	var specification = {
+		'User Management': {
+			'Prss': {
+				'get': {
+					desc: 'Return a list of all persons as resource URLs, potentially filtered by email. Does not return any users other than the AU unless AU is admin.',
+					params: {
+						email: '(Optional) Email of user to find',
 					},
-					'post': {
-						desc: 'Add a new person, returning newly added person.',
-						params: {
-							email: '* (Unique) Email of user',
-							lastName: '* Last name',
+					return: {
+						example: [{
+							email: 'email of user'
+						}]
+					}
+				},
+				'post': {
+					desc: 'Add a new person, returning newly added person.',
+					params: {
+						email: '* (Unique) Email of user',
+						lastName: '* Last name',
+						firstName: 'First name',
+						password: 'Password (required for non-admin',
+						role: '0 for student, 1 for teacher, 2 for admin',
+						termsAccepted: 'Were T&C accepted?'
+					},
+					return: {
+						location: 'Prss/{prsId}',
+					}
+				}
+			},
+			'Prss/{prsid}': {
+				'get': {
+					desc: 'Return object for Person prsId. AU must be person in question or admin',
+					return: {
+						example: {
+							email: '(Unique) Email of user',
+							lastName: 'Last name',
 							firstName: 'First name',
-							password: 'Password (required for non-admin',
 							role: '0 for student, 1 for teacher, 2 for admin',
+							whenRegistered: 'timestamp of registration',
 							termsAccepted: 'Were T&C accepted?'
-						},
-						return: {
-							location: 'Prss/{prsId}',
 						}
 					}
 				},
-				'Prss/{prsid}': {
-					'get': {
-						desc: 'Return object for Person prsId. AU must be person in question or admin',
-						return: {
-							example: {
-								email: '(Unique) Email of user',
-								lastName: 'Last name',
-								firstName: 'First name',
-								role: '0 for student, 1 for teacher, 2 for admin',
-								whenRegistered: 'timestamp of registration',
-								termsAccepted: 'Were T&C accepted?'
-							}
-						}
-					},
-					'put': {
-						desc: 'Update person prsId',
-						params: {
-							firstName: 'First name',
-							lastName: 'Last name',
-							password: 'Password',
-							oldPassword: 'Required if changing password',
-							role: '* 0, 1, or 2 (Requires admin AU)',
-						}
-					},
-					'delete': {
-						desc: 'Delete the person in question, including all Attempts. Requires Admin AU'
-					},
-				}
+				'put': {
+					desc: 'Update person prsId',
+					params: {
+						firstName: 'First name',
+						lastName: 'Last name',
+						password: 'Password',
+						oldPassword: 'Required if changing password',
+						role: '* 0, 1, or 2 (Requires admin AU)',
+					}
+				},
+				'delete': {
+					desc: 'Delete the person in question, including all Attempts. Requires Admin AU'
+				},
 			}
 		}
-	];
+	};
 
 	function stringify(obj) {
 		var str = JSON.stringify(obj) || '';
@@ -244,10 +241,10 @@
 	}
 
 	var spec = $('#spec');
-	for (var s = 0; s < specification.length; s ++) {
-		var section = specification[s];
+	for (topic in specification) {
+		var endpoints = specification[topic];
 
-		spec.append($('<h4>' + section.desc + '</h4>'));
+		spec.append($('<h4>' + topic + '</h4>'));
 
 		var table = $('<table><thead>' + 
 		'	<tr>' + 
@@ -259,9 +256,9 @@
 		'</thead></table>');
 		spec.append(table);
 
-		for (var url in section.endpoints) {
-			for (var method in section.endpoints[url]) {
-				var endpoint = section.endpoints[url][method];
+		for (var url in endpoints) {
+			for (var method in endpoints[url]) {
+				var endpoint = endpoints[url][method];
 
 				var row = $('<tr class=' + method + '></tr>');
 				row.append($('<td>' + method.toUpperCase() + ' ' + url + '</td>'));
