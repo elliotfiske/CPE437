@@ -8,7 +8,6 @@ router.baseURL = '/Chls';
 router.get('/', function(req, res) {
    connections.getConnection(res, function(cnn) {
       cnn.query('SELECT name, description, attsAllowed from Challenge', function(err, result) {
-         console.log(result);
          res.json(result);
          cnn.release();
       });
@@ -16,7 +15,7 @@ router.get('/', function(req, res) {
 });
 
 router.post('/', function(req, res) {
-   if (req._validator.checkAdminOrTeacher() && req._validator.hasFields(req.body, ["name", "courseName"])) {
+   if (req._validator.checkAdminOrTeacher() && req._validator.hasFields(req.body, ["name", "courseName", "type", "answer"])) {
       connections.getConnection(res, function(cnn) {
          cnn.query('SELECT * from Challenge where name = ? AND courseName = ?', [req.body.name, req.body.courseName],
          function(err, result) {
@@ -26,7 +25,6 @@ router.post('/', function(req, res) {
                cnn.release();
             }
             else if (req._validator.check(!result.length, Tags.dupName)) {
-               console.log(req.body);
                cnn.query('INSERT INTO Challenge SET ?', req.body, function(err, result) {
                   console.log(err, result);
                   res.location(router.baseURL + '/' + req.body.name).send(200).end();

@@ -27,7 +27,7 @@ app.controller('studentController', ['$scope', '$state', 'api', 'confirm', 'logi
 
                scope.grouped[challengeName] = scope.grouped[challengeName] || [];
 
-               scope.grouped[challengeName].push(attempt);
+               scope.grouped[challengeName].unshift(attempt);
                if (scope.inProgressChallenges.indexOf(challengeName) < 0)
                   scope.inProgressChallenges.push(attempt.challengeName);
             });
