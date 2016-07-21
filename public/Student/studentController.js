@@ -41,7 +41,6 @@ app.controller('studentController', ['$scope', '$state', 'api', 'confirm', 'logi
       var closeTime = new Date(scope.mappedChallenges[challengeName].openTime)
       closeTime.setDate(closeTime.getDate() + 1);
 
-      console.log(closeTime, attempt.startTime);
       return closeTime >= attempt.startTime;
    }
 
