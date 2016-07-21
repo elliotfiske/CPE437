@@ -39,8 +39,13 @@ Connections.prototype.getConnection = function(res, cb) {
 };
 
 Connections.prototype.getConnectionP = function() {
+  var self = this;
   return this.poolP.getConnection().then(function(connection) {
-    return Promise.resolve(connection);
+    connection.release = function() {
+      self.poolP.releaseConnection(this);
+    };
+
+    return connection;
   }).catch(function(err) {
     return Promise.reject({status: 500, message: "DB ERROR"});
   });

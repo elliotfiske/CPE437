@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var Session = require('./Routes/Session.js');
 var Validator = require('./Routes/Validator.js');
+var _Validator = require('./Routes/_Validator.js');
 var cnnPool = require('./Routes/Connections.js');
 
 var async = require('async');
@@ -25,6 +26,7 @@ app.use(Session.router);
 
 app.use(function(req, res, next) {
    req.validator = new Validator(req, res);
+   req._validator = new _Validator(req, res);
 
    console.log(req.method, req.path);
 
