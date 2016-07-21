@@ -4,14 +4,46 @@ var Tags = require('../Validator.js').Tags;
 var router = Express.Router({caseSensitive: true});
 router.baseURL = '/Chls';
 
+function handleError(res) {
+   return function(error) {
+      var code = error.code || 400;
+      delete error.code
+
+      res.status(code).json(error);
+   }
+}
+
+function sendResult(res, status) {
+  return function(result) {
+    res.status(status || 200).json(result);
+  }
+}
+
+function releaseConn(conn) {
+   return function() {
+      conn.release();
+   }
+}
+
 // Get only OPEN challenges
 router.get('/', function(req, res) {
-   connections.getConnection(res, function(cnn) {
-      cnn.query('SELECT name, description, attsAllowed, openTime from Challenge WHERE openTime <= NOW()', function(err, result) {
-         res.json(result);
-         cnn.release();
-      });
-   });
+   req.validator.check(!!req.query.prsId, 'noPrsId')
+      .then(function() {
+         return connections.getConnectionP();
+      })
+      .then(function(conn) {
+         var query = [
+            'SELECT name, description, attsAllowed, openTime, prsId from Challenge chl',
+            'LEFT JOIN Enrollment enr ON enr.courseName = chl.courseName',
+            'WHERE openTime <= NOW() AND prsId = ?'
+         ];
+         var params = [req.query.prsId];
+
+         conn.query(query.join(' '), params)
+            .then(sendResult(res))
+            .finally(releaseConn(conn));
+      })
+      .catch(handleError(res));
 });
 
 router.post('/', function(req, res) {
