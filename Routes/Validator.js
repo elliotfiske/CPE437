@@ -46,7 +46,7 @@ Validator.prototype.checkAdmin = function(passThrough) {
       Validator.Tags.noPermission, {}, passThrough);
 }
 
-Validator.prototype.checkAdminOrTeacher = function() {
+Validator.prototype.checkAdminOrTeacher = function(passThrough) {
    return this.check(this.session && (this.session.isAdmin() || this.session.isTeacher()),
       Validator.Tags.noPermission, {}, passThrough);
 }
