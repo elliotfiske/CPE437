@@ -51,8 +51,7 @@ router.post('/', function(req, res) {
    // This can be seen by an attempt to post an admin with no AU
    if (vld.hasFields(body, ["email", "lastName", "role", "password"])
     && vld.chain(body.role == 0 || admin, Tags.noPermission)
-    .check(body.role >= 0 && body.role < 3, Tags.badValue, ["role"])
-    && vld.check(body.termsAccepted || admin, Tags.noTerms)) {
+    .check(body.role >= 0 && body.role < 3, Tags.badValue, ["role"])) {
       connections.getConnection(res,
       function(cnn) {
          cnn.query('SELECT * from Person where email = ?', body.email,

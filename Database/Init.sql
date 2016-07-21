@@ -38,6 +38,7 @@ create table Attempt (
     score int(11),
     startTime DATETIME not null,
     state int(11) not null,
+    input VARCHAR(1024) DEFAULT "",
     Constraint FKChallengeName FOREIGN KEY(challengeName) REFERENCES Challenge(name)
      on delete cascade on update cascade,
     Constraint FKOwnerId Foreign key(ownerId) references Person(id)
