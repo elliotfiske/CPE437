@@ -1,9 +1,14 @@
 angular.module('mainApp')
-.service('api', ['$http', function($http) {
+.service('api', ['$http', '$rootScope', function($http, $rootScope) {
    function call(method, url, params) {
       return $http[method](url, params)
          .catch(function(err) {
-            console.log(err ? "Error" + JSON.stringify(err) : "Cancelled");
+            if (err.status === 401) {
+               $rootScope.logout();
+            }
+            else {
+               console.log(err ? "Error" + JSON.stringify(err) : "Cancelled");
+            }
 
             throw err;
          });
@@ -51,7 +56,14 @@ angular.module('mainApp')
          delete: typicalDelete('Prss'),
          Atts: {
             get: function(prsId, challengeName) {
-               return get('Prss/' + prsId + '/Atts' + (challengeName ? '?challengeName=' + challengeName : ''));
+               return get('Prss/' + prsId + '/Atts' + (challengeName ? '?challengeName=' + challengeName : ''))
+                  .then(function(response) {
+                     response.data = response.data.map(function(att) {
+                        att.startTime = new Date(att.startTime);
+                        return att;
+                     });
+                     return response;
+                  })
             },
             post: function(prsId, attempt) {
                return post('Prss/' + prsId + '/Atts', attempt);
@@ -61,6 +73,11 @@ angular.module('mainApp')
             get: function(prsId) {
                return get('Prss/' + prsId + '/Crss');
             }
+         },
+         Chls: {
+            get: function(prsId) {
+               return get('Chls?prsId=' + prsId);
+            }
          }
       },
       Ssns: {
@@ -69,7 +86,6 @@ angular.module('mainApp')
          delete: typicalDelete('Ssns')
       },
       Chls: {
-         get: typicalGet('Chls'),
          post: typicalPost('Chls'),
       },
       Crss: {
@@ -106,7 +122,14 @@ angular.module('mainApp')
          Chls: {
             get: function(courseName, challengeName) {
                challengeName = challengeName || '';
-               return get('Crss/' + courseName + '/Chls/' + challengeName);
+               return get('Crss/' + courseName + '/Chls/' + challengeName).
+                  then(function(response) {
+                     response.data = response.data.map(function(chl) {
+                        chl.openTime = new Date(chl.openTime);
+                        return chl;
+                     });
+                     return response;
+                  });
             }
          }
       }

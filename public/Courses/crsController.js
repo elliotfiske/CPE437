@@ -5,7 +5,8 @@ app.controller('crsController',
 
    scope.challenge = { 
       courseName: scope.courseName,
-      attsAllowed: 5
+      attsAllowed: 5,
+      openTime: new Date()
    };
 
    if (!login.isLoggedIn()) {
@@ -29,6 +30,10 @@ app.controller('crsController',
    };
 
    scope.refreshChls();
+
+   scope.isOpen = function(chl) {
+      return chl.openTime <= new Date();
+   }
 
    scope.addEnrollment = function() {
       if (!scope.email)
@@ -82,5 +87,9 @@ app.controller('crsController',
 
       API.Chls.post(scope.challenge)
          .then(scope.refreshChls);
+   }
+
+   scope.viewChallenge = function(challengeName) {
+      $state.go('chl', { challengeName: challengeName });
    }
 }])

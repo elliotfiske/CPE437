@@ -226,6 +226,48 @@ router.get('/:name/Enrs/:enrId', function(req, res) {
    });
 });
 
+router.put('/:name/Enrs/:enrId', function(req, res) {
+   var vld = req._validator;
+   var admin = req.session && req.session.isAdmin();
+   var owner = false;
+   var enrolled = false;
+
+   connections.getConnection(res, function(cnn) {
+      cnn.query('Select * from Course where name = ?', req.params.name,
+      function(err, result) {
+         if (vld.check(result.length, Tags.notFound)) {
+            result = result[0];
+            if (result.ownerId === req.session.id)
+               owner = true;
+
+            cnn.query('Select * from Enrollment where enrId = ?', req.params.enrId,
+            function(err, result) {
+               if (vld.check(result.length, Tags.notFound)) {
+                  result = result[0];
+                  if(result.prsId === req.session.id)
+                     enrolled = true;
+
+                  if (vld.check(owner || enrolled || admin, Tags.noPermission)) {
+                     cnn.query('Update Enrollment set ? where enrId = ?', [req.body, req.params.enrId],
+                     function(err, result) {
+                        res.status(200).end();
+                        cnn.release();
+                     });
+                  }
+                  else {
+                     cnn.release();
+                  }
+               }
+               else
+                  cnn.release();
+            });
+         }
+         else
+            cnn.release();
+      });
+   });
+});
+
 router.delete('/:name/Enrs/:enrId', function(req, res) {
    var vld = req._validator;
    var prs = req.session;
@@ -265,7 +307,7 @@ router.get('/:name/Chls', function(req, res) {
       })
       .then(function(conn) {
 
-         return conn.query('SELECT name, description from Challenge WHERE courseName = ?', [req.params.name])
+         return conn.query('SELECT name, description, attsAllowed, openTime from Challenge WHERE courseName = ?', [req.params.name])
             .then(sendResult(res))
             .finally(function() {
                conn.release();
@@ -352,8 +394,6 @@ router.put('/:crsName/Itms/:itmId', function(req, res) {
    connections.getConnection(res, function(cnn) {
       cnn.query('Select * from Course where name = ?', req.params.crsName,
       function(err, result) {
-         console.log(req.params.crsName);
-         console.log(result);
          if (vld.check(result && result.length, Tags.notFound)) {
             result = result[0];
             if (result.ownerId === req.session.id)

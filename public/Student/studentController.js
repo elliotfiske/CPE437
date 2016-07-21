@@ -34,12 +34,23 @@ app.controller('studentController', ['$scope', '$state', 'api', 'confirm', 'logi
          });
    };
 
+   scope.isWithinDay = function(attempt, challengeName) {
+      if (!scope.mappedChallenges[challengeName])
+         return false;
+
+      var closeTime = new Date(scope.mappedChallenges[challengeName].openTime)
+      closeTime.setDate(closeTime.getDate() + 1);
+
+      console.log(closeTime, attempt.startTime);
+      return closeTime >= attempt.startTime;
+   }
+
    scope.notInProgress = function(challenge) {
       return scope.inProgressChallenges.indexOf(challenge.name) < 0;
    };
 
    scope.isOpen = function(challengeName) {
-      return scope.mappedChallenges[challengeName].attsAllowed > scope.grouped[challengeName].length;
+      return scope.mappedChallenges[challengeName] && scope.mappedChallenges[challengeName].attsAllowed > scope.grouped[challengeName].length;
    };
 
    scope.getAttColor = function(att) {
@@ -48,7 +59,7 @@ app.controller('studentController', ['$scope', '$state', 'api', 'confirm', 'logi
       return styles[2 - att.score] || "";
    };
 
-   API.Chls.get().then(function(response) {
+   API.Prss.Chls.get(scope.loggedUser.id).then(function(response) {
       scope.challenges = response.data;
 
       scope.challenges.forEach(function(challenge) {
