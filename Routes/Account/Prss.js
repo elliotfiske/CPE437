@@ -220,7 +220,6 @@ router.get('/:id/Atts', function(req, res) {
 router.post('/:id/Atts', function(req, res) {
    var vld = req.validator;
    var owner = req.params.id;
-   var chl;
 
    return vld.checkPrsOK(owner)
    .then(function() {
@@ -230,33 +229,65 @@ router.post('/:id/Atts', function(req, res) {
      return connections.getConnectionP();
    })
    .then(function(conn) {
+      // Verify specified challenge exists
+      return conn.query('SELECT * FROM Challenge WHERE name = ?', [chlName])
+         .then(function(result) {
+            var chl = result && result.length && result[0];
+            return vld.check(result.length, Tags.badChlName)
 
-     // Verify # of attempts is still under limit
-       return conn.query('SELECT * FROM Attempt WHERE ' +
-                              'ownerId = ? AND challengeName = ?',
-                              [owner, chlName])
-     .then(function(result) {
-       return vld.check(result.length < chl.attsAllowed, Tags.excessAtts);
-     })
-     .then(function() {
-       var newAtt = {
-         ownerId: owner,
-         challengeName: chlName,
-         startTime: new Date(),
-         input: input
-       };
-       return conn.query('INSERT INTO Attempt SET ?', attempt);
-     })
-     .then(function(result) {
-       res.location(router.baseURL + '/' + owner + '/Atts/'
-        + result.insertId).end();
-     })
-     .catch(function(err) {
-       console.log("Error: " + err.message);
-     })
-     .finally(function() {
-       conn.release();
-     });
+               // Verify # of attempts is still under limit
+               .then(function() {
+                  return conn.query('SELECT * FROM Attempt WHERE ' +
+                                    'ownerId = ? AND challengeName = ?',
+                                    [owner, chlName]);
+               })
+               .then(function(result) {
+                  return vld.check(result.length < chl.attsAllowed, Tags.excessAtts);
+               })
+               .then(function() {
+                  req.body.ownerId = owner;
+                  req.body.startTime = new Date();
+
+                  // Score the attempt
+                  var input = req.body.input.toLowerCase();
+                  var answer = chl.answer.toLowerCase();
+
+                  req.body.score = 0;
+                  if (chl.type === 'number') {
+                     input = parseInt(input);
+                     answer = parseInt(answer);
+                     if (!Number.isNaN(input)) {
+                        req.body.score ++;
+
+                        if (Math.abs(input - answer) < 0.01) {
+                           req.body.score ++;
+                        }
+                     }
+                  }
+                  else if (chl.type === 'term') {
+                     answer = JSON.parse(answer);
+                     var exact =  answer.exact;
+                     var inexact = answer.inexact;
+
+                     if (exact.indexOf(input) >= 0) {
+                        req.body.score = 2;
+                     }
+                     else if (inexact.indexOf(input) >= 0) {
+                        req.body.score = 1;
+                     }
+                  }
+
+                  return conn.query('INSERT INTO Attempt SET ?', req.body);
+               })
+               .then(function(result) {
+                  res.location(router.baseURL + '/' + owner + '/Atts/'
+                     + result.insertId).end();
+               })
+               .catch(handleError(res))
+               .finally(function() {
+                  conn.release();
+               });
+         });
    })
    .catch(handleError(res));
 });

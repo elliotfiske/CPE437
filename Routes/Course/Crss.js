@@ -351,14 +351,16 @@ router.put('/:crsName/Itms/:itmId', function(req, res) {
 
    connections.getConnection(res, function(cnn) {
       cnn.query('Select * from Course where name = ?', req.params.crsName,
-      function(result) {
+      function(err, result) {
+         console.log(req.params.crsName);
+         console.log(result);
          if (vld.check(result && result.length, Tags.notFound)) {
             result = result[0];
             if (result.ownerId === req.session.id)
                owner = true;
 
             cnn.query('Select * from ShopItem where id = ?', req.params.itmId,
-            function(result) {
+            function(err, result) {
                if (vld.check(result && result.length, Tags.notFound)) {
                   purchase = result[0].purchased;
 
@@ -392,13 +394,21 @@ router.put('/:crsName/Itms/:itmId', function(req, res) {
          }
       });
    });
-
-
-
 });
 
 router.delete('/:crsName/Itms/:itmId', function(req, res) {
+   var vld = req.validator;
+   var admin = req.session && req.session.isAdmin();
 
+   if (vld.check(admin, Tags.noPermission)) {
+      connections.getConnection(res, function(cnn) {
+         cnn.query('Delete from ShopItem where id = ?', req.params.itmId,
+         function(err, result) {
+            res.end();
+            cnn.release();
+         });
+      });
+   }
 });
 
 module.exports = router;
