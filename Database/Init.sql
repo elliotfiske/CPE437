@@ -11,7 +11,7 @@ create table Person (
     whenRegistered DATETIME not null,
     termsAccepted DATETIME not null,
     role  int(11) UNSIGNED not null,
-    UNIQUE KEY(email)
+
 );
 
 create table Challenge (
@@ -49,32 +49,11 @@ create table Course (
     on delete cascade
 );
 
-create table ShopItem (
-   id int(11) AUTO_INCREMENT PRIMARY KEY,
-   name VARCHAR(30) not null,
-   courseName VARCHAR(30) NOT NULL,
-   cost int(11),
-   Constraint FKShopCourse Foreign key(courseName) references Course(name)
-    on delete cascade
-);
-
-create table StudentPurchase (
-  purchaseId INT(11) AUTO_INCREMENT PRIMARY KEY,
-  prsId INT(11) NOT NULL,
-  itemId INT(11) NOT NULL,
-  UNIQUE KEY (prsId, itemId),
-  Constraint FKPurchaseStudentId Foreign key(prsId) references Person(id)
-  on delete cascade,
-  Constraint FKPurchaseItem Foreign key(itemId) references ShopItem(id)
-  on delete cascade
-);
-
 create table Enrollment (
     enrId INT(11) AUTO_INCREMENT PRIMARY KEY,
     prsId INT(11) NOT NULL,
     courseName VARCHAR(30) NOT NULL,
     whenEnrolled DATETIME not null,
-    creditsEarned INT(11) DEFAULT 0,
     UNIQUE KEY (prsId, courseName),
     Constraint FKEnrollmentStudentId Foreign key(prsId) references Person(id)
     on delete cascade,
