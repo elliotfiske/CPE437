@@ -39,7 +39,7 @@ app.controller('studentController', ['$scope', '$state', 'api', 'confirm', 'logi
    };
 
    scope.isOpen = function(challengeName) {
-      return scope.mappedChallenges[challengeName].attsAllowed > scope.grouped[challengeName].length;
+      return scope.mappedChallenges[challengeName] && scope.mappedChallenges[challengeName].attsAllowed > scope.grouped[challengeName].length;
    };
 
    scope.getAttColor = function(att) {
@@ -48,7 +48,7 @@ app.controller('studentController', ['$scope', '$state', 'api', 'confirm', 'logi
       return styles[2 - att.score] || "";
    };
 
-   API.Chls.get().then(function(response) {
+   API.Prss.Chls.get(scope.loggedUser.id).then(function(response) {
       scope.challenges = response.data;
 
       scope.challenges.forEach(function(challenge) {

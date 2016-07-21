@@ -66,6 +66,11 @@ angular.module('mainApp')
             get: function(prsId) {
                return get('Prss/' + prsId + '/Crss');
             }
+         },
+         Chls: {
+            get: function(prsId) {
+               return get('Chls?prsId=' + prsId);
+            }
          }
       },
       Ssns: {
@@ -74,7 +79,6 @@ angular.module('mainApp')
          delete: typicalDelete('Ssns')
       },
       Chls: {
-         get: typicalGet('Chls'),
          post: typicalPost('Chls'),
       },
       Crss: {
