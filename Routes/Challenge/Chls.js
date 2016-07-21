@@ -7,7 +7,7 @@ router.baseURL = '/Chls';
 
 router.get('/', function(req, res) {
    connections.getConnection(res, function(cnn) {
-      cnn.query('SELECT name, description from Challenge', function(err, result) {
+      cnn.query('SELECT name, description, attsAllowed from Challenge', function(err, result) {
          console.log(result);
          res.json(result);
          cnn.release();

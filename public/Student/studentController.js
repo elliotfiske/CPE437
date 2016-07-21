@@ -2,9 +2,9 @@ app.controller('studentController', ['$scope', '$state', 'api', 'confirm', 'logi
  function(scope, $state, API, confirm, login, $rootScope) {
    $rootScope.page = 'student';
 
-   scope.inProgress = [];
    scope.inProgressChallenges = [];
    scope.challenges = [];
+   scope.mappedChallenges = {};
 
    if (!login.isLoggedIn()) {
       $state.go('home');
@@ -18,14 +18,18 @@ app.controller('studentController', ['$scope', '$state', 'api', 'confirm', 'logi
    scope.refreshAtts = function() {
       return API.Prss.Atts.get(scope.loggedUser.id)
          .then(function(response) {
-            scope.inProgress = [];
+            scope.grouped = {};
+
             scope.inProgressChallenges = [];
 
             angular.forEach(response.data, function(attempt) {
-               if (attempt.state === 2) {
-                  scope.inProgress.push(attempt);
+               var challengeName = attempt.challengeName;
+
+               scope.grouped[challengeName] = scope.grouped[challengeName] || [];
+
+               scope.grouped[challengeName].push(attempt);
+               if (scope.inProgressChallenges.indexOf(challengeName) < 0)
                   scope.inProgressChallenges.push(attempt.challengeName);
-               }
             });
          });
    };
@@ -34,14 +38,22 @@ app.controller('studentController', ['$scope', '$state', 'api', 'confirm', 'logi
       return scope.inProgressChallenges.indexOf(challenge.name) < 0;
    };
 
-   scope.getAttColor = function(att) {
-      var styles = ['panel-success', 'panel-danger', 'panel-warning'];
+   scope.isOpen = function(challengeName) {
+      return scope.mappedChallenges[challengeName].attsAllowed > scope.grouped[challengeName].length;
+   };
 
-      return styles[att.state] || "";
+   scope.getAttColor = function(att) {
+      var styles = ['success', 'warning', 'danger'];
+
+      return styles[2 - att.score] || "";
    };
 
    API.Chls.get().then(function(response) {
       scope.challenges = response.data;
+
+      scope.challenges.forEach(function(challenge) {
+         scope.mappedChallenges[challenge.name] = challenge;
+      })
    });
 
    scope.refreshAtts();

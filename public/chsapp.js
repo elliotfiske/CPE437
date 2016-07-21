@@ -10,6 +10,11 @@ var app = angular.module('mainApp', [
       return stateNames[input];
    };
 })
+.filter('reverse', function() {
+  return function(items) {
+    return items.slice().reverse();
+  };
+})
 .service('login', ['$rootScope', 'api', '$state', function($rootScope, API, $state){
    $rootScope.loggedUser = null;
 
