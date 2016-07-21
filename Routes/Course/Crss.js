@@ -282,7 +282,7 @@ router.post('/:crsName/Itms', function(req, res) {
 
    if (vld.hasFields(req.body, ["name", "cost"])) {
       connections.getConnection(res, function(cnn) {
-         cnn.query('Select name from ShoptItem where name = ?', req.body.name,
+         cnn.query('Select name from ShopItem where name = ?', req.body.name,
          function(result) {
             if (vld.check(!result.length, Tags.dupName)) {
                cnn.query('Insert into ShopItem (name, courseName, cost) value (?, ?, ?)',
@@ -304,7 +304,10 @@ router.post('/:crsName/Itms', function(req, res) {
 });
 
 router.put('/:crsName/Itms/:itmId', function(req, res) {
-   
+   var vld = req._validator;
+   var admin = req.session && req.session.isAdmin();
+
+
 });
 
 router.delete('/:crsName/Itms/:itmId', function(req, res) {
