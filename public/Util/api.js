@@ -1,9 +1,14 @@
 angular.module('mainApp')
-.service('api', ['$http', function($http) {
+.service('api', ['$http', '$rootScope', function($http, $rootScope) {
    function call(method, url, params) {
       return $http[method](url, params)
          .catch(function(err) {
-            console.log(err ? "Error" + JSON.stringify(err) : "Cancelled");
+            if (err.status === 401) {
+               $rootScope.logout();
+            }
+            else {
+               console.log(err ? "Error" + JSON.stringify(err) : "Cancelled");
+            }
 
             throw err;
          });
@@ -106,7 +111,14 @@ angular.module('mainApp')
          Chls: {
             get: function(courseName, challengeName) {
                challengeName = challengeName || '';
-               return get('Crss/' + courseName + '/Chls/' + challengeName);
+               return get('Crss/' + courseName + '/Chls/' + challengeName).
+                  then(function(response) {
+                     response.data = response.data.map(function(chl) {
+                        chl.openTime = new Date(chl.openTime);
+                        return chl;
+                     });
+                     return response;
+                  });
             }
          }
       }

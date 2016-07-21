@@ -265,7 +265,7 @@ router.get('/:name/Chls', function(req, res) {
       })
       .then(function(conn) {
 
-         return conn.query('SELECT name, description from Challenge WHERE courseName = ?', [req.params.name])
+         return conn.query('SELECT name, description, attsAllowed, openTime from Challenge WHERE courseName = ?', [req.params.name])
             .then(sendResult(res))
             .finally(function() {
                conn.release();

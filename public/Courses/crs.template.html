@@ -31,7 +31,7 @@
 
       <div class="panel panel-default" ng-repeat="challenge in chls">
          <div class="panel-heading">
-            <a href="#Chls/{{ challenge.name }}" class="btn btn-success pull-right" type="button">Go!</a>
+            <button ng-click="viewChallenge(challenge.name)" class="btn btn-success pull-right" type="button" ng-disabled="!isOpen(challenge)">Go!</button>
             <h3 class="panel-title">{{ challenge.name }}</h3>
             <div class="clearfix"></div>
          </div>
@@ -65,7 +65,14 @@
                <input ng-show="challenge.type === 'term'" class="form-control" type="text" ng-model="exact" placeholder="Exact Answers" />
                <input ng-show="challenge.type === 'term'" class="form-control" type="text" ng-model="inexact" placeholder="Inexact Answers" />
                <input ng-show="challenge.type === 'number'" class="form-control" type="text" ng-model="challenge.answer" placeholder="Answer" /><br>
-               Atts Allowed: <input type="number" class="form-control" ng-model="challenge.attsAllowed" /><br />
+               <div class="row">
+                  <div class="col-xs-6">
+                     Atts Allowed: <input type="number" class="form-control" ng-model="challenge.attsAllowed" />
+                  </div>
+                  <div class="col-xs-6">
+                     Opening date: <input type="date" class="form-control" ng-model="challenge.openTime" />
+                  </div>
+               </div><br>
                <button class="btn btn-success" type="submit" ng-click="createChallenge()">Create</button>
             </div>
          </div>

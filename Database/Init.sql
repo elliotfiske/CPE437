@@ -28,6 +28,7 @@ create table Challenge (
     courseName VARCHAR(30) NOT NULL,
     type VARCHAR(30) NOT NULL,
     answer VARCHAR(1024) DEFAULT "",
+    openTime DATETIME not null DEFAULT NOW(),
     Constraint FKChallengeCourse Foreign key(courseName) references Course(name)
     on delete cascade
 );

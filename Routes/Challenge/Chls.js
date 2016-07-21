@@ -4,10 +4,10 @@ var Tags = require('../Validator.js').Tags;
 var router = Express.Router({caseSensitive: true});
 router.baseURL = '/Chls';
 
-
+// Get only OPEN challenges
 router.get('/', function(req, res) {
    connections.getConnection(res, function(cnn) {
-      cnn.query('SELECT name, description, attsAllowed from Challenge', function(err, result) {
+      cnn.query('SELECT name, description, attsAllowed, openTime from Challenge WHERE openTime <= NOW()', function(err, result) {
          res.json(result);
          cnn.release();
       });
@@ -15,7 +15,8 @@ router.get('/', function(req, res) {
 });
 
 router.post('/', function(req, res) {
-   if (req._validator.checkAdminOrTeacher() && req._validator.hasFields(req.body, ["name", "courseName", "type", "answer"])) {
+   if (req._validator.checkAdminOrTeacher() && req._validator.hasFields(req.body, ["name", "courseName", "type", "answer", "openTime"])) {
+      req.body.openTime = new Date(req.body.openTime);
       connections.getConnection(res, function(cnn) {
          cnn.query('SELECT * from Challenge where name = ? AND courseName = ?', [req.body.name, req.body.courseName],
          function(err, result) {
@@ -40,7 +41,7 @@ router.post('/', function(req, res) {
 
 router.get('/:name', function(req, res) {
    connections.getConnection(res, function(cnn) {
-      cnn.query('SELECT name, description, attsAllowed from Challenge where name = ?', req.params.name, function(err, result) {
+      cnn.query('SELECT name, description, attsAllowed, openTime from Challenge where name = ?', req.params.name, function(err, result) {
          if (result.length === 1) {
             res.json(result[0]);
          }

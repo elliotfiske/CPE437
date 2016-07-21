@@ -31,8 +31,8 @@ var app = angular.module('mainApp', [
 
    $rootScope.logout = function() {
       $rootScope.loggedUser = null;
-      $state.go('home');
       delete localStorage.user;
+      $state.go('home');
    };
 
    return {
