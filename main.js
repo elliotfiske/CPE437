@@ -50,9 +50,6 @@ app.delete('/DB', function(req, res) {
    cnnPool.getConnection(res, function(cnn) {
       async.series([
          function(callback){
-            cnn.query('delete from Step', callback);
-         },
-         function(callback){
             cnn.query('delete from Attempt', callback);
          },
          function(callback){
@@ -68,7 +65,10 @@ app.delete('/DB', function(req, res) {
             cnn.query('delete from Enrollment', callback);
          },
          function(callback){
-            cnn.query('alter table Step auto_increment = 1', callback);
+            cnn.query('delete from StudentPurchase', callback);
+         },
+         function(callback){
+            cnn.query('delete from ShopItem', callback);
          },
          function(callback){
             cnn.query('alter table Attempt auto_increment = 1', callback);
@@ -78,6 +78,12 @@ app.delete('/DB', function(req, res) {
          },
          function(callback){
             cnn.query('alter table Enrollment auto_increment = 1', callback);
+         },
+         function(callback){
+            cnn.query('alter table ShopItem auto_increment = 1', callback);
+         },
+         function(callback){
+            cnn.query('alter table StudentPurchase auto_increment = 1', callback);
          },
          function(callback){
             cnn.query('INSERT INTO Person (id, firstName, lastName, email,' +

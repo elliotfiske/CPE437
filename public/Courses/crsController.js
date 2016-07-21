@@ -45,7 +45,7 @@ app.controller('crsController',
 
    scope.deleteEnrollment = function(enrId) {
       var confirm = uibM.open({
-         templateUrl: 'Courses/confirmDelete.html',
+         templateUrl: 'Teacher/confirmDelete.html',
          scope: scope,
          size: 'sm'
       });

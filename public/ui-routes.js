@@ -31,9 +31,14 @@ app.config(['$stateProvider', '$urlRouterProvider',
          templateUrl: 'Courses/crs.template.html',
          controller: 'crsController'
       })
-      .state('atts', {
-         url: '/Prss/{prsId}',
-         templateUrl: 'Attempts/atts.template.html',
-         controller: 'attsController'
+      .state('student', {
+         url: '/student',
+         templateUrl: 'Student/student.template.html',
+         controller: 'studentController'
+      })
+      .state('teacher', {
+         url: '/teacher',
+         templateUrl: 'Teacher/teacher.template.html',
+         controller: 'teacherController'
       })
    }]);

@@ -14,10 +14,20 @@ create table Person (
     UNIQUE KEY(email)
 );
 
+create table Course (
+    name VARCHAR(30) PRIMARY KEY,
+    ownerId int(11) not null,
+    Constraint FKCourseOwnerId Foreign key(ownerId) references Person(id)
+    on delete cascade
+);
+
 create table Challenge (
     name VARCHAR(30) PRIMARY KEY,
     description VARCHAR(90),
-    attsAllowed int(11)
+    attsAllowed int(11),
+    courseName VARCHAR(30) NOT NULL,
+    Constraint FKChallengeCourse Foreign key(courseName) references Course(name)
+    on delete cascade
 );
 
 create table Attempt (
@@ -29,23 +39,8 @@ create table Attempt (
     startTime DATETIME not null,
     state int(11) not null,
     Constraint FKChallengeName FOREIGN KEY(challengeName) REFERENCES Challenge(name)
- 	 on delete cascade on update cascade,
+     on delete cascade on update cascade,
     Constraint FKOwnerId Foreign key(ownerId) references Person(id)
-    on delete cascade
-);
-
-create table Step (
-    id int(11) AUTO_INCREMENT PRIMARY KEY,
-    attemptId int(11) not null,
-    input varchar(1024),
-    result varchar(1024),
-    Constraint FKAttemptId FOREIGN KEY(attemptId) REFERENCES Attempt(id) on delete cascade
-);
-
-create table Course (
-    name VARCHAR(30) PRIMARY KEY,
-    ownerId int(11) not null,
-    Constraint FKCourseOwnerId Foreign key(ownerId) references Person(id)
     on delete cascade
 );
 
@@ -80,4 +75,12 @@ create table Enrollment (
     on delete cascade,
     Constraint FKEnrollmentCourse Foreign key(courseName) references Course(name)
     on delete cascade
+);
+
+INSERT INTO Person (
+    id, firstName, lastName, email,
+    password, whenRegistered, termsAccepted, role
+) VALUES (
+    1, "Admin", "IAM", "Admin@11.com",
+    "password", NOW(), NOW(), 2
 );

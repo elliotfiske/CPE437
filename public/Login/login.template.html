@@ -1,16 +1,22 @@
-<div>
-   <form>
+<div class="col-sm-6 col-sm-offset-3">
+   <form class="form-horizontal" ng-submit="login()">
       <fieldset class="form-group">
-        <label>Email address</label>
-        <input type="email" class="form-control" placeholder="Enter email" ng-model="user.email">
+         <label for="email" class="control-label col-sm-4 col-xs-2">Email</label>
+         <div class="col-sm-8 col-xs-10">
+            <input id="email" type="email" class="form-control" placeholder="Enter email" ng-model="user.email">
+         </div>
       </fieldset>
       <fieldset class="form-group">
-        <label>Password</label>
-        <input type="password" class="form-control" placeholder="Password" ng-model="user.password">
+         <label for="password" class="control-label col-sm-4 col-xs-2">Password</label>
+         <div class="col-sm-8 col-xs-10">
+            <input id="password" type="password" class="form-control" placeholder="Password" ng-model="user.password">
+         </div>
       </fieldset>
-
-  <button type="button" class="btn btn-primary" ng-click="login()"
-  ng-disabled="!user.password || !user.email">Submit</button>
-    <button type="button" class="btn btn-secondary" ng-click="goBack()">Cancel</button>
-</form>
+      <div class="form-group">
+         <div class="col-sm-8 col-sm-offset-4 col-xs-10 col-xs-offset-2 text-left">
+            <button type="submit" class="btn btn-primary" ng-click="login()" ng-disabled="!user.password || !user.email">Submit</button>
+            <button type="button" class="btn btn-default" ng-click="goBack()">Cancel</button>
+         </div>
+      </div>
+   </form>
 </div>
