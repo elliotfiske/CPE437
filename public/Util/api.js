@@ -3,7 +3,9 @@ angular.module('mainApp')
    function call(method, url, params) {
       return $http[method](url, params)
          .catch(function(err) {
-            console.error(err ? "Error" + JSON.stringify(err) : "Cancelled");
+            console.log(err ? "Error" + JSON.stringify(err) : "Cancelled");
+
+            throw err;
          });
    }
 
@@ -51,8 +53,8 @@ angular.module('mainApp')
             get: function(prsId, challengeName) {
                return get('Prss/' + prsId + '/Atts' + (challengeName ? '?challengeName=' + challengeName : ''));
             },
-            post: function(prsId, challengeName) {
-               return post('Prss/' + prsId + '/Atts', { challengeName: challengeName });
+            post: function(prsId, attempt) {
+               return post('Prss/' + prsId + '/Atts', attempt);
             }
          },
          Crss: {
@@ -99,6 +101,12 @@ angular.module('mainApp')
             },
             delete: function(courseName, itemId) {
                return del('Crss/' + courseName + '/Itms/' + itemId);
+            }
+         },
+         Chls: {
+            get: function(courseName, challengeName) {
+               challengeName = challengeName || '';
+               return get('Crss/' + courseName + '/Chls/' + challengeName);
             }
          }
       }

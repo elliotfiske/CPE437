@@ -2,7 +2,7 @@
 
 <div class="container-white row">
    <h1>{{ courseName }}</h1>
-   <div class="col-sm-7">
+   <div class="col-sm-5">
       <h2>Enrollments</h2>
       <hr />
 
@@ -14,20 +14,43 @@
       <button class="btn btn-small btn-warning pull-right" ng-click="deleteEnrollment(enr.enrId)">Delete</button>
       {{ enr.email }}
    </a>
-</div>
-   </div>
-   <div class="col-sm-5">
-      <h2>Add new</h2>
-      <hr />
-
-      <form ng-submit="addEnrollment()">
-         <div class="form-group">
-            <input type="text" placeholder="Student email" ng-model="email" class="form-control" />
-         </div>
-         <button class="btn btn-primary" ng-click="createCourse()">Submit</button>
+   <a class="list-group-item">
+      <form>
+         <button type="submit" class="btn btn-small btn-primary pull-right" ng-click="addEnrollment()">Enroll</button>
+         <input type="text" placeholder="Student email" ng-model="email" style="width: 150px" />
          <h4 class="bg-danger" ng-repeat="error in errors" style="padding: 10px;">
             {{ error }}
          </h4>
+      </form>
+   </a>
+</div>
+   </div>
+   <div class="col-sm-7">
+      <h2>Challenges</h2>
+      <hr />
+
+      <div class="panel panel-default" ng-repeat="challenge in chls">
+         <div class="panel-heading">
+            <a href="#Chls/{{ challenge.name }}" class="btn btn-success pull-right" type="button">Go!</a>
+            <h3 class="panel-title">{{ challenge.name }}</h3>
+            <div class="clearfix"></div>
+         </div>
+         <div class="panel-body">
+            {{ challenge.description }}
+         </div>
+      </div>
+
+      <form>
+         <div class="panel panel-default">
+            <div class="panel-heading">
+               <h2 class="panel-title"><input type='text' ng-model="challenge.name" class="form-control" placeholder="New Challenge" /></h2>
+               <div class="clearfix"></div>
+            </div>
+            <div class="panel-body">
+               <textarea class="form-control" ng-model="challenge.description" placeholder="Description of challenge"></textarea><br>
+               <button class="btn btn-success" type="submit" ng-click="createChallenge()">Create</button>
+            </div>
+         </div>
       </form>
    </div>
 </div>

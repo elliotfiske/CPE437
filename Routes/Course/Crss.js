@@ -4,6 +4,22 @@ var Tags = require('../Validator.js').Tags;
 var router = Express.Router({caseSensitive: true});
 router.baseURL = '/Crss';
 
+function handleError(res) {
+  return function(error) {
+    var code = error.code || 400;
+    delete error.code
+
+    res.status(code).json(error);
+  }
+}
+
+function sendResult(res, status) {
+  return function(result) {
+    res.status(status || 200).json(result);
+  }
+}
+
+
 router.post('/', function(req, res) {
    if (req._validator.checkAdminOrTeacher() && req._validator.hasFields(req.body, ["name"])) {
       connections.getConnection(res, function(cnn) {
@@ -237,6 +253,26 @@ router.delete('/:name/Enrs/:enrId', function(req, res) {
          }
       });
    }
+});
+
+router.get('/:name/Chls', function(req, res) {
+   var vld = req.validator;
+   var prs = req.session;
+
+   vld.checkAdminOrTeacher()
+      .then(function() {
+         return connections.getConnectionP();
+      })
+      .then(function(conn) {
+
+         return conn.query('SELECT name, description from Challenge WHERE courseName = ?', [req.params.name])
+            .then(sendResult(res))
+            .finally(function() {
+               conn.release();
+            });
+      })
+      .catch(handleError(res));
+
 });
 
 router.get('/:crsName/Itms', function(req, res) {
