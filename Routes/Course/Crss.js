@@ -49,7 +49,7 @@ router.put('/:name', function(req, res) {
                         }
                         else if (req._validator.check(result.affectedRows, Tags.notFound))
                            res.status(200).end();
-                     
+
                         cnn.release();
                      });
                   }
@@ -79,7 +79,7 @@ router.delete('/:name', function(req, res) {
                   }
                   else if (req._validator.check(result.affectedRows, Tags.notFound))
                      res.status(200).end();
-               
+
                   cnn.release();
                });
             }
@@ -237,6 +237,81 @@ router.delete('/:name/Enrs/:enrId', function(req, res) {
          }
       });
    }
+});
+
+router.get('/:crsName/Itms', function(req, res) {
+   var vld = req.validator;
+   var admin = req.session && req.session.isAdmin();
+   var enrolled = false;
+   var owner = false;
+
+   connections.getConnection(res, function(cnn) {
+      cnn.query('Select * from Enrollment where courseName = ?', req.params.crsName,
+      function(err, result) {
+            if (result.length) {
+               for (var i = 0; i < result.length; i++) {
+                  if (result[i].prsId === req.session.id)
+                     enrolled = true;
+               }
+            }
+            cnn.query('Select * from Course where name = ?', req.params.crsName,
+            function(err, result) {
+               if (result.length) {
+                  for (var i = 0; i < result.length; i++) {
+                     if (result[i].ownerId == req.session.id)
+                        owner = true;
+                  }
+               }
+               if (vld.check(enrolled || owner || admin, Tags.noPermission)) {
+                  cnn.query('Select name, cost, purchased from ShopItem where courseName = ?', req.params.crsName,
+                  function(err, result) {
+                     res.json(result);
+                     cnn.release();
+                  });
+               }
+               else {
+                  cnn.release();
+               }
+            });
+      });
+   });
+});
+
+router.post('/:crsName/Itms', function(req, res) {
+   var vld = req._validator;
+
+   if (vld.hasFields(req.body, ["name", "cost"])) {
+      connections.getConnection(res, function(cnn) {
+         cnn.query('Select name from ShopItem where name = ?', req.body.name,
+         function(result) {
+            if (vld.check(!result.length, Tags.dupName)) {
+               cnn.query('Insert into ShopItem (name, courseName, cost) value (?, ?, ?)',
+               [req.body.name, req.params.crsName, req.body.cost],
+               function(err, result) {
+                  if (err)
+                     res.status(400).json(err);
+                  else {
+                     res.location(router.baseURL + '/' + req.params.crsName + '/Itms/' + result.insertId).status(200).end();
+                  }
+               });
+            }
+            else {
+               cnn.release();
+            }
+         });
+      });
+   }
+});
+
+router.put('/:crsName/Itms/:itmId', function(req, res) {
+   var vld = req._validator;
+   var admin = req.session && req.session.isAdmin();
+
+
+});
+
+router.delete('/:crsName/Itms/:itmId', function(req, res) {
+
 });
 
 module.exports = router;

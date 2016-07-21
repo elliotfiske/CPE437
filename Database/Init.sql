@@ -48,6 +48,7 @@ create table ShopItem (
    name VARCHAR(30) not null,
    courseName VARCHAR(30) NOT NULL,
    cost int(11),
+   purchased BOOLEAN NOT NULL default 0,
    Constraint FKShopCourse Foreign key(courseName) references Course(name)
     on delete cascade
 );

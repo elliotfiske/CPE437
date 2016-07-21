@@ -11,7 +11,6 @@ app.controller('crsController',
       return API.Crss.Enrs.get(scope.courseName)
          .then(function(response) {
             scope.enrs = response.data;
-            console.log(scope.enrs);
          });
    };
 
