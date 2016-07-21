@@ -1,14 +1,33 @@
-<div>
-<h1>Course {{ courseName }}</h1>
-<h3>Enrollments</h3>
-<div ng-repeat="enr in enrs">
-{{ enr.email }} <a ng-click="deleteEnrollment(enr.enrId)" style="cursor:pointer;">Remove</a>
+
+
+<div class="container-white row">
+   <h1>{{ courseName }}</h1>
+   <div class="col-sm-7">
+      <h2>Enrollments</h2>
+      <hr />
+
+      <div class="list-group">
+   <a href="#" class="list-group-item disabled">
+   Students
+   </a>
+   <a class="list-group-item" ng-repeat="enr in enrs">
+      <button class="btn btn-small btn-warning pull-right" ng-click="deleteEnrollment(enr.enrId)">Delete</button>
+      {{ enr.email }}
+   </a>
 </div>
-<form>
-   <h3>Add new Enrollment</h3>
-   <input type="text" placeholder="Course name" ng-model="email" />
-   <button class="btn btn-primary" ng-click="addEnrollment()">Submit</button>
-   <h4 class="bg-danger" ng-repeat="error in errors" style="padding: 10px;">
-      {{ error }}
-   </h4>
-</form>
+   </div>
+   <div class="col-sm-5">
+      <h2>Add new</h2>
+      <hr />
+
+      <form ng-submit="addEnrollment()">
+         <div class="form-group">
+            <input type="text" placeholder="Student email" ng-model="email" class="form-control" />
+         </div>
+         <button class="btn btn-primary" ng-click="createCourse()">Submit</button>
+         <h4 class="bg-danger" ng-repeat="error in errors" style="padding: 10px;">
+            {{ error }}
+         </h4>
+      </form>
+   </div>
+</div>

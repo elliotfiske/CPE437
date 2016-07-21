@@ -1,9 +1,11 @@
-app.controller('registerController', ['$scope', '$state', '$http', 'login', function(scope, $state, $http, login) {
+app.controller('registerController', ['$scope', '$state', '$rootScope', 'api', function(scope, $state, $rootScope, API) {
+   $rootScope.page = 'register';
+
    scope.user = {role: 0};
    scope.errors = [];
 
-   scope.registerUser = function() {
-      $http.post("Prss", scope.user)
+   scope.register = function() {
+      API.Prss.post(scope.user)
       .then(function(response) {
          $state.go('login');
       })

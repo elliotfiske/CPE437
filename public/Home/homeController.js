@@ -1,15 +1,8 @@
-app.controller('homeController', ['$scope', '$state', 'login', function(scope, state, login) {
-
-   scope.goToLogin = function() {
-      state.go('login');
-   }
-
-   scope.goToRegister = function() {
-      state.go('register');
-   }
+app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', function(scope, state, login, $rootScope) {
+   $rootScope.page = 'home';
 
    scope.goToAttempts = function() {
-      state.go('atts', {prsId: scope.loggedUser.id});
+      state.go('student');
    }
 
    scope.goToCourses = function() {

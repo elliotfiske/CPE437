@@ -8,6 +8,7 @@ router.baseURL = '/Chls';
 router.get('/', function(req, res) {
    connections.getConnection(res, function(cnn) {
       cnn.query('SELECT name, description from Challenge', function(err, result) {
+         console.log(result);
          res.json(result);
          cnn.release();
       });
@@ -25,7 +26,9 @@ router.post('/', function(req, res) {
                cnn.release();
             }
             else if (req._validator.check(!result.length, Tags.dupName)) {
+               console.log(req.body);
                cnn.query('INSERT INTO Challenge SET ?', req.body, function(err, result) {
+                  console.log(err, result);
                   res.location(router.baseURL + '/' + req.body.name).send(200).end();
                   cnn.release();
                });
