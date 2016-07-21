@@ -7,12 +7,13 @@ var PromiseUtil = require('../PromiseUtil.js');
 router.baseURL = '/Prss';
 
 function handleError(res) {
-  return function(error) {
-    var code = error.code || 400;
-    delete error.code
+   return function(error) {
+      console.log(error);
+      var code = error.code || 400;
+      delete error.code
 
-    res.status(code).json(error);
-  }
+      res.status(code).json(error);
+   }
 }
 
 function sendResult(res, status) {
@@ -218,52 +219,49 @@ router.get('/:id/Atts', function(req, res) {
 });
 
 router.post('/:id/Atts', function(req, res) {
-   var vld = req._validator;
+   var vld = req.validator;
    var chlName = req.body.challengeName;
    var owner = req.params.id;
    var chl;
 
    return vld.checkPrsOK(owner)
    .then(function() {
-     return vld.hasFields(req.body, ['challengeName', 'input']);
+      return vld.hasFields(req.body, ['challengeName', 'input']);
    })
    .then(function() {
-     return connections.getConnectionP();
+      return connections.getConnectionP();
    })
    .then(function(conn) {
+      // Verify specified challenge exists
+      return conn.query('SELECT * FROM Challenge WHERE name = ?', [chlName])
+         .then(function(result) {
+      console.log(result);
+            chl = result && result.length && result[0];
+            return vld.check(result.length, Tags.badChlName);
+         })
 
-     // Verify specified challenge exists
-     return conn.query('SELECT * FROM Challenge WHERE name = ?', [chlName])
-     .then(function(result) {
-       chl = result && result.length && result[0];
-       return vld.check(result.length, Tags.badChlName);
-     })
-
-     // Verify # of attempts is still under limit
-     .then(function() {
-       return conn.query('SELECT * FROM Attempt WHERE ' +
+         // Verify # of attempts is still under limit
+         .then(function() {
+            return conn.query('SELECT * FROM Attempt WHERE ' +
                               'ownerId = ? AND challengeName = ?',
                               [owner, chlName]);
-     })
-     .then(function(result) {
-       return vld.check(result.length < chl.attsAllowed, Tags.excessAtts);
-     })
-     .then(function() {
-       var newAtt = {
-         ownerId: owner,
-         challengeName: chlName,
-         startTime: new Date(),
-         input: input
-       };
-       return conn.query('INSERT INTO Attempt SET ?', attempt);
-     })
-     .then(function(result) {
-       res.location(router.baseURL + '/' + owner + '/Atts/'
-        + result.insertId).end();
-     })
-     .finally(function() {
-       conn.release();
-     });
+         })
+         .then(function(result) {
+            return vld.check(result.length < chl.attsAllowed, Tags.excessAtts);
+         })
+         .then(function() {
+            req.body.ownerId = owner;
+            req.body.startTime = new Date();
+            return conn.query('INSERT INTO Attempt SET ?', req.body);
+         })
+         .then(function(result) {
+            res.location(router.baseURL + '/' + owner + '/Atts/'
+               + result.insertId).end();
+         })
+         .catch(handleError(res))
+         .finally(function() {
+            conn.release();
+         });
    })
    .catch(handleError(res));
 });
