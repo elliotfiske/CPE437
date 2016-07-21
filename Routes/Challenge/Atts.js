@@ -6,7 +6,7 @@ var async = require('async');
 router.baseURL = '/Atts';
 
 router.get('/:attId', function(req, res) {
-   var vld = req.validator;
+   var vld = req._validator;
 
    connections.getConnection(res, function(cnn) {
       cnn.query('select * from Attempt where id = ?', [req.params.attId],
@@ -26,7 +26,7 @@ router.get('/:attId', function(req, res) {
 });
 
 router.put('/:attId', function(req, res) {
-   var vld = req.validator;
+   var vld = req._validator;
 
    connections.getConnection(res, function(cnn) {
       cnn.query('select * from Attempt where id = ?', [req.params.attId],
@@ -48,7 +48,7 @@ router.put('/:attId', function(req, res) {
 });
 
 router.get("/:attId/Stps", function(req, res) {
-   var vld = req.validator;
+   var vld = req._validator;
    var attId = req.params.attId;
 
    connections.getConnection(res,
@@ -75,7 +75,7 @@ router.get("/:attId/Stps", function(req, res) {
 
 /* Async waterfall version */
 router.post("/:attId/Stps", function(req, res) {
-   var vld = req.validator;
+   var vld = req._validator;
    var body = req.body;
    var stpInput = req.body.input;
    var attId = req.params.attId;
@@ -126,7 +126,7 @@ router.post("/:attId/Stps", function(req, res) {
 });
 
 router.get("/:attId/Stps/:stpId", function(req, res) {
-   var vld = req.validator;
+   var vld = req._validator;
 
    connections.getConnection(res, function(cnn) {
       cnn.query('select * from Step s join Attempt a on attemptId = a.id where s.id = ?',

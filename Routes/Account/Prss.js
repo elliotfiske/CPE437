@@ -2,7 +2,18 @@ var Express = require('express');
 var connections = require('../Connections.js');
 var Tags = require('../Validator.js').Tags;
 var router = Express.Router({caseSensitive: true});
+var PromiseUtil = require('../PromiseUtil.js');
+
 router.baseURL = '/Prss';
+
+function handleError(res) {
+  return function(error) {
+    var code = error.code || 400;
+    delete error.code
+
+    res.status(code).json(error);
+  }
+}
 
 router.get('/', function(req, res) {
    var specifier = req.query.email || !req.session.isAdmin() && req.session.email;
@@ -22,7 +33,7 @@ router.get('/', function(req, res) {
 });
 
 router.post('/', function(req, res) {
-   var vld = req.validator;  // Shorthands
+   var vld = req._validator;  // Shorthands
    var body = req.body;
    var admin = req.session && req.session.isAdmin();
 
@@ -40,7 +51,7 @@ router.post('/', function(req, res) {
       function(cnn) {
          cnn.query('SELECT * from Person where email = ?', body.email,
          function(err, result) {
-            if (req.validator.check(!result.length, Tags.dupEmail)) {
+            if (req._validator.check(!result.length, Tags.dupEmail)) {
                body.termsAccepted = new Date();
                cnn.query('INSERT INTO Person SET ?', body,
                function(err, result) {
@@ -58,7 +69,7 @@ router.post('/', function(req, res) {
 });
 
 router.get('/:id', function(req, res) {
-   var vld = req.validator;
+   var vld = req._validator;
 
    if (vld.checkPrsOK(req.params.id)) {
       connections.getConnection(res,
@@ -74,7 +85,41 @@ router.get('/:id', function(req, res) {
 });
 
 router.put('/:id', function(req, res) {
-   var vld = req.validator;
+  var vld = req.validator;
+  var body = req.body;
+  var admin = req.session.isAdmin();
+
+  return vld.checkPrsOK(req.params.id)
+    .then(function() {
+      return vld.check(!body.role || admin, Tags.noPermission);
+    })
+    .then(function() {
+      return vld.check(body.password === undefined || body.oldPassword || admin, Tags.noOldPwd);
+    })
+    .then(function() {
+      return connections.getConnectionP();
+    })
+    .then(function(conn) {
+      return conn.query('SELECT * FROM Person WHERE id = ?', [req.params.id, body.oldPassword])
+        .then(function(result) {
+          return vld.check(body.password === undefined || result[0].password === body.oldPassword || admin, Tags.oldPwdMismatch);
+        })
+        .then(function() {
+          delete body.oldPassword;
+          return conn.query('Update Person SET ? WHERE id = ?', [body, req.params.id]);
+        })
+        .then(function() {
+          res.status(200).end();
+        })
+        .finally(function() {
+          conn.release();
+        });
+    })
+    .catch(handleError(res));
+});
+
+router.putid_OLD_WAY = function(req, res) {
+   var vld = req._validator;
    var body = req.body;
    var admin = req.session && req.session.isAdmin();
 
@@ -98,7 +143,7 @@ router.put('/:id', function(req, res) {
                   }
                   else if (vld.check(prsArr.affectedRows, Tags.notFound))
                      res.status(200).end();
-               
+
                   cnn.release();
                });
             }
@@ -107,10 +152,10 @@ router.put('/:id', function(req, res) {
          });
       });
    }
-});
+};
 
 router.delete('/:id', function(req, res) {
-   var vld = req.validator;
+   var vld = req._validator;
 
    if (vld.checkAdmin())
       connections.getConnection(res, function(cnn) {
@@ -126,7 +171,7 @@ router.delete('/:id', function(req, res) {
 router.get('/:id/Crss', function(req, res) {
    var query, qryParams;
 
-   if (req.validator.checkPrsOK(req.params.id))
+   if (req._validator.checkPrsOK(req.params.id))
       query = 'SELECT * from Course where ownerId = ?';
       params = [req.params.id];
 
@@ -144,7 +189,7 @@ router.get('/:id/Crss', function(req, res) {
 router.get('/:id/Atts', function(req, res) {
    var query, qryParams;
 
-   if (req.validator.checkPrsOK(req.params.id))
+   if (req._validator.checkPrsOK(req.params.id))
       query = 'SELECT * from Attempt where ownerId = ?';
       params = [req.params.id];
       if (req.query.challengeName) {
@@ -164,7 +209,7 @@ router.get('/:id/Atts', function(req, res) {
 });
 
 router.post('/:id/Atts', function(req, res) {
-   var vld = req.validator;
+   var vld = req._validator;
    var chlName = req.body.challengeName;
    var owner = req.params.id;
    var chl;

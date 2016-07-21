@@ -1,3 +1,4 @@
+var Promise = require('bluebird');
 
 // Create a validator that draws its session from |req|, and reports
 // errors on |res|
@@ -33,61 +34,36 @@ Validator.prototype.ok = function() {return !this.errors.length;}
 // of qualifying parameters, e.g. name of missing field if tag is
 // Tags.missingField.  Close the response.
 Validator.prototype.check = function(test, tag, params) {
-   if (!test)
-      this.errors.push({tag: tag, params: params});
-
-   if (this.errors.length)
-      this.closeResponse();
-
-   return !this.errors.length;
-}
-
-Validator.prototype.closeResponse = function() {
-   if (this.res) {
-      this.res.status(400).json(this.errors);
-      this.res = null;   // Preclude repeated closings
-   }
-}
-
-// Somewhat like |check|, but designed to allow several chained checks
-// in a row, finalized by a check call.
-Validator.prototype.chain = function(test, tag, params) {
    if (!test) {
-      this.errors.push({tag: tag, params: params});
+      return Promise.reject({tag: tag, params: params});
    }
-   return this;
+
+   return Promise.resolve();
 }
 
 Validator.prototype.checkAdmin = function() {
    return this.check(this.session && this.session.isAdmin(),
-    Validator.Tags.noPermission);
+      Validator.Tags.noPermission);
 }
 
 Validator.prototype.checkAdminOrTeacher = function() {
    return this.check(this.session && (this.session.isAdmin() || this.session.isTeacher()),
-    Validator.Tags.noPermission);
+      Validator.Tags.noPermission);
 }
 
 // Validate that AU is the specified person or is an admin
 Validator.prototype.checkPrsOK = function(prsId) {
-
-   return this.check(this.session &&
-   (this.session.isAdmin() || this.session.id == prsId),
-    Validator.Tags.noPermission);
+   return this.check(this.session && (this.session.isAdmin() || this.session.id == prsId),
+      Validator.Tags.noPermission);
 }
 
 // Check presence of truthy property in |obj| for all fields in fieldList
 Validator.prototype.hasFields = function(obj, fieldList) {
    var self = this;
 
-   fieldList.forEach(function(name) {
-      self.chain(obj.hasOwnProperty(name), Validator.Tags.missingField, [name])
-   });
-
-   if (!this.ok())
-      this.closeResponse();
-
-   return this.ok();
+   return Promise.spread(fieldList.map(function(name) {
+      return self.check(obj.hasOwnProperty(name), Validator.Tags.missingField, [name]);
+   }))
 }
 
 module.exports = Validator;

@@ -15,7 +15,7 @@ router.get('/', function(req, res) {
 });
 
 router.post('/', function(req, res) {
-   if (req.validator.checkAdminOrTeacher() && req.validator.hasFields(req.body, ["name"])) {
+   if (req._validator.checkAdminOrTeacher() && req._validator.hasFields(req.body, ["name"])) {
       connections.getConnection(res, function(cnn) {
          cnn.query('SELECT * from Challenge where name = ?', req.body.name,
          function(err, result) {
@@ -24,7 +24,7 @@ router.post('/', function(req, res) {
                res.status(500).end();
                cnn.release();
             }
-            else if (req.validator.check(!result.length, Tags.dupName)) {
+            else if (req._validator.check(!result.length, Tags.dupName)) {
                cnn.query('INSERT INTO Challenge SET ?', req.body, function(err, result) {
                   res.location(router.baseURL + '/' + req.body.name).send(200).end();
                   cnn.release();
@@ -73,7 +73,7 @@ router.get('/:name/Atts', function(req, res) {
       }
       else {
          cnn.query('SELECT * FROM Attempt WHERE challengeName = ? AND ownerId = ?', [req.params.name, req.session.id], function(err, result) {
-            if (req.validator.check(result.length, Tags.noPermission)) {
+            if (req._validator.check(result.length, Tags.noPermission)) {
                getResult();
             }
             else {

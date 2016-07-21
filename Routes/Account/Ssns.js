@@ -9,7 +9,7 @@ router.baseURL = '/Ssns';
 router.get('/', function(req, res) {
    var body = [], ssn;
 
-   if (req.validator.checkAdmin()) {
+   if (req._validator.checkAdmin()) {
       for (cookie in ssnUtil.sessions) {
          ssn = ssnUtil.sessions[cookie];
          console.log("Session: " + cookie + ' -> ' + ssn);
@@ -24,7 +24,7 @@ router.post('/', function(req, res) {
 
    connections.getConnection(res, function(cnn) {
       cnn.query('select * from Person where email = ?', [req.body.email], function(err, result) {
-         if (req.validator.check(result.length && result[0].password === req.body.password, Tags.badLogin)) {
+         if (req._validator.check(result.length && result[0].password === req.body.password, Tags.badLogin)) {
             cookie = ssnUtil.makeSession(result[0], res);
             res.location(router.baseURL + '/'  + cookie).end();
          }
@@ -34,7 +34,7 @@ router.post('/', function(req, res) {
 });
 
 router.delete('/:cookie', function(req, res, next) {
-   if (req.validator.check(req.params.cookie === req.cookies[ssnUtil.cookieName]
+   if (req._validator.check(req.params.cookie === req.cookies[ssnUtil.cookieName]
     || req.session.isAdmin(), Tags.noPermission)) {
        ssnUtil.deleteSession(req.params.cookie);
        res.sendStatus(200);
@@ -43,7 +43,7 @@ router.delete('/:cookie', function(req, res, next) {
 
 router.get('/:cookie', function(req, res, next) {
    var cookie = req.params.cookie;
-   var vld = req.validator;
+   var vld = req._validator;
    if (vld.checkPrsOK(ssnUtil.sessions[cookie].id)) {
       res.json({prsId: req.session.id});
    }

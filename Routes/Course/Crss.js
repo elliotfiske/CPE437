@@ -5,7 +5,7 @@ var router = Express.Router({caseSensitive: true});
 router.baseURL = '/Crss';
 
 router.post('/', function(req, res) {
-   if (req.validator.checkAdminOrTeacher() && req.validator.hasFields(req.body, ["name"])) {
+   if (req._validator.checkAdminOrTeacher() && req._validator.hasFields(req.body, ["name"])) {
       connections.getConnection(res, function(cnn) {
          cnn.query('SELECT * from Course where name = ?', req.body.name,
          function(err, result) {
@@ -14,7 +14,7 @@ router.post('/', function(req, res) {
                res.status(500).end();
                cnn.release();
             }
-            else if (req.validator.check(!result.length, Tags.dupName)) {
+            else if (req._validator.check(!result.length, Tags.dupName)) {
                req.body.ownerId = req.session.id;
                cnn.query('INSERT INTO Course SET ?', req.body, function(err, result) {
                   res.location(router.baseURL + '/' + req.body.name).status(200).end();
@@ -30,24 +30,24 @@ router.post('/', function(req, res) {
 
 router.put('/:name', function(req, res) {
    connections.getConnection(res, function(cnn) {
-      if (req.validator.checkAdminOrTeacher()) {
+      if (req._validator.checkAdminOrTeacher()) {
          cnn.query('SELECT * from Course where name = ?', [req.params.name], function(err, result) {
-            var ok = req.validator.check(result.length === 1, Tags.notFound);
+            var ok = req._validator.check(result.length === 1, Tags.notFound);
 
             if (ok && req.session.isTeacher()) {
-               ok = req.validator.check(req.body.ownerId == undefined || req.body.ownerId === result[0].ownerId, Tags.noPermission)
-                 && req.validator.check(result[0].ownerId === req.session.id, Tags.noPermission);
+               ok = req._validator.check(req.body.ownerId == undefined || req.body.ownerId === result[0].ownerId, Tags.noPermission)
+                 && req._validator.check(result[0].ownerId === req.session.id, Tags.noPermission);
             }
 
             if (ok) {
                cnn.query('SELECT * from Course where name = ?', [req.body.name], function(err, result) {
-                  if (req.validator.check(result.length === 0 || req.body.name == undefined, Tags.dupName) &&
-                      req.validator.check(req.session.isAdmin() || result)) {
+                  if (req._validator.check(result.length === 0 || req.body.name == undefined, Tags.dupName) &&
+                      req._validator.check(req.session.isAdmin() || result)) {
                      cnn.query('UPDATE Course SET ? WHERE name = ?', [req.body, req.params.name], function(err, result) {
                         if (err) {
                            res.status(500).end();
                         }
-                        else if (req.validator.check(result.affectedRows, Tags.notFound))
+                        else if (req._validator.check(result.affectedRows, Tags.notFound))
                            res.status(200).end();
                      
                         cnn.release();
@@ -67,17 +67,17 @@ router.put('/:name', function(req, res) {
 });
 
 router.delete('/:name', function(req, res) {
-   if (req.validator.checkAdminOrTeacher()) {
+   if (req._validator.checkAdminOrTeacher()) {
       connections.getConnection(res, function(cnn) {
          cnn.query('SELECT * from Course where name = ?', [req.params.name], function(err, result) {
-            if (req.validator.check(result.length === 1, Tags.notFound) &&
-                req.validator.check(req.session.isAdmin() || req.session.id === result[0].ownerId, Tags.noPermission)) {
+            if (req._validator.check(result.length === 1, Tags.notFound) &&
+                req._validator.check(req.session.isAdmin() || req.session.id === result[0].ownerId, Tags.noPermission)) {
 
                cnn.query('DELETE from Course where name = ?', [req.params.name], function(err, result) {
                   if (err) {
                      res.status(500).end();
                   }
-                  else if (req.validator.check(result.affectedRows, Tags.notFound))
+                  else if (req._validator.check(result.affectedRows, Tags.notFound))
                      res.status(200).end();
                
                   cnn.release();
@@ -92,7 +92,7 @@ router.delete('/:name', function(req, res) {
 });
 
 router.post('/:name/Enrs', function(req, res) {
-   var vld = req.validator;
+   var vld = req._validator;
    var prs = req.session;
 
    connections.getConnection(res, function(cnn) {
@@ -136,7 +136,7 @@ router.post('/:name/Enrs', function(req, res) {
 });
 
 router.get('/:name/Enrs', function(req, res) {
-   var vld = req.validator;
+   var vld = req._validator;
    var prs = req.session;
 
    if (vld.checkAdminOrTeacher()) {
@@ -174,7 +174,7 @@ router.get('/:name/Enrs', function(req, res) {
 });
 
 router.get('/:name/Enrs/:enrId', function(req, res) {
-   var vld = req.validator;
+   var vld = req._validator;
    var prs = req.session;
 
    connections.getConnection(res, function(cnn) {
@@ -211,7 +211,7 @@ router.get('/:name/Enrs/:enrId', function(req, res) {
 });
 
 router.delete('/:name/Enrs/:enrId', function(req, res) {
-   var vld = req.validator;
+   var vld = req._validator;
    var prs = req.session;
 
    if (vld.checkAdminOrTeacher()) {
