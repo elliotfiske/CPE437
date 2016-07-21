@@ -1,22 +1,30 @@
 <div class="container-white row">
    <div class="col-sm-7">
-      <h2>My Challenges</h2>
+      <h2>My Recent Attempts</h2>
       <hr />
 
-      <div class="panel panel-default {{ getAttColor(attempt) }}" ng-repeat="attempt in inProgress">
+      <div class="panel panel-default panel-{{ getAttColor(attempts[0]) }}" ng-repeat="(challengeName, attempts) in grouped">
          <div class="panel-heading">
-            <span class="badge pull-left" ng-show="attempt.state === 0">
-               {{ attempt.score }}
+            <span class="badge pull-left">
+               {{ attempts[0].score }}
             </span>
             <span class="badge pull-right">
-               {{ attempt.startTime | date:'short' }}
+               {{ attempts[0].startTime | date:'short' }}
             </span>
-            <h2 class="panel-title">{{ attempt.challengeName }}</h2>
+            <h2 class="panel-title">{{ challengeName }}</h2>
             <div class="clearfix"></div>
          </div>
-         <div class="panel-body">
-            State: {{ attempt.state | attState }}<br/>
-         </div>
+         <ul class="list-group">
+            <li class="list-group-item bg-{{ getAttColor(attempt) }}" ng-repeat="attempt in attempts | reverse">
+               <span class="badge pull-left">
+                  {{ attempt.score }}
+               </span>
+               &nbsp;&nbsp;{{ attempt.input }}
+            </li>
+            <li class="list-group-item" ng-show="isOpen(challengeName)">
+               <a href="#Chls/{{ challengeName }}" class="btn btn-success btn-small" type="button">Try again</a>
+            </li>
+         </ul>
       </div>
    </div>
    <div class="col-sm-5">
