@@ -53,7 +53,7 @@ Validator.prototype.checkAdminOrTeacher = function(passThrough) {
 
 // Validate that AU is the specified person or is an admin
 Validator.prototype.checkPrsOK = function(prsId) {
-   return this.check(this.session && (this.session.isAdmin() || this.session.id == prsId),
+   return this.check(this.session && (this.session.isAdmin() || this.session.id === prsId),
       Validator.Tags.noPermission);
 }
 
@@ -61,7 +61,7 @@ Validator.prototype.checkPrsOK = function(prsId) {
 Validator.prototype.hasFields = function(obj, fieldList) {
    var self = this;
 
-   return Promise.spread(fieldList.map(function(name) {
+   return Promise.all(fieldList.map(function(name) {
       return self.check(obj.hasOwnProperty(name), Validator.Tags.missingField, [name]);
    }))
 }
