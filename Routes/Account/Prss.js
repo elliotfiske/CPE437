@@ -81,6 +81,7 @@ router.put('/:id', function(req, res) {
   var admin = req.session.isAdmin();
 
   if (!vld.checkPrsOK(req.params.id)) { // AU == person being edited
+    console.log('no');
     return;
   }
 
@@ -96,25 +97,18 @@ router.put('/:id', function(req, res) {
     return cnn.query('SELECT * FROM Person WHERE id = ?', [req.params.id, body.oldPassword]);
   })
   .then(function(res) {
-    if (res[0].password === body.oldPassword || admin) { // verify old pwd
+    if (vld.check(body.password === undefined || res[0].password === body.oldPassword || admin, Tags.oldPwdMismatch)) { // verify old pwd
       delete body.oldPassword;
       return cnn.query('Update Person SET ? WHERE id = ?', [body, req.params.id]);
     }
-    else {
-      return PromiseUtil.Error(400, Tags.oldPwdMismatch)
-    }
   })
-  .then(function(res) {
+  .then(function(result) {
     res.status(200).end();
   })
   .catch(function(err) {
     if (!err.statusCode)
       err.statusCode = 400;
     res.status(err.statusCode).json(err.message);
-  })
-  .finally(function() {
-    if (cnn)
-      cnn.release();
   });
 });
 
