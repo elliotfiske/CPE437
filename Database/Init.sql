@@ -10,7 +10,7 @@ create table Person (
     password VARCHAR(50),
     whenRegistered DATETIME not null,
     termsAccepted DATETIME not null,
-    role  int(11) UNSIGNED not null,
+    role  int(11) UNSIGNED not null
 
 );
 
