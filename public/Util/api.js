@@ -27,12 +27,38 @@
    }])
    .service('courses', ['$http', function($http) {
       return {
-         get: get($http, 'Crss')
+         get: get($http, 'Crss'),
+         delete: function(courseName) {
+            return $http.delete('Crss/' + courseName);
+         }
       }
    }])
    .service('challenges', ['$http', function($http) {
       return {
          get: get($http, 'Chls')
+      }
+   }])
+   .service('enrollments', ['$http', function($http) {
+      return {
+         get: function(courseName) {
+            return $http.get("Crss/" + courseName + "/Enrs?full=true")
+               .then(function(response) {
+                  return response.data;
+               });
+         },
+         create: function(courseName, prsId) {
+            return $http.post('Crss/' + courseName + '/Enrs', { prsId: prsId });
+         }
+      }
+   }])
+   .service('person', ['$http', function($http) {
+      return {
+         get: function(email) {
+            return $http.get('Prss?email=' + email)
+               .then(function(res) {
+                  return res.data;
+               });
+         }
       }
    }]);
 

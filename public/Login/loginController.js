@@ -9,6 +9,9 @@ app.controller('loginController',
       .then(function() {
          $state.go('student');
       })
+      .catch(function(err) {
+         scope.error = 'Login failed';
+      });
    }
 
    scope.goBack = function() {

@@ -37,22 +37,19 @@ var app = angular.module('mainApp', [
    return {
       login: function(email, password) {
          return $http.post("Ssns", { email: email, password: password })
-         .then(function(response) {
-            var location = response.headers().location.split('/');
-            return $http.get("Ssns/" + location[location.length - 1]);
-         })
-         .then(function(response) {
-            return $http.get("Prss/" + response.data.prsId);
-         })
-         .then(function(reponse) {
-            var user = reponse.data[0];
-            localStorage.user = JSON.stringify(user);
-            $rootScope.loggedUser = user;
-            return user;
-         })
-         .catch(function(err) {
-            nDlg.show(scope, "Login failed", "Error").then(function() {console.log("Done")});
-         });
+            .then(function(response) {
+               var location = response.headers().location.split('/');
+               return $http.get("Ssns/" + location[location.length - 1]);
+            })
+            .then(function(response) {
+               return $http.get("Prss/" + response.data.prsId);
+            })
+            .then(function(reponse) {
+               var user = reponse.data[0];
+               localStorage.user = JSON.stringify(user);
+               $rootScope.loggedUser = user;
+               return user;
+            });
       },
       logout: $rootScope.logout,
       isLoggedIn: function() {

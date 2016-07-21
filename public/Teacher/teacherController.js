@@ -1,6 +1,6 @@
 app.controller('teacherController',
-['$scope', '$state', '$http', 'attStateFilter', '$uibModal', 'login', '$rootScope',
- function(scope, $state, $http, attStateFilter, uibM, login, $rootScope) {
+['$scope', '$state', '$http', 'attStateFilter', 'confirm', 'login', 'courses', '$rootScope',
+ function(scope, $state, $http, attStateFilter, confirm, login, courses, $rootScope) {
    $rootScope.page = 'teacher';
 
    scope.courses = [];
@@ -37,19 +37,12 @@ app.controller('teacherController',
    };
 
    scope.deleteCourse = function(courseName) {
-      var confirm = uibM.open({
-         templateUrl: 'Courses/confirmDelete.html',
-         scope: scope,
-         size: 'sm'
-      });
-      confirm.result.then(function(confirmed) {
-         if (confirmed) {
-            $http.delete('Crss/' + courseName)
+      confirm(function() {
+         courses.delete(courseName)
             .then(function(res) {
                return scope.refreshCrss();
             });
-         }
-      })
+      });
    };
 
    scope.viewCourse = function(courseName) {

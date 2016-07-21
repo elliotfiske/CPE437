@@ -1,6 +1,6 @@
 app.controller('crsController',
-['$scope', '$state', '$stateParams', '$http', 'attStateFilter', '$uibModal', 'login',
- function(scope, $state, $stateParams, $http, attStateFilter, uibM, login) {
+['$scope', '$state', '$stateParams', '$http', 'attStateFilter', 'confirm', 'login', 'enrollments', 'person',
+ function(scope, $state, $stateParams, $http, attStateFilter, confirm, login, enrollments, person) {
    scope.courseName = $stateParams.courseName;
 
    if (!login.isLoggedIn()) {
@@ -8,9 +8,9 @@ app.controller('crsController',
    }
 
    scope.refreshEnrs = function() {
-      return $http.get("Crss/" + scope.courseName + "/Enrs?full=true")
-         .then(function(response) {
-            scope.enrs = response.data;
+      return enrollments.get(scope.courseName)
+         .then(function(data) {
+            scope.enrs = data;
          });
    };
 
@@ -21,41 +21,33 @@ app.controller('crsController',
          return;
 
       // Get prsId
-      $http.get('Prss?email=' + scope.email)
-      .then(function(res) {
-         if (res.data.length === 0) {
-            scope.errors = ['No user found for that email'];
-         }
-         else {
-            return $http.post('Crss/' + scope.courseName + '/Enrs', {
-               prsId: res.data[0].id
-            }).then(function(data) {
-               return scope.refreshEnrs();
-            });
-         }
-      })
-      .catch(function(err) {
-         if (err.data[0].tag === 'dupName') {
-            scope.errors = ['User already enrolled'];
-         }
-         else
-            scope.errors = err.data;
-      });
+      person.get(scope.email)
+         .then(function(data) {
+            if (data.length === 0) {
+               scope.errors = ['No user found for that email'];
+            }
+            else {
+               return enrollments.create(scope.courseName, data[0].id)
+                  .then(function(data) {
+                     return scope.refreshEnrs();
+                  });
+            }
+         })
+         .catch(function(err) {
+            if (err.data[0].tag === 'dupName') {
+               scope.errors = ['User already enrolled'];
+            }
+            else
+               scope.errors = err.data;
+         });
    };
 
    scope.deleteEnrollment = function(enrId) {
-      var confirm = uibM.open({
-         templateUrl: 'Teacher/confirmDelete.html',
-         scope: scope,
-         size: 'sm'
-      });
-      confirm.result.then(function(confirmed) {
-         if (confirmed) {
-            $http.delete('Crss/' + scope.courseName + '/Enrs/' + enrId)
+      confirm(function() {
+         $http.delete('Crss/' + scope.courseName + '/Enrs/' + enrId)
             .then(function(res) {
                return scope.refreshEnrs();
             });
-         }
-      })
+      });
    };
 }])

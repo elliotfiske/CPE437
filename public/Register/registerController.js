@@ -4,7 +4,7 @@ app.controller('registerController', ['$scope', '$state', '$http', 'login', '$ro
    scope.user = {role: 0};
    scope.errors = [];
 
-   scope.registerUser = function() {
+   scope.register = function() {
       $http.post("Prss", scope.user)
       .then(function(response) {
          $state.go('login');
