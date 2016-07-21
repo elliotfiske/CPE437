@@ -3,6 +3,8 @@ app.controller('crsController',
  function(scope, $state, $stateParams, API, confirm, login) {
    scope.courseName = $stateParams.courseName;
 
+   scope.challenge = { courseName: scope.courseName };
+
    if (!login.isLoggedIn()) {
       $state.go('home');
    }
@@ -15,6 +17,15 @@ app.controller('crsController',
    };
 
    scope.refreshEnrs();
+
+   scope.refreshChls = function() {
+      return API.Crss.Chls.get(scope.courseName)
+         .then(function(response) {
+            scope.chls = response.data;
+         });
+   };
+
+   scope.refreshChls();
 
    scope.addEnrollment = function() {
       if (!scope.email)
@@ -51,4 +62,9 @@ app.controller('crsController',
             });
       });
    };
+
+   scope.createChallenge = function() {
+      API.Chls.post(scope.challenge)
+         .then(scope.refreshChls);
+   }
 }])
