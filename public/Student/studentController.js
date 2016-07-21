@@ -1,5 +1,5 @@
-app.controller('studentController', ['$scope', '$state', '$http', 'attStateFilter', '$uibModal', 'login', '$rootScope', 'challenges', 'attempts',
- function(scope, $state, $http, attStateFilter, uibM, login, $rootScope, challenges, attempts) {
+app.controller('studentController', ['$scope', '$state', 'api', 'confirm', 'login', '$rootScope',
+ function(scope, $state, API, confirm, login, $rootScope) {
    $rootScope.page = 'student';
 
    scope.inProgress = [];
@@ -11,14 +11,12 @@ app.controller('studentController', ['$scope', '$state', '$http', 'attStateFilte
    }
 
    scope.startChallenge = function(challengeName) {
-      attempts.start(scope.loggedUser.id, challengeName)
-         .then(function() {
-            scope.refreshAtts();
-         });
+      API.Prss.Atts.post(scope.loggedUser.id, challengeName)
+         .then(scope.refreshAtts);
    };
 
    scope.refreshAtts = function() {
-      return $http.get("Prss/" + scope.loggedUser.id + "/Atts")
+      return API.Prss.Atts.get(scope.loggedUser.id)
          .then(function(response) {
             scope.inProgress = [];
             scope.inProgressChallenges = [];
@@ -42,24 +40,8 @@ app.controller('studentController', ['$scope', '$state', '$http', 'attStateFilte
       return styles[att.state] || "";
    };
 
-   scope.quitAtt = function(attId) {
-      var confirm = uibM.open({
-         templateUrl: 'Courses/confirmDelete.html',
-         scope: scope,
-         size: 'sm'
-      });
-      confirm.result.then(function(confirmed) {
-         if (confirmed) {
-            $http.put('Atts/' + attId)
-            .then(function(res) {
-               return scope.refreshAtts();
-            });
-         }
-      })
-   };
-
-   challenges.get().then(function(data) {
-      scope.challenges = data;
+   API.Chls.get().then(function(response) {
+      scope.challenges = response.data;
    });
 
    scope.refreshAtts();

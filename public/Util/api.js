@@ -1,65 +1,106 @@
-(function() {
-   function get($http, url) {
-      return function() {
-         return $http.get(url)
-            .then(function(response) {
-               return response.data;
-            })
-            .catch(function(err) {
-               console.log(err ? "Error" + JSON.stringify(err) : "Cancelled");
-            });
-      };
+angular.module('mainApp')
+.service('api', ['$http', function($http) {
+   function call(method, url, params) {
+      return $http[method](url, params)
+         .catch(function(err) {
+            console.error(err ? "Error" + JSON.stringify(err) : "Cancelled");
+         });
    }
 
-   angular.module('mainApp')
-   .service('attempts', ['$http', function($http) {
-      return {
-         get: function(prsId) {
+   function get(url, params) { return call('get', url, params); }
+   function post(url, params) { return call('post', url, params); }
+   function put(url, params) { return call('put', url, params); }
+   function del(url, params) { return call('delete', url, params); }
 
-         },
-         start: function(prsId, challengeName) {
-            return $http.post("Prss/" + prsId + "/Atts", { challengeName: challengeName.trim('') })
-               .catch(function(err) {
-                  console.log(err ? "Error" + JSON.stringify(err) : "Cancelled");
-               });
-         }
+   function typicalGet(baseUrl) {
+      return function(identifier) {
+         identifier = identifier || '';
+         // Will get baseUrl if nothing is passed
+         return get(baseUrl + '/' + identifier);
       }
-   }])
-   .service('courses', ['$http', function($http) {
-      return {
-         get: get($http, 'Crss'),
-         delete: function(courseName) {
-            return $http.delete('Crss/' + courseName);
-         }
+   }
+   function typicalPost(baseUrl) {
+      return function(body) {
+         return post(baseUrl, body);
       }
-   }])
-   .service('challenges', ['$http', function($http) {
-      return {
-         get: get($http, 'Chls')
+   }
+   function typicalPut(baseUrl) {
+      return function(identifier, body) {
+         identifier = identifier || '';
+         return post(baseUrl + '/' + identifier, body);
       }
-   }])
-   .service('enrollments', ['$http', function($http) {
-      return {
-         get: function(courseName) {
-            return $http.get("Crss/" + courseName + "/Enrs?full=true")
-               .then(function(response) {
-                  return response.data;
-               });
-         },
-         create: function(courseName, prsId) {
-            return $http.post('Crss/' + courseName + '/Enrs', { prsId: prsId });
-         }
+   }
+   function typicalDelete(baseUrl) {
+      return function(identifier) {
+         identifier = identifier || '';
+         // Will get baseUrl if nothing is passed
+         return del(baseUrl + '/' + identifier);
       }
-   }])
-   .service('person', ['$http', function($http) {
-      return {
-         get: function(email) {
-            return $http.get('Prss?email=' + email)
-               .then(function(res) {
-                  return res.data;
-               });
-         }
-      }
-   }]);
+   }
 
-})();
+   return {
+      Prss: {
+         get: typicalGet('Prss'),
+         find: function(email) {
+            return get('Prss?email=' + email);
+         },
+         post: typicalPost('Prss'),
+         put: typicalPut('Prss'),
+         delete: typicalDelete('Prss'),
+         Atts: {
+            get: function(prsId, challengeName) {
+               return get('Prss/' + prsId + '/Atts' + (challengeName ? '?challengeName=' + challengeName : ''));
+            },
+            post: function(prsId, challengeName) {
+               return post('Prss/' + prsId + '/Atts', { challengeName: challengeName });
+            }
+         },
+         Crss: {
+            get: function(prsId) {
+               return get('Prss/' + prsId + '/Crss');
+            }
+         }
+      },
+      Ssns: {
+         get: typicalGet('Ssns'),
+         post: typicalPost('Ssns'),
+         delete: typicalDelete('Ssns')
+      },
+      Chls: {
+         get: typicalGet('Chls'),
+         post: typicalPost('Chls'),
+      },
+      Crss: {
+         post: typicalPost('Crss'),
+         put: typicalPut('Crss'),
+         delete: typicalDelete('Crss'),
+         Enrs: {
+            get: function(courseName, enrId) {
+               enrId = enrId || '';
+               return get('Crss/' + courseName + '/Enrs/' + enrId + '?full=true');
+            },
+            delete: function(courseName, enrId) {
+               return del('Crss/' + courseName + '/Enrs/' + enrId);
+            },
+            post: function(courseName, prsId) {
+               return post('Crss/' + courseName + '/Enrs', { prsId: prsId });
+            }
+         },
+         Itms: {
+            get: function(courseName, itemId) {
+               itemId = itemId || '';
+               return get('Crss/' + courseName + '/Itms/' + itemId);
+            },
+            post: function(courseName, body) {
+               return post('Crss/' + courseName + '/Itms', body);
+            },
+            put: function(courseName, itemId, body) {
+               return put('Crss/' + courseName + '/Itms/' + itemId, body);
+            },
+            delete: function(courseName, itemId) {
+               return del('Crss/' + courseName + '/Itms/' + itemId);
+            }
+         }
+      }
+   }
+}])

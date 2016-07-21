@@ -1,16 +1,16 @@
 app.controller('teacherController',
-['$scope', '$state', '$http', 'attStateFilter', 'confirm', 'login', 'courses', '$rootScope',
- function(scope, $state, $http, attStateFilter, confirm, login, courses, $rootScope) {
+['$scope', '$state', 'api', 'confirm', 'login', '$rootScope',
+ function(scope, $state, API, confirm, login, $rootScope) {
    $rootScope.page = 'teacher';
 
    scope.courses = [];
 
-   if (!scope.loggedUser) {
+   if (!login.isLoggedIn()) {
       $state.go('home');
    }
 
    scope.refreshCrss = function() {
-      return $http.get("Prss/" + scope.loggedUser.id + "/Crss")
+      return API.Prss.Crss.get(scope.loggedUser.id)
          .then(function(response) {
             scope.courses = response.data;
          });
@@ -23,22 +23,20 @@ app.controller('teacherController',
          return;
 
       console.log("Making new course named " + scope.courseName);
-      $http.post('Crss', { name: scope.courseName })
-      .then(function(res) {
-         return scope.refreshCrss();
-      })
-      .catch(function(err) {
-         if (err.data[0].tag === 'dupName') {
-            scope.errors = ['Course name ' + scope.courseName + ' is taken'];
-         }
-         else
-            scope.errors = err.data;
-      });
+      API.Crss.post({ name: scope.courseName })
+         .then(scope.refreshCrss)
+         .catch(function(err) {
+            if (err.data[0].tag === 'dupName') {
+               scope.errors = ['Course name ' + scope.courseName + ' is taken'];
+            }
+            else
+               scope.errors = err.data;
+         });
    };
 
    scope.deleteCourse = function(courseName) {
       confirm(function() {
-         courses.delete(courseName)
+         API.Crss.delete(courseName)
             .then(function(res) {
                return scope.refreshCrss();
             });

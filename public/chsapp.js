@@ -10,22 +10,18 @@ var app = angular.module('mainApp', [
       return stateNames[input];
    };
 })
-.service('login', ['$rootScope', 'notifyDlg', '$http', '$state', function($rootScope, nDlg, $http, $state){
+.service('login', ['$rootScope', 'api', '$state', function($rootScope, API, $state){
    $rootScope.loggedUser = null;
 
    if (localStorage.user) {
       $rootScope.loggedUser = JSON.parse(localStorage.user);
-      $http.get('Prss/' + $rootScope.loggedUser.id)
-      .then(function(response) {
-         var user = response.data[0];
-         $rootScope.loggedUser = user;
-         return user;
-      })
-      .catch(function() {
-         $rootScope.loggedUser = null;
-         delete localStorage.user;
-         $state.go('home');
-      });
+      API.Prss.get($rootScope.loggedUser.id)
+         .then(function(response) {
+            var user = response.data[0];
+            $rootScope.loggedUser = user;
+            return user;
+         })
+         .catch($rootScope.logout);
    }
 
    $rootScope.logout = function() {
@@ -36,13 +32,13 @@ var app = angular.module('mainApp', [
 
    return {
       login: function(email, password) {
-         return $http.post("Ssns", { email: email, password: password })
+         return API.Ssns.post({ email: email, password: password })
             .then(function(response) {
                var location = response.headers().location.split('/');
-               return $http.get("Ssns/" + location[location.length - 1]);
+               return API.Ssns.get(location[location.length - 1]);
             })
             .then(function(response) {
-               return $http.get("Prss/" + response.data.prsId);
+               return API.Prss.get(response.data.prsId);
             })
             .then(function(reponse) {
                var user = reponse.data[0];

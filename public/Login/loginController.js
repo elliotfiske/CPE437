@@ -1,5 +1,5 @@
 app.controller('loginController',
- ['$scope', '$state', '$http', 'notifyDlg', 'login', '$rootScope', function(scope, $state, $http, nDlg, login, $rootScope) {
+ ['$scope', '$state', 'login', '$rootScope', function(scope, $state, login, $rootScope) {
    $rootScope.page = 'login';
 
    scope.user = {};

@@ -1,6 +1,6 @@
 app.controller('crsController',
-['$scope', '$state', '$stateParams', '$http', 'attStateFilter', 'confirm', 'login', 'enrollments', 'person',
- function(scope, $state, $stateParams, $http, attStateFilter, confirm, login, enrollments, person) {
+['$scope', '$state', '$stateParams', 'api', 'confirm', 'login',
+ function(scope, $state, $stateParams, API, confirm, login) {
    scope.courseName = $stateParams.courseName;
 
    if (!login.isLoggedIn()) {
@@ -8,9 +8,10 @@ app.controller('crsController',
    }
 
    scope.refreshEnrs = function() {
-      return enrollments.get(scope.courseName)
-         .then(function(data) {
-            scope.enrs = data;
+      return API.Crss.Enrs.get(scope.courseName)
+         .then(function(response) {
+            scope.enrs = response.data;
+            console.log(scope.enrs);
          });
    };
 
@@ -21,13 +22,14 @@ app.controller('crsController',
          return;
 
       // Get prsId
-      person.get(scope.email)
-         .then(function(data) {
+      API.Prss.find(scope.email)
+         .then(function(response) {
+            var data = response.data;
             if (data.length === 0) {
                scope.errors = ['No user found for that email'];
             }
             else {
-               return enrollments.create(scope.courseName, data[0].id)
+               return API.Crss.Enrs.post(scope.courseName, data[0].id)
                   .then(function(data) {
                      return scope.refreshEnrs();
                   });
@@ -44,7 +46,7 @@ app.controller('crsController',
 
    scope.deleteEnrollment = function(enrId) {
       confirm(function() {
-         $http.delete('Crss/' + scope.courseName + '/Enrs/' + enrId)
+         API.Crss.Enrs.delete(scope.courseName, enrId)
             .then(function(res) {
                return scope.refreshEnrs();
             });
