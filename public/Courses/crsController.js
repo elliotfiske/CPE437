@@ -3,7 +3,11 @@ app.controller('crsController',
  function(scope, $state, $stateParams, API, confirm, login) {
    scope.courseName = $stateParams.courseName;
 
-   scope.challenge = { courseName: scope.courseName };
+   scope.challenge = { 
+      courseName: scope.courseName,
+      attsAllowed: 5,
+      openTime: new Date()
+   };
 
    if (!login.isLoggedIn()) {
       $state.go('home');
@@ -26,6 +30,10 @@ app.controller('crsController',
    };
 
    scope.refreshChls();
+
+   scope.isOpen = function(chl) {
+      return chl.openTime <= new Date();
+   }
 
    scope.addEnrollment = function() {
       if (!scope.email)
@@ -64,7 +72,24 @@ app.controller('crsController',
    };
 
    scope.createChallenge = function() {
+      if (scope.challenge.type === 'term') {
+         scope.challenge.answer = {};
+         scope.challenge.answer.inexact = scope.inexact.split(',').map(function(str) {
+            return str.trim();
+         });
+         scope.challenge.answer.exact = scope.exact.split(',').map(function(str) {
+            return str.trim();
+         });
+
+         scope.challenge.answer = JSON.stringify(scope.challenge.answer);
+         console.log(scope.challenge);
+      }
+
       API.Chls.post(scope.challenge)
          .then(scope.refreshChls);
+   }
+
+   scope.viewChallenge = function(challengeName) {
+      $state.go('chl', { challengeName: challengeName });
    }
 }])
