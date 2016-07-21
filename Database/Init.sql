@@ -23,8 +23,8 @@ create table Course (
 
 create table Challenge (
     name VARCHAR(30) PRIMARY KEY,
-    description VARCHAR(90),
-    attsAllowed int(11),
+    description VARCHAR(90) DEFAULT "No description",
+    attsAllowed int(11) DEFAULT 1,
     courseName VARCHAR(30) NOT NULL,
     Constraint FKChallengeCourse Foreign key(courseName) references Course(name)
     on delete cascade
