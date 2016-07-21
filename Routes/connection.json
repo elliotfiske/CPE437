@@ -1,7 +1,7 @@
 {
     "host": "localhost",
     "user": "root",
-    "password": "password",
+    "password": "root",
     "database": "CHSdb",
     "port": "3306"
 }
