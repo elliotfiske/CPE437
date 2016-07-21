@@ -20,6 +20,9 @@
                   {{ attempt.score }}
                </span>
                &nbsp;&nbsp;{{ attempt.input }}
+               <span class="pull-right" ng-show="isWithinDay(attempt, challengeName)">
+                  <i class="fa fa-bolt"></i>
+               </span>
             </li>
             <li class="list-group-item" ng-show="isOpen(challengeName)">
                <a href="#Chls/{{ challengeName }}" class="btn btn-success btn-small" type="button">Try again</a>
@@ -41,5 +44,11 @@
             {{ challenge.description }}
          </div>
       </div>
+      <h4>
+         Nothing!
+         </h4>
+      <h1>
+         <i class="fa fa-hand-peace-o" ng-hide="(challenges | filter:notInProgress).length > 0"></i>
+      </h1>
    </div>
 </div>

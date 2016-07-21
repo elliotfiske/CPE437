@@ -56,7 +56,14 @@ angular.module('mainApp')
          delete: typicalDelete('Prss'),
          Atts: {
             get: function(prsId, challengeName) {
-               return get('Prss/' + prsId + '/Atts' + (challengeName ? '?challengeName=' + challengeName : ''));
+               return get('Prss/' + prsId + '/Atts' + (challengeName ? '?challengeName=' + challengeName : ''))
+                  .then(function(response) {
+                     response.data = response.data.map(function(att) {
+                        att.startTime = new Date(att.startTime);
+                        return att;
+                     });
+                     return response;
+                  })
             },
             post: function(prsId, attempt) {
                return post('Prss/' + prsId + '/Atts', attempt);
