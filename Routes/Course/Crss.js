@@ -306,6 +306,57 @@ router.post('/:crsName/Itms', function(req, res) {
 router.put('/:crsName/Itms/:itmId', function(req, res) {
    var vld = req._validator;
    var admin = req.session && req.session.isAdmin();
+   var owner = false;
+   var purchase = false;
+   var name = req.body.name;
+   var cost = req.body.cost;
+   var purchased = req.body.purchased;
+   var error = false;
+
+   connections.getConnection(res, function(cnn) {
+      cnn.query('Select * from Course where name = ?', req.params.crsName,
+      function(result) {
+         if (vld.check(result && result.length, Tags.notFound)) {
+            result = result[0];
+            if (result.ownerId === req.session.id)
+               owner = true;
+
+            cnn.query('Select * from ShopItem where id = ?', req.params.itmId,
+            function(result) {
+               if (vld.check(result && result.length, Tags.notFound)) {
+                  purchase = result[0].purchased;
+
+                  if (name && !vld.check(admin || owner, Tags.noPermission))
+                     error = true;
+                  if (cost && !vld.check(admin || owner, Tags.noPermission))
+                     error = true;
+
+                  if ((purchased !== undefined) && purchased && !vld.check(!purchase || admin || owner, Tags.noPermission))
+                     error = true;
+
+                  if (!error) {
+                     cnn.query('Update ShopItem set ? where id = ?', [req.body, req.params.itmId],
+                     function(err) {
+                        if(err)
+                           res.status(400).json(err);
+                        else {
+                           res.end();
+                        }
+                        cnn.release();
+                     });
+                  }
+               }
+               else {
+                  cnn.release();
+               }
+            });
+         }
+         else {
+            cnn.release();
+         }
+      });
+   });
+
 
 
 });
