@@ -15,6 +15,12 @@ function handleError(res) {
   }
 }
 
+function sendResult(res, status) {
+  return function(result) {
+    res.status(status || 200).json(result);
+  }
+}
+
 router.get('/', function(req, res) {
    var specifier = req.query.email || !req.session.isAdmin() && req.session.email;
 
@@ -89,6 +95,7 @@ router.put('/:id', function(req, res) {
   var body = req.body;
   var admin = req.session.isAdmin();
 
+  // Validation
   return vld.checkPrsOK(req.params.id)
     .then(function() {
       return vld.check(!body.role || admin, Tags.noPermission);
@@ -97,20 +104,23 @@ router.put('/:id', function(req, res) {
       return vld.check(body.password === undefined || body.oldPassword || admin, Tags.noOldPwd);
     })
     .then(function() {
+      // Get connection
       return connections.getConnectionP();
     })
     .then(function(conn) {
+
+      // Run queries
       return conn.query('SELECT * FROM Person WHERE id = ?', [req.params.id, body.oldPassword])
         .then(function(result) {
           return vld.check(body.password === undefined || result[0].password === body.oldPassword || admin, Tags.oldPwdMismatch);
         })
         .then(function() {
+
+          // Update the person object
           delete body.oldPassword;
           return conn.query('Update Person SET ? WHERE id = ?', [body, req.params.id]);
         })
-        .then(function() {
-          res.status(200).end();
-        })
+        .then(sendResult(res))
         .finally(function() {
           conn.release();
         });
