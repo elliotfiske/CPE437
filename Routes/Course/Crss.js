@@ -397,7 +397,18 @@ router.put('/:crsName/Itms/:itmId', function(req, res) {
 });
 
 router.delete('/:crsName/Itms/:itmId', function(req, res) {
+   var vld = req.validator;
+   var admin = req.session && req.session.isAdmin();
 
+   if (vld.check(admin, Tags.noPermission)) {
+      connections.getConnection(res, function(cnn) {
+         cnn.query('Delete from ShopItem where id = ?', req.params.itmId,
+         function(err, result) {
+            res.end();
+            cnn.release();
+         });
+      });
+   }
 });
 
 module.exports = router;
