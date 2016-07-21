@@ -23,8 +23,8 @@ create table Course (
 
 create table Challenge (
     name VARCHAR(30) PRIMARY KEY,
-    description VARCHAR(90),
-    attsAllowed int(11),
+    description VARCHAR(90) DEFAULT "No description",
+    attsAllowed int(11) DEFAULT 1,
     courseName VARCHAR(30) NOT NULL,
     Constraint FKChallengeCourse Foreign key(courseName) references Course(name)
     on delete cascade
@@ -34,10 +34,9 @@ create table Attempt (
     id int(11) AUTO_INCREMENT PRIMARY KEY,
     ownerId int(11) not null,
     challengeName VARCHAR(30) not null,
-    duration int(11) UNSIGNED not null,
-    score int(11),
+    score int(11) DEFAULT 0,
     startTime DATETIME not null,
-    state int(11) not null,
+    input VARCHAR(1024) DEFAULT "",
     Constraint FKChallengeName FOREIGN KEY(challengeName) REFERENCES Challenge(name)
      on delete cascade on update cascade,
     Constraint FKOwnerId Foreign key(ownerId) references Person(id)

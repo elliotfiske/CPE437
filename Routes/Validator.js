@@ -33,22 +33,22 @@ Validator.prototype.ok = function() {return !this.errors.length;}
 // Check test.  If false, add an error with tag and possibly empty array
 // of qualifying parameters, e.g. name of missing field if tag is
 // Tags.missingField.  Close the response.
-Validator.prototype.check = function(test, tag, params) {
+Validator.prototype.check = function(test, tag, params, passThrough) {
    if (!test) {
       return Promise.reject({tag: tag, params: params});
    }
 
-   return Promise.resolve();
+   return Promise.resolve(passThrough);
 }
 
-Validator.prototype.checkAdmin = function() {
+Validator.prototype.checkAdmin = function(passThrough) {
    return this.check(this.session && this.session.isAdmin(),
-      Validator.Tags.noPermission);
+      Validator.Tags.noPermission, {}, passThrough);
 }
 
 Validator.prototype.checkAdminOrTeacher = function() {
    return this.check(this.session && (this.session.isAdmin() || this.session.isTeacher()),
-      Validator.Tags.noPermission);
+      Validator.Tags.noPermission, {}, passThrough);
 }
 
 // Validate that AU is the specified person or is an admin

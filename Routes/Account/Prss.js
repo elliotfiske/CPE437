@@ -51,8 +51,7 @@ router.post('/', function(req, res) {
    // This can be seen by an attempt to post an admin with no AU
    if (vld.hasFields(body, ["email", "lastName", "role", "password"])
     && vld.chain(body.role == 0 || admin, Tags.noPermission)
-    .check(body.role >= 0 && body.role < 3, Tags.badValue, ["role"])
-    && vld.check(body.termsAccepted || admin, Tags.noTerms)) {
+    .check(body.role >= 0 && body.role < 3, Tags.badValue, ["role"])) {
       connections.getConnection(res,
       function(cnn) {
          cnn.query('SELECT * from Person where email = ?', body.email,
@@ -224,49 +223,49 @@ router.post('/:id/Atts', function(req, res) {
    var owner = req.params.id;
    var chl;
 
-   if (vld.chain(chlName, Tags.missingField, ['challengeName']).checkPrsOK(owner)) {
-      connections.getConnection(res,
-      function(cnn) {
-         cnn.query('select * from Challenge where name = ?', [chlName],
-         function(err, result) {
-            if (vld.check(result.length, Tags.badChlName)) {
-               chl = result[0];
-               cnn.query('SELECT * from Attempt where state = 2 and ownerId = ? '
-                + 'and challengeName = ?',  [owner, chlName],
-               function(err, result) {
-                  if (vld.check(result.length === 0, Tags.incompAttempt)) {
-                     cnn.query('SELECT * from Attempt where ownerId = ? '
-                      + 'and challengeName = ?',  [owner, chlName],
-                     function(err, result) {
-                        if (vld.check(result.length < chl.attsAllowed, Tags.excessAtts)) {
-                           var attempt = {
-                              ownerId: owner,
-                              challengeName: chlName,
-                              duration: 0,
-                              score: -1,
-                              startTime: new Date(),
-                              state: 2
-                           };
-                           cnn.query('INSERT INTO Attempt SET ?', attempt,
-                           function(err, result) {
-                              res.location(router.baseURL + '/' + owner + '/Atts/'
-                               + result.insertId).end();
-                              cnn.release();
-                           });
-                        }
-                        else  // Att count exceeded
-                           cnn.release();
-                     });
-                  }
-                  else // Active att was found
-                     cnn.release();
-               });
-            }
-            else // Challenge name was bad
-               cnn.release();
-         });
-      });
-   }
+   return vld.checkPrsOK(owner)
+   .then(function() {
+     return vld.hasFields(req.body, ['challengeName', 'input']);
+   })
+   .then(function() {
+     return connections.getConnectionP();
+   })
+   .then(function(conn) {
+
+     // Verify specified challenge exists
+     return conn.query('SELECT * FROM Challenge WHERE name = ?', [chlName])
+     .then(function(result) {
+       chl = result && result.length && result[0];
+       return vld.check(result.length, Tags.badChlName);
+     })
+
+     // Verify # of attempts is still under limit
+     .then(function() {
+       return conn.query('SELECT * FROM Attempt WHERE ' +
+                              'ownerId = ? AND challengeName = ?',
+                              [owner, chlName]);
+     })
+     .then(function(result) {
+       return vld.check(result.length < chl.attsAllowed, Tags.excessAtts);
+     })
+     .then(function() {
+       var newAtt = {
+         ownerId: owner,
+         challengeName: chlName,
+         startTime: new Date(),
+         input: input
+       };
+       return conn.query('INSERT INTO Attempt SET ?', attempt);
+     })
+     .then(function(result) {
+       res.location(router.baseURL + '/' + owner + '/Atts/'
+        + result.insertId).end();
+     })
+     .finally(function() {
+       conn.release();
+     });
+   })
+   .catch(handleError(res));
 });
 
 module.exports = router;

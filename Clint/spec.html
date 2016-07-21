@@ -343,7 +343,7 @@
 			}
 		},
 		'Shop Item Management': {
-			'Crss/{crsid}/Itms': {
+			'Crss/{crsName}/Itms': {
 				'get': {
 					desc: 'Return a list of all the available items to purchase for a particular course. AU must be enrolled in the course, owner of the course, or admin.',
 					return: {
@@ -372,13 +372,13 @@
 					}
 				}
 			},
-			'Crss/{crsid}/Itms/{itmId}': {
+			'Crss/{crsName}/Itms/{itmId}': {
 				'put': {
 					desc: 'Update item itmId',
 					params: {
 						name: '* name of item (requires admin or course owner)',
 						cost: '* cost of item (requires admin or course owner)',
-						purchased: 'True if AU has purchased item, false otherwise. No refunds (going from false->true), unless admin or course owner.'
+						purchased: 'True if AU has purchased item, false otherwise. No refunds (going from true->false), unless admin or course owner.'
 					}
 				},
 				'delete': {
@@ -515,7 +515,7 @@
 					}
 				}
 			}
-		} 
+		}
 	};
 
 	function stringify(obj) {

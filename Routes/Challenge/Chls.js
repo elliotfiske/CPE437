@@ -16,9 +16,9 @@ router.get('/', function(req, res) {
 });
 
 router.post('/', function(req, res) {
-   if (req._validator.checkAdminOrTeacher() && req._validator.hasFields(req.body, ["name"])) {
+   if (req._validator.checkAdminOrTeacher() && req._validator.hasFields(req.body, ["name", "courseName"])) {
       connections.getConnection(res, function(cnn) {
-         cnn.query('SELECT * from Challenge where name = ?', req.body.name,
+         cnn.query('SELECT * from Challenge where name = ? AND courseName = ?', [req.body.name, req.body.courseName],
          function(err, result) {
             if (err) {
                console.log(err);
