@@ -1,4 +1,6 @@
 var mysql = require('mysql');
+var mysqlP = require('promise-mysql');
+var Promise = require('bluebird');
 
 var Connections = function() {
    var poolCfg = require('./connection.json');
@@ -13,6 +15,8 @@ var Connections = function() {
 
    poolCfg.connectionLimit = Connections.PoolSize;
    this.pool = mysql.createPool(poolCfg);
+
+   this.poolP = mysqlP.createPool(poolCfg);
 };
 
 Connections.PoolSize = 10;
@@ -32,6 +36,14 @@ Connections.prototype.getConnection = function(res, cb) {
       else
          cb(cnn);
    });
+};
+
+Connections.prototype.getConnectionP = function() {
+  this.poolP.getConnection().then(function(connection) {
+    return Promise.resolve(connection);
+  }).catch(function(err) {
+    return Promise.reject({status: 500, message: "DB ERROR"});
+  });
 };
 
 Connections.prototype.getWorkConnection = function(cb) {

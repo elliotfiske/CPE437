@@ -2,6 +2,8 @@ var Express = require('express');
 var connections = require('../Connections.js');
 var Tags = require('../Validator.js').Tags;
 var router = Express.Router({caseSensitive: true});
+var PromiseUtil = require('../PromiseUtil.js');
+
 router.baseURL = '/Prss';
 
 router.get('/', function(req, res) {
@@ -74,6 +76,49 @@ router.get('/:id', function(req, res) {
 });
 
 router.put('/:id', function(req, res) {
+  var vld = req.validator;
+  var body = req.body;
+  var admin = req.session.isAdmin();
+
+  if (!vld.checkPrsOK(req.params.id)) { // AU == person being edited
+    return;
+  }
+
+  if (!vld.chain(!body.role || admin, Tags.noPermission) // Check fields
+  .check(body.password === undefined || body.oldPassword || admin, Tags.noOldPwd)) {
+    return;
+  }
+
+  var cnn;
+
+  connections.getConnectionP().then(function(res) {
+    cnn = res;
+    return cnn.query('SELECT * FROM Person WHERE id = ?', [req.params.id, body.oldPassword]);
+  })
+  .then(function(res) {
+    if (res[0].password === body.oldPassword || admin) { // verify old pwd
+      delete body.oldPassword;
+      return cnn.query('Update Person SET ? WHERE id = ?', [body, req.params.id]);
+    }
+    else {
+      return PromiseUtil.Error(400, Tags.oldPwdMismatch)
+    }
+  })
+  .then(function(res) {
+    res.status(200).end();
+  })
+  .catch(function(err) {
+    if (!err.statusCode)
+      err.statusCode = 400;
+    res.status(err.statusCode).json(err.message);
+  })
+  .finally(function() {
+    if (cnn)
+      cnn.release();
+  });
+});
+
+router.putid_OLD_WAY = function(req, res) {
    var vld = req.validator;
    var body = req.body;
    var admin = req.session && req.session.isAdmin();
@@ -98,7 +143,7 @@ router.put('/:id', function(req, res) {
                   }
                   else if (vld.check(prsArr.affectedRows, Tags.notFound))
                      res.status(200).end();
-               
+
                   cnn.release();
                });
             }
@@ -107,7 +152,7 @@ router.put('/:id', function(req, res) {
          });
       });
    }
-});
+};
 
 router.delete('/:id', function(req, res) {
    var vld = req.validator;
