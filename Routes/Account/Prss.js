@@ -218,33 +218,23 @@ router.get('/:id/Atts', function(req, res) {
 });
 
 router.post('/:id/Atts', function(req, res) {
-   var vld = req._validator;
-   var chlName = req.body.challengeName;
+   var vld = req.validator;
    var owner = req.params.id;
    var chl;
 
    return vld.checkPrsOK(owner)
    .then(function() {
-     return vld.hasFields(req.body, ['challengeName', 'input']);
+     return vld.hasFields(req.body, ['input']);
    })
    .then(function() {
      return connections.getConnectionP();
    })
    .then(function(conn) {
 
-     // Verify specified challenge exists
-     return conn.query('SELECT * FROM Challenge WHERE name = ?', [chlName])
-     .then(function(result) {
-       chl = result && result.length && result[0];
-       return vld.check(result.length, Tags.badChlName);
-     })
-
      // Verify # of attempts is still under limit
-     .then(function() {
        return conn.query('SELECT * FROM Attempt WHERE ' +
                               'ownerId = ? AND challengeName = ?',
-                              [owner, chlName]);
-     })
+                              [owner, chlName])
      .then(function(result) {
        return vld.check(result.length < chl.attsAllowed, Tags.excessAtts);
      })
@@ -260,6 +250,9 @@ router.post('/:id/Atts', function(req, res) {
      .then(function(result) {
        res.location(router.baseURL + '/' + owner + '/Atts/'
         + result.insertId).end();
+     })
+     .catch(function(err) {
+       console.log("Error: " + err.message);
      })
      .finally(function() {
        conn.release();
