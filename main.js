@@ -1,6 +1,7 @@
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
+var passport = require('./Database/passport');
 
 var bodyParser = require('body-parser');
 var Session = require('./Routes/Session.js');
@@ -21,6 +22,9 @@ app.use(bodyParser.json());
 // Attach cookies to req as req.cookies.<cookieName>
 app.use(cookieParser());
 
+app.use(passport.initialize());
+app.use(passport.session());
+
 // Set up Session on req if available
 app.use(Session.router);
 
@@ -30,11 +34,11 @@ app.use(function(req, res, next) {
 
    console.log(req.method, req.path);
 
-   if (req.session || (req.method === 'POST' &&
-    (req.path === '/Prss' || req.path === '/Ssns')))
+  //  if (req.session || (req.method === 'POST' &&
+  //   (req.path === '/Prss' || req.path === '/Ssns')))
       next();
-   else
-      res.status(401).json([{tag: Validator.Tags.noLogin}]);
+  //  else
+      // res.status(401).json([{tag: Validator.Tags.noLogin}]);
 
 });
 
@@ -43,6 +47,19 @@ app.use('/Ssns', require('./Routes/Account/Ssns'));
 app.use('/Chls', require('./Routes/Challenge/Chls'));
 app.use('/Atts', require('./Routes/Challenge/Atts'));
 app.use('/Crss', require('./Routes/Course/Crss'));
+
+// Redirect the user to Facebook for authentication.  When complete,
+// Facebook will redirect the user back to the application at
+//     /auth/facebook/callback
+app.get('/auth/facebook', passport.authenticate('facebook'));
+
+// Facebook will redirect the user to this URL after approval.  Finish the
+// authentication process by attempting to obtain an access token.  If
+// access was granted, the user will be logged in.  Otherwise,
+// authentication has failed.
+app.get('/auth/facebook/callback',
+  passport.authenticate('facebook', { successRedirect: '/',
+                                      failureRedirect: '/login' }));
 
 
 app.delete('/DB', function(req, res) {
@@ -140,7 +157,7 @@ app.use(function(err, req, res, next) {
    res.status(500).send('error', {error: err});
 });
 
-app.listen(process.env.OPENSHIFT_NODEJS_PORT || process.env.NODE_PORT || 3000, 
+app.listen(process.env.OPENSHIFT_NODEJS_PORT || process.env.NODE_PORT || 3000,
            process.env.OPENSHIFT_NODEJS_IP   || process.env.NODE_IP   || 'localhost',
 function () {
    console.log('App Listening on port 3000');

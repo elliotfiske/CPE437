@@ -11,7 +11,8 @@ create table Person (
     whenRegistered DATETIME not null,
     termsAccepted DATETIME not null,
     role  int(11) UNSIGNED not null,
-    UNIQUE KEY(email)
+    UNIQUE KEY(email),
+    UNIQUE KEY(facebookId)
 );
 
 create table Course (

@@ -32,7 +32,8 @@ Connections.PoolSize = 10;
 Connections.prototype.getConnection = function(res, cb) {
    this.pool.getConnection(function (err, cnn) {
       if (err)
-         res.status(500).send('DB ERROR');
+         if (res)
+            res.status(500).send('DB ERROR');
       else
          cb(cnn);
    });
