@@ -6,12 +6,15 @@ var Connections = function() {
    var poolCfg = require('./connection.json');
    var env = process.env;
 
+   var onHeroku = !!process.env.DYNO;
+   console.log('Am I on Heroku? ' + (onHeroku ? 'yeah' : 'nah'));
+
    // Use openshift environment variables if available, else connection.json default.
-   poolCfg.host = env.OPENSHIFT_MYSQL_DB_HOST || poolCfg.host;
-   poolCfg.user = env.OPENSHIFT_MYSQL_DB_USERNAME || poolCfg.user;
-   poolCfg.password = env.OPENSHIFT_MYSQL_DB_PASSWORD || poolCfg.password;
-   poolCfg.port = env.OPENSHIFT_MYSQL_DB_PORT || poolCfg.port;
-   poolCfg.database = env.OPENSHIFT_GEAR_NAME || poolCfg.database;
+   poolCfg.host = env.CLEARDB_HOST || poolCfg.host;
+   poolCfg.user = env.CLEARDB_USERNAME || poolCfg.user;
+   poolCfg.password = env.CLEARDB_PASSWORD || poolCfg.password;
+   poolCfg.port = env.CLEARDB_PORT || poolCfg.port;
+   poolCfg.database = env.CLEARDB_DB_NAME || poolCfg.database;
 
    poolCfg.connectionLimit = Connections.PoolSize;
    this.pool = mysql.createPool(poolCfg);

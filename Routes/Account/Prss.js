@@ -1,19 +1,11 @@
 var Express = require('express');
 var connections = require('../Connections.js');
 var Tags = require('../Validator.js').Tags;
+var doErrorResponse = require('../Validator.js').doErrorResponse;
 var router = Express.Router({caseSensitive: true});
 var PromiseUtil = require('../PromiseUtil.js');
 
 router.baseURL = '/Prss';
-
-function handleError(res) {
-  return function(error) {
-    var code = error.code || 400;
-    delete error.code
-
-    res.status(code).json(error);
-  }
-}
 
 function sendResult(res, status) {
   return function(result) {
@@ -124,7 +116,7 @@ router.put('/:id', function(req, res) {
           conn.release();
         });
     })
-    .catch(handleError(res));
+    .catch(doErrorResponse(res));
 });
 
 router.putid_OLD_WAY = function(req, res) {
@@ -283,13 +275,13 @@ router.post('/:id/Atts', function(req, res) {
                   res.location(router.baseURL + '/' + owner + '/Atts/'
                      + result.insertId).end();
                })
-               .catch(handleError(res))
+               .catch(doErrorResponse(res))
                .finally(function() {
                   conn.release();
                });
          });
    })
-   .catch(handleError(res));
+   .catch(doErrorResponse(res));
 });
 
 module.exports = router;

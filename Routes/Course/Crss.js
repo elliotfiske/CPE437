@@ -1,6 +1,8 @@
 var Express = require('express');
+var Promise = require('bluebird');
 var connections = require('../Connections.js');
 var Tags = require('../Validator.js').Tags;
+var doErrorResponse = require('../Validator.js').doErrorResponse;
 var router = Express.Router({caseSensitive: true});
 router.baseURL = '/Crss';
 
@@ -45,41 +47,84 @@ router.post('/', function(req, res) {
 });
 
 router.put('/:name', function(req, res) {
-   connections.getConnection(res, function(cnn) {
-      if (req._validator.checkAdminOrTeacher()) {
-         cnn.query('SELECT * from Course where name = ?', [req.params.name], function(err, result) {
-            var ok = req._validator.check(result.length === 1, Tags.notFound);
+  var vld = req.validator;
+  var body = req.body;
+  var admin = req.session.isAdmin();
 
-            if (ok && req.session.isTeacher()) {
-               ok = req._validator.check(req.body.ownerId == undefined || req.body.ownerId === result[0].ownerId, Tags.noPermission)
-                 && req._validator.check(result[0].ownerId === req.session.id, Tags.noPermission);
-            }
+  return vld.checkAdminOrTeacher(req.params.id)
+  .then(function() {
+    return connections.getConnectionP();
+  })
+  .then(function(conn) {
 
-            if (ok) {
-               cnn.query('SELECT * from Course where name = ?', [req.body.name], function(err, result) {
-                  if (req._validator.check(result.length === 0 || req.body.name == undefined, Tags.dupName) &&
-                      req._validator.check(req.session.isAdmin() || result)) {
-                     cnn.query('UPDATE Course SET ? WHERE name = ?', [req.body, req.params.name], function(err, result) {
-                        if (err) {
-                           res.status(500).end();
-                        }
-                        else if (req._validator.check(result.affectedRows, Tags.notFound))
-                           res.status(200).end();
-
-                        cnn.release();
-                     });
-                  }
-                  else {
-                     cnn.release();
-                  }
-               });
-            }
-            else {
-               cnn.release();
-            }
-         });
+    return conn.query('SELECT * FROM Course where name = ?', [req.params.name])
+    .then(function(courseResult) {
+      return vld.check(courseResult.length === 1, Tags.notFound, null, courseResult);
+    })
+    .then(function(courseResult) {
+      return vld.checkPrsOK(courseResult[0].ownerId);
+    })
+    .then(function() {
+      return vld.check(req.body.ownerId == undefined || admin, Tags.noPermission);
+    })
+    .then(function() {
+      if (req.body.name !== undefined) {
+        return conn.query('SELECT * FROM Course where name = ?', [req.body.name]);
       }
-   });
+      else {
+        return Promise.resolve(null);
+      }
+    })
+    .then(function(checkDupNameCourseResult) {
+      return vld.check(checkDupNameCourseResult === null || checkDupNameCourseResult.length === 0, Tags.dupName)
+    })
+    .then(function() {
+      return conn.query('UPDATE Course SET ? WHERE name = ?', [req.body, req.params.name]);
+    })
+    .then(function(result) {
+      res.status(200).json(result);
+    })
+    .finally(function() {
+      conn.release();
+    });
+  })
+  .catch(doErrorResponse(res));
+   //
+  //  connections.getConnection(res, function(cnn) {
+  //     if (req._validator.checkAdminOrTeacher()) {
+  //        cnn.query('SELECT * from Course where name = ?', [req.params.name], function(err, result) {
+  //           var ok = req._validator.check(result.length === 1, Tags.notFound);
+   //
+  //           if (ok && req.session.isTeacher()) {
+  //              ok = req._validator.check(req.body.ownerId == undefined || req.body.ownerId === result[0].ownerId, Tags.noPermission)
+  //                && req._validator.check(result[0].ownerId === req.session.id, Tags.noPermission);
+  //           }
+   //
+  //           if (ok) {
+  //              cnn.query('SELECT * from Course where name = ?', [req.body.name], function(err, result) {
+  //                 if (req._validator.check(result.length === 0 || req.body.name == undefined, Tags.dupName) &&
+  //                     req._validator.check(req.session.isAdmin() || result)) {
+  //                    cnn.query('UPDATE Course SET ? WHERE name = ?', [req.body, req.params.name], function(err, result) {
+  //                       if (err) {
+  //                          res.status(500).end();
+  //                       }
+  //                       else if (req._validator.check(result.affectedRows, Tags.notFound))
+  //                          res.status(200).end();
+   //
+  //                       cnn.release();
+  //                    });
+  //                 }
+  //                 else {
+  //                    cnn.release();
+  //                 }
+  //              });
+  //           }
+  //           else {
+  //              cnn.release();
+  //           }
+  //        });
+  //     }
+  //  });
 });
 
 router.delete('/:name', function(req, res) {

@@ -66,4 +66,15 @@ Validator.prototype.hasFields = function(obj, fieldList) {
    }))
 }
 
+Validator.doErrorResponse = function(res) {
+  return function(error) {
+    var code = error.code || 400;
+    delete error.code
+
+    error.errMsg = error.message;
+
+    res.status(code).json(error);
+  }
+}
+
 module.exports = Validator;
