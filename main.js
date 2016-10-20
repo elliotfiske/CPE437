@@ -42,11 +42,11 @@ app.use(function(req, res, next) {
 
 });
 
+app.use('/Crss', require('./Routes/Course/Crss'));
 app.use('/Prss', require('./Routes/Account/Prss'));
 app.use('/Ssns', require('./Routes/Account/Ssns'));
 app.use('/Chls', require('./Routes/Challenge/Chls'));
 app.use('/Atts', require('./Routes/Challenge/Atts'));
-app.use('/Crss', require('./Routes/Course/Crss'));
 
 // Redirect the user to Facebook for authentication.  When complete,
 // Facebook will redirect the user back to the application at

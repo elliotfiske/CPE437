@@ -1,4 +1,5 @@
 var passport = require('passport');
+var connections = require('../Routes/Connections.js');
 
 // These are different types of authentication strategies that can be used with Passport.
 // var LocalStrategy = require('passport-local').Strategy;
@@ -13,10 +14,22 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(id, req, done) {
-  connections.getConnection(res, function(cnn) {
-      cnn.query('select * from Person where id = ?', [id], function(err, result) {
-      }
-    }
+  // var vld = req.validator;
+  //
+  // connections.getConnectionP()
+  // .then(function(conn) {
+  //   return conn.query('SELECT * FROM Person WHERE id = ?', [req.params.id])
+  //     .then(function(result) {
+  //       return vld.check(result.length > 0)
+  //     })
+  //     .finally(function() {
+  //       conn.release();
+  //     });
+  // })
+  // .catch(function(err) {
+  //   done(err, null);
+  // });
+
     db.User.find({where: {id: id}}).then(function(user){
         if(!user){
             console.error('Logged in user not in database, user possibly deleted post-login');
