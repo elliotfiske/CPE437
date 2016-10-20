@@ -158,7 +158,7 @@ app.use(function(err, req, res, next) {
    res.status(500).send('error', {error: err});
 });
 
-app.listen(process.env.OPENSHIFT_NODEJS_PORT || process.env.NODE_PORT || 3000,
+app.listen(process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 3000,
            process.env.OPENSHIFT_NODEJS_IP   || process.env.NODE_IP   || 'localhost',
 function () {
    console.log('App Listening on port 3000');
