@@ -7,7 +7,11 @@ var Tags = require('../Routes/Validator.js').Tags;
 // var TwitterStrategy = require('passport-twitter').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
 // var GoogleStrategy = require('passport-google').Strategy;
-var config = require('./developmentKeys');
+
+var onHeroku = !!process.env.DYNO;
+if (!onHeroku) {
+  var config = require('./developmentKeys');
+}
 
 //Serialize sessions
 passport.serializeUser(function(user, done) {
@@ -19,6 +23,7 @@ passport.deserializeUser(function(id, req, done) {
 
   connections.getConnectionP()
   .then(function(conn) {
+    
     return conn.query('SELECT * FROM Person WHERE id = ?', [req.params.id])
       .then(function(userResult) {
         return vld.check(userResult.length > 0, null, null, userResult);
