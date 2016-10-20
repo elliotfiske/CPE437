@@ -12,6 +12,15 @@ var onHeroku = !!process.env.DYNO;
 if (!onHeroku) {
   var config = require('./developmentKeys');
 }
+else {
+  config = {
+    facebook: {
+      clientID: process.env.FACEBOOK_CLIENTID,
+      clientSecret: process.env.FACEBOOK_CLIENTSECRET,
+      callbackURL: process.env.FACEBOOK_CALLBACK
+    }
+  }
+}
 
 //Serialize sessions
 passport.serializeUser(function(user, done) {
@@ -23,7 +32,7 @@ passport.deserializeUser(function(id, req, done) {
 
   connections.getConnectionP()
   .then(function(conn) {
-    
+
     return conn.query('SELECT * FROM Person WHERE id = ?', [req.params.id])
       .then(function(userResult) {
         return vld.check(userResult.length > 0, null, null, userResult);
