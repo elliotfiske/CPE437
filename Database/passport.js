@@ -47,17 +47,6 @@ passport.deserializeUser(function(id, req, done) {
   .catch(function(err) {
     done(err, null);
   });
-    //
-    // db.User.find({where: {id: id}}).then(function(user){
-    //     if(!user){
-    //         console.error('Logged in user not in database, user possibly deleted post-login');
-    //         return done(null, false);
-    //     }
-    //     console.log('Session: { id: ' + user.id + ', username: ' + user.email + ' }');
-    //     done(null, user);
-    // }).catch(function(err){
-    //     done(err, null);
-    // });
 });
 
 // Use facebook strategy
@@ -65,8 +54,7 @@ passport.use(new FacebookStrategy({
         clientID: config.facebook.clientID,
         clientSecret: config.facebook.clientSecret,
         callbackURL: config.facebook.callbackURL,
-        // passReqToCallback: true,
-        profileFields: ['id', 'emails', 'name']
+        profileFields: ['id', 'emails']
     },
     // Whatever you pass into the second argument of done() will be available as
     //  req.user
@@ -78,11 +66,11 @@ passport.use(new FacebookStrategy({
             if (fbUserResult.length === 0) {
               var newPerson = {
                 email: profile.emails[0].value,
-                lastName: profile.name.familyName,
+                name: profile.name.familyName,
                 role: 2,
                 password: "illuminati",
                 whenRegistered: new Date(),
-                termsAccepted: new Date()
+                facebookId: profile.id
               };
               return conn.query('INSERT INTO Person SET ?', newPerson);
             }
@@ -101,25 +89,6 @@ passport.use(new FacebookStrategy({
           done(err, null);
           console.log("OH NO ERROR: " + err);
         })
-        // db.User.find({where : {facebookUserId: profile.id}}).then(function(user){
-        //     if(!user){
-        //         db.User.create({
-        //             name: profile.displayName,
-        //             email: profile.emails[0].value,
-        //             username: profile.username,
-        //             provider: 'facebook',
-        //             facebookUserId: profile.id
-        //         }).then(function(u){
-        //             winston.info('New User (facebook) : { id: ' + u.id + ', username: ' + u.username + ' }');
-        //             done(null, u);
-        //         })
-        //     } else {
-        //         winston.info('Login (facebook) : { id: ' + user.id + ', username: ' + user.username + ' }');
-        //         done(null, user);
-        //     }
-        // }).catch(function(err){
-        //     done(err, null);
-        // });
     }
 ));
 

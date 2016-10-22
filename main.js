@@ -131,28 +131,6 @@ app.get('/test', function(req, res) {
    res.status(200).end();
 });
 
-var sbCounter = 0;
-
-app.get('/slowboat', function(req, res, next) {
-   console.log("In slowboat route");
-   setTimeout(function(){
-      console.log("Slowboat hit done");
-      res.status(200).json(sbCounter++);
-   }, 5000);
-   console.log("Done with route");
-});
-
-// Messing around with a simple route and with mysql
-app.get('/data', function (req, res, next) {
-   cnnPool.getConnection(res, function(cnn) {
-      cnn.query('Select * from Person', function (err, data) {
-         //cnn.release();
-         res.status(200).json(data);
-      });
-   });
-   console.log('Done setting up /data query');
-});
-
 app.use(function(err, req, res, next) {
    console.error(err.stack);
    res.status(500).send('error', {error: err});

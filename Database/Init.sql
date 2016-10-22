@@ -4,8 +4,7 @@ use CHSdb;
 
 create table Person (
     id int(11) AUTO_INCREMENT PRIMARY KEY,
-    firstName VARCHAR(30),
-    lastName VARCHAR(30) not null,
+    name VARCHAR(30) not null,
     email VARCHAR(30) not null,
     password VARCHAR(50),
     whenRegistered DATETIME not null,
