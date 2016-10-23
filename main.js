@@ -43,11 +43,11 @@ app.use(function(req, res, next) {
 
 });
 
-app.use('/Crss', require('./Routes/Course/Crss'));
-app.use('/Prss', require('./Routes/Account/Prss'));
-app.use('/Ssns', require('./Routes/Account/Ssns'));
-app.use('/Chls', require('./Routes/Challenge/Chls'));
-app.use('/Atts', require('./Routes/Challenge/Atts'));
+app.use('/Crss', require('./Routes/Course/courses'));
+app.use('/Prss', require('./Routes/Account/users'));
+app.use('/Ssns', require('./Routes/Account/sessions'));
+app.use('/Chls', require('./Routes/Challenge/challenges'));
+app.use('/Atts', require('./Routes/Challenge/attempts'));
 
 // Redirect the user to Facebook for authentication.  When complete,
 // Facebook will redirect the user back to the application at
@@ -104,9 +104,9 @@ app.delete('/DB', function(req, res) {
             cnn.query('alter table StudentPurchase auto_increment = 1', callback);
          },
          function(callback){
-            cnn.query('INSERT INTO Person (id, firstName, lastName, email,' +
-                ' password, whenRegistered, termsAccepted, role) VALUES (' +
-                '1, "Admin", "IAM", "Admin@11.com","password", NOW(), NOW(), 2);'
+            cnn.query('INSERT INTO Person (id, name, email,' +
+                ' password, whenRegistered, role) VALUES (' +
+                '1, "Admin man", "Admin@11.com", "password", NOW(), 2);'
             , callback);
          },
          function(callback){

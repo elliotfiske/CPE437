@@ -8,7 +8,6 @@ create table Person (
     email VARCHAR(30) not null,
     password VARCHAR(50),
     whenRegistered DATETIME not null,
-    termsAccepted DATETIME not null,
     role  int(11) UNSIGNED not null,
     UNIQUE KEY(email),
     UNIQUE KEY(facebookId)

@@ -5,7 +5,7 @@ var doErrorResponse = require('../Validator.js').doErrorResponse;
 var router = Express.Router({caseSensitive: true});
 var PromiseUtil = require('../PromiseUtil.js');
 
-router.baseURL = '/Prss';
+router.baseURL = '/prss';
 
 function sendResult(res, status) {
   return function(result) {
@@ -41,7 +41,7 @@ router.post('/', function(req, res) {
 
    // This chain seems like it will always return the last test, not false if any fail
    // This can be seen by an attempt to post an admin with no AU
-   if (vld.hasFields(body, ["email", "lastName", "role", "password"])
+   if (vld.hasFields(body, ["email", "name", "role", "password"])
     && vld.chain(body.role == 0 || admin, Tags.noPermission)
     .check(body.role >= 0 && body.role < 3, Tags.badValue, ["role"])) {
       connections.getConnection(res,

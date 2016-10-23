@@ -4,13 +4,11 @@ use heroku_78b9c47b8eee261;
 
 create table Person (
     id int(11) AUTO_INCREMENT PRIMARY KEY,
-    firstName VARCHAR(30),
-    lastName VARCHAR(30) not null,
+    name VARCHAR(30) not null,
     email VARCHAR(30) not null,
     facebookId VARCHAR(45),
     password VARCHAR(50),
     whenRegistered DATETIME not null,
-    termsAccepted DATETIME not null,
     role  int(11) UNSIGNED not null,
     UNIQUE KEY(email),
     UNIQUE KEY(facebookId)
