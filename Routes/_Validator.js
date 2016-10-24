@@ -23,7 +23,7 @@ Validator.Tags = {
    badChlName: "badChlName",        // Bad Challenge Name
    attNotClosable: "attNotClosable",// Attempt not in a closable state
    attClosed: "attClosed",          // Attempt is alread closed
-   excessAtts: "excessAtts",        // Too many attempts for this challenge.
+   excessatts: "excessatts",        // Too many attempts for this challenge.
    oldPwdMismatch: "oldPwdMismatch"// Incorrect old password.
 }
 

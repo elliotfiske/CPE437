@@ -2,7 +2,7 @@ var Express = require('express');
 var connections = require('../Connections.js');
 var Tags = require('../Validator.js').Tags;
 var router = Express.Router({caseSensitive: true});
-router.baseURL = '/Chls';
+router.baseURL = '/chls';
 
 function handleError(res) {
    return function(error) {
@@ -85,11 +85,11 @@ router.get('/:name', function(req, res) {
    });
 });
 
-router.get('/:name/Atts', function(req, res) {
+router.get('/:name/atts', function(req, res) {
    connections.getConnection(res, function(cnn) {
       function getResult() {
          var query = 'SELECT id, ? as challengeURI, ownerId, duration, score, startTime, state from Attempt where challengeName = ? ORDER BY startTime DESC';
-         var params = ['Chls/' + req.params.name, req.params.name];
+         var params = ['chls/' + req.params.name, req.params.name];
 
          if (req.query.limit) {
             query += ' LIMIT ?';

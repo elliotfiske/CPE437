@@ -3,7 +3,7 @@ var connections = require('../Connections.js');
 var Tags = require('../Validator.js').Tags;
 var router = Express.Router({caseSensitive: true});
 var async = require('async');
-router.baseURL = '/Atts';
+router.baseURL = '/atts';
 
 router.get('/:attId', function(req, res) {
    var vld = req._validator;

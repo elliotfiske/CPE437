@@ -20,7 +20,7 @@ var app = angular.module('mainApp', [
 
    if (localStorage.user) {
       $rootScope.loggedUser = JSON.parse(localStorage.user);
-      API.Prss.get($rootScope.loggedUser.id)
+      API.prss.get($rootScope.loggedUser.id)
          .then(function(response) {
             var user = response.data[0];
             $rootScope.loggedUser = user;
@@ -43,7 +43,7 @@ var app = angular.module('mainApp', [
                return API.Ssns.get(location[location.length - 1]);
             })
             .then(function(response) {
-               return API.Prss.get(response.data.prsId);
+               return API.prss.get(response.data.prsId);
             })
             .then(function(reponse) {
                var user = reponse.data[0];

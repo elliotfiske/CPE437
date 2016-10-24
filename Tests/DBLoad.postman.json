@@ -58,7 +58,7 @@
 		{
 			"id": "125e3b88-5856-39ca-5cc7-84a804063265",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Chls",
+			"url": "{{url}}/chls",
 			"pathVariables": {},
 			"preRequestScript": null,
 			"method": "POST",
@@ -80,7 +80,7 @@
 		{
 			"id": "29edb880-a736-ec91-4881-1106196725ac",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss/{{PrsA}}/Atts",
+			"url": "{{url}}/prss/{{PrsA}}/atts",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -100,7 +100,7 @@
 		{
 			"id": "2e1d7f79-78af-eb11-4355-91586d293533",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Atts/{{PrsAAttB}}/Stps",
+			"url": "{{url}}/atts/{{PrsAAttB}}/Stps",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -142,7 +142,7 @@
 		{
 			"id": "4c993939-c843-4dbe-ff06-60bb8c22af55",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Chls",
+			"url": "{{url}}/chls",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -163,7 +163,7 @@
 		{
 			"id": "586c2302-1889-9b6f-7487-6b07aa961a8b",
 			"headers": "",
-			"url": "{{url}}/Chls/MMindF41",
+			"url": "{{url}}/chls/MMindF41",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -173,7 +173,7 @@
 			"currentHelper": "normal",
 			"helperAttributes": "{}",
 			"time": 1467412947788,
-			"name": "Get Chls by name",
+			"name": "Get chls by name",
 			"description": "",
 			"collectionId": "f65d61f7-54b0-e429-0376-779e67c70122",
 			"responses": [],
@@ -182,7 +182,7 @@
 		{
 			"id": "64494209-8254-c93f-27c2-dc06632959c8",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss/{{PrsA}}/Atts",
+			"url": "{{url}}/prss/{{PrsA}}/atts",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -261,7 +261,7 @@
 		{
 			"id": "86191b31-4b0b-c1ad-9cdb-b045d33d65de",
 			"headers": "",
-			"url": "{{url}}/Atts/{{PrsAAttA}}",
+			"url": "{{url}}/atts/{{PrsAAttA}}",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "PUT",
@@ -300,7 +300,7 @@
 		{
 			"id": "adeed5d9-4ee5-a955-02e6-2a355d6e7f5f",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss",
+			"url": "{{url}}/prss",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -320,7 +320,7 @@
 		{
 			"id": "c10ffef8-2605-5aae-6d70-1ddb2cb7b83d",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss",
+			"url": "{{url}}/prss",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -340,7 +340,7 @@
 		{
 			"id": "d69e2ef5-aef9-c679-a603-b809e9c415b0",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss/{{PrsA}}/Atts",
+			"url": "{{url}}/prss/{{PrsA}}/atts",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -360,7 +360,7 @@
 		{
 			"id": "e36e7a30-b084-e047-f3b5-ef0baaec23bd",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Atts/{{PrsAAttB}}/Stps",
+			"url": "{{url}}/atts/{{PrsAAttB}}/Stps",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -380,7 +380,7 @@
 		{
 			"id": "e58eaa87-64d9-33b1-989b-21e742f9fca3",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Atts/{{PrsAAttB}}/Stps",
+			"url": "{{url}}/atts/{{PrsAAttB}}/Stps",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",

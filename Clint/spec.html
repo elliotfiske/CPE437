@@ -121,7 +121,7 @@
 	<ol>
 		<li/>
 	<p>All resource URLs are prefixed by {Root}/
-		(e.g. http://cstaley.csc.calpoly.edu:8080/Prss
+		(e.g. http://cstaley.csc.calpoly.edu:8080/prss
 		</p>
 		<li/>
 	<p>All resources accept and provide only JSON body
@@ -154,7 +154,7 @@
 		nonobvious cases, the type is given explicitly in the docs.</p>
 		<li/>
 	<p>All access requires authentication via login; no
-		resources are public except for Prss/POST (for initial
+		resources are public except for prss/POST (for initial
 		registration), and Ssns/POST (to log in). Other resources may be
 		restricted based on admin status of Authenticated User (AU). The
 		default restriction is to allow only access relevant to the AU,
@@ -173,7 +173,7 @@
 	<script type='text/javascript'>
 	var specification = {
 		'User Management': {
-			'Prss': {
+			'prss': {
 				'get': {
 					desc: 'Return a list of all persons as resource URLs, potentially filtered by email. Does not return any users other than the AU unless AU is admin.',
 					params: {
@@ -196,11 +196,11 @@
 						termsAccepted: 'Were T&C accepted?'
 					},
 					return: {
-						location: 'Prss/{prsId}',
+						location: 'prss/{prsId}',
 					}
 				}
 			},
-			'Prss/{prsid}': {
+			'prss/{prsid}': {
 				'get': {
 					desc: 'Return object for Person prsId. AU must be person in question or admin',
 					return: {
@@ -228,9 +228,9 @@
 					desc: 'Delete the person in question, including all Attempts. Requires Admin AU'
 				},
 			},
-			'Prss/{prsId}/Atts': {
+			'prss/{prsId}/atts': {
 				'get': {
-					desc: 'Get an array of all Atts for the specified person, optionally narrowed down to one challenge. AU must be person in question or Admin',
+					desc: 'Get an array of all atts for the specified person, optionally narrowed down to one challenge. AU must be person in question or Admin',
 					params: {
 						challengeName: 'Name of challenge',
 					},
@@ -246,12 +246,12 @@
 					}
 				},
 				'post': {
-					desc: 'Start a new attempt if possible. There must be none in progress and the limit of allowed Atts must not be exhausted.',
+					desc: 'Start a new attempt if possible. There must be none in progress and the limit of allowed atts must not be exhausted.',
 					params: {
 						challengeName: '* Challenge to start'
 					},
 					return: {
-						location: 'Prss/{prsId}',
+						location: 'prss/{prsId}',
 					}
 				}
 			}
@@ -287,7 +287,7 @@
 			}
 		},
 		'Challenge Resources': {
-			'Chls': {
+			'chls': {
 				'get': {
 					desc: 'Return a list of challenges in the system',
 					return: {
@@ -306,11 +306,11 @@
 					},
 					return: {
 						desc: 'Person id will be registered as the owner',
-						location: 'Chls/{name}'
+						location: 'chls/{name}'
 					}
 				}
 			},
-			'Chls/{name}': {
+			'chls/{name}': {
 				'get': {
 					desc: 'Get information about challenge',
 					return: {
@@ -321,7 +321,7 @@
 					}
 				}
 			},
-			'Chls/{name}/Atts': {
+			'chls/{name}/atts': {
 				'get': {
 					desc: 'Get info on Attempts. AU must be someone who has attempted the Challenge or admin.',
 					params: {
@@ -343,7 +343,7 @@
 			}
 		},
 		'Shop Item Management': {
-			'Crss/{crsName}/Itms': {
+			'crss/{crsName}/Itms': {
 				'get': {
 					desc: 'Return a list of all the available items to purchase for a particular course. AU must be enrolled in the course, owner of the course, or admin.',
 					return: {
@@ -368,11 +368,11 @@
 						cost: 'Cost in credits for the item'
 					},
 					return: {
-						location: 'Crss/{crsid}/Itms/{itmId}',
+						location: 'crss/{crsid}/Itms/{itmId}',
 					}
 				}
 			},
-			'Crss/{crsName}/Itms/{itmId}': {
+			'crss/{crsName}/Itms/{itmId}': {
 				'put': {
 					desc: 'Update item itmId',
 					params: {
@@ -387,7 +387,7 @@
 			}
 		},
 		'Attempt Resources': {
-			'Atts/{attId}': {
+			'atts/{attId}': {
 				'get': {
 					desc: 'Retrieve Att-specific info. AU must be owner or admin.',
 					return: {
@@ -408,18 +408,18 @@
 					}
 				}
 			},
-			'Atts/{attId}/Stps': {
+			'atts/{attId}/Stps': {
 				'post': {
 					desc: 'Post a new step to the attempt. Must be in progress',
 					params: {
 						input: 'JSON string specifying input'
 					},
 					return: {
-						location: 'Atts/{attId}/Stps/{stpId}'
+						location: 'atts/{attId}/Stps/{stpId}'
 					}
 				}
 			},
-			'Atts/{attId}/Stps/{stpId}': {
+			'atts/{attId}/Stps/{stpId}': {
 				get: {
 					desc: 'Get the result of the indicated step',
 					return: {
@@ -432,18 +432,18 @@
 			}
 		},
 		'Course Resources': {
-			'Crss': {
+			'crss': {
 				post: {
 					desc: 'Create a new course. AU must be teacher or admin, who will become owner',
 					params: {
 						name: '* Unique name for course'
 					},
 					return: {
-						loation: 'Crss/{name}'
+						loation: 'crss/{name}'
 					}
 				}
 			},
-			'Crss/{name}': {
+			'crss/{name}': {
 				put: {
 					desc: 'Update Crs information. AU must be owner of course or admin.',
 					params: {
@@ -455,14 +455,14 @@
 					desc: 'Delete course and all associated Enrollments. AU must be owner or admin.'
 				}
 			},
-			'Crss/{name}/Enrs': {
+			'crss/{name}/Enrs': {
 				post: {
 					desc: 'Add Enrollment to the course. Error if already enrolled. AU must be enrolled person, course owner, or admin.',
 					params: {
 						prsId: 'Person to enroll'
 					},
 					return: {
-						location: 'Crss/{name}/Enrs/{enrId}'
+						location: 'crss/{name}/Enrs/{enrId}'
 					}
 				},
 				get: {
@@ -482,7 +482,7 @@
 					}
 				}
 			},
-			'Crss/{name}/Enrs/{enrId}': {
+			'crss/{name}/Enrs/{enrId}': {
 				get: {
 					desc: 'Get Enrollment information. AU must be course owner, person enrolled, or admin',
 					return: {

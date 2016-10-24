@@ -5,7 +5,7 @@ app.controller('registerController', ['$scope', '$state', '$rootScope', 'api', f
    scope.errors = [];
 
    scope.register = function() {
-      API.Prss.post(scope.user)
+      API.prss.post(scope.user)
       .then(function(response) {
          $state.go('login');
       })

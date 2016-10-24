@@ -35,19 +35,19 @@ app.use(function(req, res, next) {
 
    console.log(req.method, req.path);
 
-  //  if (req.session || (req.method === 'POST' &&
-  //   (req.path === '/Prss' || req.path === '/Ssns')))
+   if (req.session || (req.method === 'POST' &&
+    (req.path === '/prss' || req.path === '/ssns')))
       next();
-  //  else
-      // res.status(401).json([{tag: Validator.Tags.noLogin}]);
+   else
+      res.status(401).json([{tag: Validator.Tags.noLogin}]);
 
 });
 
-app.use('/Crss', require('./Routes/Course/courses'));
-app.use('/Prss', require('./Routes/Account/users'));
-app.use('/Ssns', require('./Routes/Account/sessions'));
-app.use('/Chls', require('./Routes/Challenge/challenges'));
-app.use('/Atts', require('./Routes/Challenge/attempts'));
+app.use('/crss', require('./Routes/Course/courses'));
+app.use('/prss', require('./Routes/Account/users'));
+app.use('/ssns', require('./Routes/Account/sessions'));
+app.use('/chls', require('./Routes/Challenge/challenges'));
+app.use('/atts', require('./Routes/Challenge/attempts'));
 
 // Redirect the user to Facebook for authentication.  When complete,
 // Facebook will redirect the user back to the application at

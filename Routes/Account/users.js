@@ -31,38 +31,40 @@ router.get('/', function(req, res) {
 });
 
 router.post('/', function(req, res) {
-   var vld = req._validator;  // Shorthands
+   var vld = req.validator;  // Shorthands
    var body = req.body;
    var admin = req.session && req.session.isAdmin();
 
    if (admin && !body.password)
       body.password = "*";                       // Blocking password
-   body.whenRegistered = new Date();
 
-   // This chain seems like it will always return the last test, not false if any fail
-   // This can be seen by an attempt to post an admin with no AU
-   if (vld.hasFields(body, ["email", "name", "role", "password"])
-    && vld.chain(body.role == 0 || admin, Tags.noPermission)
-    .check(body.role >= 0 && body.role < 3, Tags.badValue, ["role"])) {
-      connections.getConnection(res,
-      function(cnn) {
-         cnn.query('SELECT * from Person where email = ?', body.email,
-         function(err, result) {
-            if (req._validator.check(!result.length, Tags.dupEmail)) {
-               body.termsAccepted = new Date();
-               cnn.query('INSERT INTO Person SET ?', body,
-               function(err, result) {
-                  if (err)
-                     res.status(500).json(err);
-                  else
-                     res.location(router.baseURL + '/' + result.insertId).end();
-                  cnn.release();
-               });
-            } else
-               cnn.release();
-         });
-      });
-   }
+   return vld.hasFields(body, ["email", "name", "role", "password"])
+     .then(function() {
+       return vld.check(body.role == 0 || admin, Tags.noPermission);
+     })
+     .then(function() {
+       return vld.check(body.role >= 0 && body.role < 3, Tags.badValue, ["role"]);
+     })
+     .then(function() {
+       return connections.getConnectionP();
+     })
+     .then(function(conn) {
+
+       return conn.query('SELECT * FROM Person WHERE email = ?', [body.email])
+        .then(function(collidingEmailPerson) {
+          return vld.check(collidingEmailPerson.length == 0, Tags.dupEmail);
+        })
+        .then(function() {
+          return conn.query('INSERT INTO Person SET ?', body);
+        })
+        .then(function(result) {
+          res.location(router.baseURL + '/' + result.insertId).end();
+        })
+        .finally(function() {
+          conn.release();
+        })
+     })
+     .catch(doErrorResponse(res));
 });
 
 router.get('/:id', function(req, res) {
@@ -71,7 +73,7 @@ router.get('/:id', function(req, res) {
    if (vld.checkPrsOK(req.params.id)) {
       connections.getConnection(res,
       function(cnn) {
-         cnn.query('select id, email, firstName, lastName, whenRegistered, role, termsAccepted from Person where id = ?', [req.params.id],
+         cnn.query('select id, email, name, whenRegistered, role from Person where id = ?', [req.params.id],
          function(err, prsArr) {
             if (vld.check(prsArr.length, Tags.notFound))
                res.json(prsArr);
@@ -119,42 +121,6 @@ router.put('/:id', function(req, res) {
     .catch(doErrorResponse(res));
 });
 
-router.putid_OLD_WAY = function(req, res) {
-   var vld = req._validator;
-   var body = req.body;
-   var admin = req.session && req.session.isAdmin();
-
-   if (vld.checkPrsOK(req.params.id)
-    && vld.check(body.role === undefined || admin, Tags.noPermission)
-    && vld.check(body.password === undefined || body.oldPassword || admin, Tags.noOldPwd)) {
-      connections.getConnection(res,
-      function(cnn) {
-         cnn.query('SELECT * FROM Person WHERE id = ?', [req.params.id, body.oldPassword],
-         function(err, prsArr) {
-            if (err) {
-               res.status(500).end();
-               cnn.release();
-            }
-            else if (vld.check(prsArr[0].password === body.oldPassword || admin, Tags.oldPwdMismatch)) {
-               delete body.oldPassword;
-               cnn.query('Update Person SET ? WHERE id = ?', [body, req.params.id],
-               function(err, prsArr) {
-                  if (err) {
-                     res.status(500).end();
-                  }
-                  else if (vld.check(prsArr.affectedRows, Tags.notFound))
-                     res.status(200).end();
-
-                  cnn.release();
-               });
-            }
-            else
-               cnn.release();
-         });
-      });
-   }
-};
-
 router.delete('/:id', function(req, res) {
    var vld = req._validator;
 
@@ -169,10 +135,11 @@ router.delete('/:id', function(req, res) {
       });
 });
 
-router.get('/:id/Crss', function(req, res) {
+// If teacher, returns list of courses OWNED by teacher.
+router.get('/:id/crss', function(req, res) {
    var query, qryParams;
 
-   if (req._validator.checkPrsOK(req.params.id))
+   if (req._validator.checkAdminOrTeacher(req.params.id)) {
       query = 'SELECT * from Course where ownerId = ?';
       params = [req.params.id];
 
@@ -185,9 +152,10 @@ router.get('/:id/Crss', function(req, res) {
             cnn.release();
          });
       });
+    }
 });
 
-router.get('/:id/Atts', function(req, res) {
+router.get('/:id/atts', function(req, res) {
    var query, qryParams;
 
    if (req._validator.checkPrsOK(req.params.id))
@@ -209,7 +177,7 @@ router.get('/:id/Atts', function(req, res) {
       });
 });
 
-router.post('/:id/Atts', function(req, res) {
+router.post('/:id/atts', function(req, res) {
    var vld = req.validator;
    var owner = req.params.id;
 
@@ -234,7 +202,7 @@ router.post('/:id/Atts', function(req, res) {
                                     [owner, chlName]);
                })
                .then(function(result) {
-                  return vld.check(result.length < chl.attsAllowed, Tags.excessAtts);
+                  return vld.check(result.length < chl.attsAllowed, Tags.excessatts);
                })
                .then(function() {
                   req.body.ownerId = owner;
@@ -272,7 +240,7 @@ router.post('/:id/Atts', function(req, res) {
                   return conn.query('INSERT INTO Attempt SET ?', req.body);
                })
                .then(function(result) {
-                  res.location(router.baseURL + '/' + owner + '/Atts/'
+                  res.location(router.baseURL + '/' + owner + '/atts/'
                      + result.insertId).end();
                })
                .catch(doErrorResponse(res))

@@ -11,12 +11,12 @@ app.controller('studentController', ['$scope', '$state', 'api', 'confirm', 'logi
    }
 
    scope.startChallenge = function(challengeName) {
-      API.Prss.Atts.post(scope.loggedUser.id, challengeName)
-         .then(scope.refreshAtts);
+      API.prss.atts.post(scope.loggedUser.id, challengeName)
+         .then(scope.refreshatts);
    };
 
-   scope.refreshAtts = function() {
-      return API.Prss.Atts.get(scope.loggedUser.id)
+   scope.refreshatts = function() {
+      return API.prss.atts.get(scope.loggedUser.id)
          .then(function(response) {
             scope.grouped = {};
 
@@ -58,7 +58,7 @@ app.controller('studentController', ['$scope', '$state', 'api', 'confirm', 'logi
       return styles[2 - att.score] || "";
    };
 
-   API.Prss.Chls.get(scope.loggedUser.id).then(function(response) {
+   API.prss.chls.get(scope.loggedUser.id).then(function(response) {
       scope.challenges = response.data;
 
       scope.challenges.forEach(function(challenge) {
@@ -66,5 +66,5 @@ app.controller('studentController', ['$scope', '$state', 'api', 'confirm', 'logi
       })
    });
 
-   scope.refreshAtts();
+   scope.refreshatts();
 }])

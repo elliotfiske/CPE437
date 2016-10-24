@@ -12,13 +12,13 @@ app.controller('chlController',
       $state.go('home');
    }
 
-   API.Chls.get(challengeName)
+   API.chls.get(challengeName)
       .then(function(response) {
          scope.challenge = response.data;
       });
 
    scope.createAttempt = function() {
-      API.Prss.Atts.post(scope.loggedUser.id, scope.attempt)
+      API.prss.atts.post(scope.loggedUser.id, scope.attempt)
          .then(function() {
             $state.go('student');
          });

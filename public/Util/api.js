@@ -46,17 +46,17 @@ angular.module('mainApp')
    }
 
    return {
-      Prss: {
-         get: typicalGet('Prss'),
+      prss: {
+         get: typicalGet('prss'),
          find: function(email) {
-            return get('Prss?email=' + email);
+            return get('prss?email=' + email);
          },
-         post: typicalPost('Prss'),
-         put: typicalPut('Prss'),
-         delete: typicalDelete('Prss'),
-         Atts: {
+         post: typicalPost('prss'),
+         put: typicalPut('prss'),
+         delete: typicalDelete('prss'),
+         atts: {
             get: function(prsId, challengeName) {
-               return get('Prss/' + prsId + '/Atts' + (challengeName ? '?challengeName=' + challengeName : ''))
+               return get('prss/' + prsId + '/atts' + (challengeName ? '?challengeName=' + challengeName : ''))
                   .then(function(response) {
                      response.data = response.data.map(function(att) {
                         att.startTime = new Date(att.startTime);
@@ -66,63 +66,64 @@ angular.module('mainApp')
                   })
             },
             post: function(prsId, attempt) {
-               return post('Prss/' + prsId + '/Atts', attempt);
+               return post('prss/' + prsId + '/atts', attempt);
             }
          },
-         Crss: {
+         crss: {
             get: function(prsId) {
-               return get('Prss/' + prsId + '/Crss');
+               return get('prss/' + prsId + '/crss');
             }
          },
-         Chls: {
+         chls: {
             get: function(prsId) {
-               return get('Chls?prsId=' + prsId);
+               return get('chls?prsId=' + prsId);
             }
          }
       },
       Ssns: {
-         get: typicalGet('Ssns'),
-         post: typicalPost('Ssns'),
-         delete: typicalDelete('Ssns')
+         get: typicalGet('ssns'),
+         post: typicalPost('ssns'),
+         delete: typicalDelete('ssns')
       },
-      Chls: {
-         post: typicalPost('Chls'),
+      chls: {
+         post: typicalPost('chls'),
       },
-      Crss: {
-         post: typicalPost('Crss'),
-         put: typicalPut('Crss'),
-         delete: typicalDelete('Crss'),
+      crss: {
+         get: typicalGet('crss'),
+         post: typicalPost('crss'),
+         put: typicalPut('crss'),
+         delete: typicalDelete('crss'),
          Enrs: {
             get: function(courseName, enrId) {
                enrId = enrId || '';
-               return get('Crss/' + courseName + '/Enrs/' + enrId + '?full=true');
+               return get('crss/' + courseName + '/enrs/' + enrId + '?full=true');
             },
             delete: function(courseName, enrId) {
-               return del('Crss/' + courseName + '/Enrs/' + enrId);
+               return del('crss/' + courseName + '/enrs/' + enrId);
             },
             post: function(courseName, prsId) {
-               return post('Crss/' + courseName + '/Enrs', { prsId: prsId });
+               return post('crss/' + courseName + '/enrs', { prsId: prsId });
             }
          },
          Itms: {
             get: function(courseName, itemId) {
                itemId = itemId || '';
-               return get('Crss/' + courseName + '/Itms/' + itemId);
+               return get('crss/' + courseName + '/itms/' + itemId);
             },
             post: function(courseName, body) {
-               return post('Crss/' + courseName + '/Itms', body);
+               return post('crss/' + courseName + '/itms', body);
             },
             put: function(courseName, itemId, body) {
-               return put('Crss/' + courseName + '/Itms/' + itemId, body);
+               return put('crss/' + courseName + '/itms/' + itemId, body);
             },
             delete: function(courseName, itemId) {
-               return del('Crss/' + courseName + '/Itms/' + itemId);
+               return del('crss/' + courseName + '/itms/' + itemId);
             }
          },
-         Chls: {
+         chls: {
             get: function(courseName, challengeName) {
                challengeName = challengeName || '';
-               return get('Crss/' + courseName + '/Chls/' + challengeName).
+               return get('crss/' + courseName + '/chls/' + challengeName).
                   then(function(response) {
                      response.data = response.data.map(function(chl) {
                         chl.openTime = new Date(chl.openTime);

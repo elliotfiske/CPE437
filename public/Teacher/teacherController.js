@@ -9,22 +9,22 @@ app.controller('teacherController',
       $state.go('home');
    }
 
-   scope.refreshCrss = function() {
-      return API.Prss.Crss.get(scope.loggedUser.id)
+   scope.refreshcrss = function() {
+      return API.prss.crss.get(scope.loggedUser.id)
          .then(function(response) {
             scope.courses = response.data;
          });
    };
 
-   scope.refreshCrss();
+   scope.refreshcrss();
 
    scope.createCourse = function() {
       if (!scope.courseName)
          return;
 
       console.log("Making new course named " + scope.courseName);
-      API.Crss.post({ name: scope.courseName })
-         .then(scope.refreshCrss)
+      API.crss.post({ name: scope.courseName })
+         .then(scope.refreshcrss)
          .catch(function(err) {
             if (err.data[0].tag === 'dupName') {
                scope.errors = ['Course name ' + scope.courseName + ' is taken'];
@@ -36,9 +36,9 @@ app.controller('teacherController',
 
    scope.deleteCourse = function(courseName) {
       confirm(function() {
-         API.Crss.delete(courseName)
+         API.crss.delete(courseName)
             .then(function(res) {
-               return scope.refreshCrss();
+               return scope.refreshcrss();
             });
       });
    };

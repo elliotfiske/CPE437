@@ -25,7 +25,7 @@
                </span>
             </li>
             <li class="list-group-item" ng-show="isOpen(challengeName)">
-               <a href="#Chls/{{ challengeName }}" class="btn btn-success btn-small" type="button">Try again</a>
+               <a href="#chls/{{ challengeName }}" class="btn btn-success btn-small" type="button">Try again</a>
             </li>
          </ul>
       </div>
@@ -36,7 +36,7 @@
 
       <div class="panel panel-default" ng-repeat="challenge in challenges | filter:notInProgress">
          <div class="panel-heading">
-            <a href="#Chls/{{ challenge.name }}" class="btn btn-success pull-right" type="button">Go!</a>
+            <a href="#chls/{{ challenge.name }}" class="btn btn-success pull-right" type="button">Go!</a>
             <h3 class="panel-title">{{ challenge.name }}</h3>
             <div class="clearfix"></div>
          </div>

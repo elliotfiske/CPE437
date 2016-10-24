@@ -70,7 +70,7 @@
 		{
 			"id": "057bf55f-3fdb-7fe8-d397-98c97faa8d52",
 			"headers": "",
-			"url": "{{url}}/Atts/{{Attempt}}",
+			"url": "{{url}}/atts/{{Attempt}}",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "PUT",
@@ -109,7 +109,7 @@
 		{
 			"id": "10e537ab-d634-51b2-00e4-02b8c6a750ad",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss",
+			"url": "{{url}}/prss",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -129,7 +129,7 @@
 		{
 			"id": "1739d45a-bd70-0842-6c04-69f4d6117234",
 			"headers": "",
-			"url": "{{url}}/Prss/2/Atts",
+			"url": "{{url}}/prss/2/atts",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -148,7 +148,7 @@
 		{
 			"id": "1c83522b-773e-1ba7-fe40-f972838aaa3a",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Atts/{{Attempt}}/Stps",
+			"url": "{{url}}/atts/{{Attempt}}/Stps",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -169,7 +169,7 @@
 		{
 			"id": "1e067593-5a9a-8a71-df0a-8479bdd1e07d",
 			"headers": "",
-			"url": "{{url}}/Prss/2",
+			"url": "{{url}}/prss/2",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -229,7 +229,7 @@
 		{
 			"id": "3efafa01-1d75-d9e6-5bf0-05a297751e2d",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss/2",
+			"url": "{{url}}/prss/2",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "PUT",
@@ -249,7 +249,7 @@
 		{
 			"id": "42af7bbb-0bce-d058-6f7e-36eb3999d06c",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss/2",
+			"url": "{{url}}/prss/2",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -290,7 +290,7 @@
 		{
 			"id": "5142ee37-c13a-40c0-c470-d3043562d7bf",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss",
+			"url": "{{url}}/prss",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -310,7 +310,7 @@
 		{
 			"id": "7622dda6-7723-f110-a2fe-6d1a5a7fb943",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss",
+			"url": "{{url}}/prss",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -372,7 +372,7 @@
 		{
 			"id": "9030e69e-3bd2-47db-977f-ac649f21e6f0",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss",
+			"url": "{{url}}/prss",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -392,7 +392,7 @@
 		{
 			"id": "993fabd8-f1d4-aea2-4f0a-2e3ac5e6bf2f",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Atts/{{Attempt}}/Stps/{{Step}}",
+			"url": "{{url}}/atts/{{Attempt}}/Stps/{{Step}}",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -413,7 +413,7 @@
 		{
 			"id": "baa5fd05-5a3a-f455-d3e3-3e06cc880bbc",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss/2/Atts",
+			"url": "{{url}}/prss/2/atts",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -433,7 +433,7 @@
 		{
 			"id": "c567d315-11d0-0978-aa55-f593edc5d3b0",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Chls",
+			"url": "{{url}}/chls",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -453,7 +453,7 @@
 		{
 			"id": "ce10aedf-b625-bdc6-d0cf-1ce569d21853",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss/2/Atts",
+			"url": "{{url}}/prss/2/atts",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",

@@ -42,7 +42,7 @@
 		},
 		{
 			"id": "1a0bb1a1-4ecf-b35b-e608-d653ea72c2e2",
-			"name": "3 Specific Prss",
+			"name": "3 Specific prss",
 			"description": "",
 			"order": [
 				"cb9c7d0e-9b17-99b5-2628-91f344332b5e",
@@ -181,7 +181,7 @@
 		{
 			"id": "014c5cc4-0251-b77a-f85e-71496255a279",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Chls",
+			"url": "{{url}}/chls",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -200,7 +200,7 @@
 		{
 			"id": "03b36e06-845b-a556-7548-d84e01d3b80a",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss/{{prsA}}/Atts",
+			"url": "{{url}}/prss/{{prsA}}/atts",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -240,7 +240,7 @@
 		{
 			"id": "0b738c97-ee2f-3ff1-af10-272e4f42fe49",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss",
+			"url": "{{url}}/prss",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -259,7 +259,7 @@
 		{
 			"id": "1294ecf5-078a-6ace-b06b-69f6947e9cc7",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Chls",
+			"url": "{{url}}/chls",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -278,7 +278,7 @@
 		{
 			"id": "14c34273-223f-9487-86c6-19eac1950b87",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss/{{prsA}}/Atts",
+			"url": "{{url}}/prss/{{prsA}}/atts",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -298,7 +298,7 @@
 		{
 			"id": "15c6c049-381d-1a30-c29b-9f5d7eb65589",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Chls/MMindFalse",
+			"url": "{{url}}/chls/MMindFalse",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -317,7 +317,7 @@
 		{
 			"id": "17d0c7c0-f849-2a43-02d8-ec452fb6b3fd",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss/{{prsA}}",
+			"url": "{{url}}/prss/{{prsA}}",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "PUT",
@@ -336,7 +336,7 @@
 		{
 			"id": "18452d0a-8258-533e-7bbf-27a1ca6c9f05",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss/{{prsA}}",
+			"url": "{{url}}/prss/{{prsA}}",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "PUT",
@@ -355,7 +355,7 @@
 		{
 			"id": "18e956c3-2464-c485-1943-70eeb6d9e6ff",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss",
+			"url": "{{url}}/prss",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -375,7 +375,7 @@
 		{
 			"id": "19b18e6f-e163-56d6-2c10-5b5e8f9a5c92",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss/{{prsB}}",
+			"url": "{{url}}/prss/{{prsB}}",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "PUT",
@@ -436,7 +436,7 @@
 		{
 			"id": "2e0d8d1e-ba23-d572-5a60-5244718507b9",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Chls",
+			"url": "{{url}}/chls",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -476,7 +476,7 @@
 		{
 			"id": "33b54428-88cc-88da-ecd4-483444a1dcc4",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss",
+			"url": "{{url}}/prss",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -495,7 +495,7 @@
 		{
 			"id": "35fdb412-f6d2-7830-da0b-0c6f67dba025",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss/{{prsA}}/Atts",
+			"url": "{{url}}/prss/{{prsA}}/atts",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -556,7 +556,7 @@
 		{
 			"id": "3e0bfd99-3ede-f7ff-62ce-55b7589767a1",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Chls",
+			"url": "{{url}}/chls",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -575,7 +575,7 @@
 		{
 			"id": "3ec497fd-39b1-89e3-7fb4-64f5145ee439",
 			"headers": "",
-			"url": "{{url}}/Atts/{{Attempt}}",
+			"url": "{{url}}/atts/{{Attempt}}",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "PUT",
@@ -615,7 +615,7 @@
 		{
 			"id": "469e4995-fe37-b79a-acea-35ee55a43073",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss/{{prsA}}",
+			"url": "{{url}}/prss/{{prsA}}",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -634,7 +634,7 @@
 		{
 			"id": "46ad1ff7-0a68-53e2-8fb1-6c077c2eac84",
 			"headers": "",
-			"url": "{{url}}/Prss/2/Atts",
+			"url": "{{url}}/prss/2/atts",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -652,7 +652,7 @@
 		{
 			"id": "47b6b126-2274-3d23-0672-c29a2a701abd",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Chls",
+			"url": "{{url}}/chls",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -693,7 +693,7 @@
 		{
 			"id": "4f8f16e5-8795-a376-3d6b-3004b680ed73",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss/{{prsA}}",
+			"url": "{{url}}/prss/{{prsA}}",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "PUT",
@@ -731,7 +731,7 @@
 		{
 			"id": "57ccb7e5-0f6e-4946-7aa6-7d7a794eaf16",
 			"headers": "",
-			"url": "{{url}}/Prss/{{prsA}}/Atts",
+			"url": "{{url}}/prss/{{prsA}}/atts",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -750,7 +750,7 @@
 		{
 			"id": "57d2a71b-d8a0-c7bb-de0a-abf83d22673c",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss",
+			"url": "{{url}}/prss",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -769,7 +769,7 @@
 		{
 			"id": "5878a0de-a328-06b4-a59c-4104da8ecbea",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss/{{prsA}}",
+			"url": "{{url}}/prss/{{prsA}}",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "PUT",
@@ -788,7 +788,7 @@
 		{
 			"id": "5ddc6bad-e966-2ad6-5be2-459869affeac",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Chls",
+			"url": "{{url}}/chls",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -826,7 +826,7 @@
 		{
 			"id": "6403ae28-33fa-bfb2-4999-e2c7d3a7b2bd",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss/{{prsA}}",
+			"url": "{{url}}/prss/{{prsA}}",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "PUT",
@@ -845,7 +845,7 @@
 		{
 			"id": "64129c9f-839d-1e68-5c0e-c858b242cffe",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss",
+			"url": "{{url}}/prss",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -885,7 +885,7 @@
 		{
 			"id": "69aae4c3-7b3b-3924-f162-7cf29e77a26c",
 			"headers": "",
-			"url": "{{url}}/Prss/{{prsA}}/Atts",
+			"url": "{{url}}/prss/{{prsA}}/atts",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -903,7 +903,7 @@
 		{
 			"id": "6b386645-fb82-8990-1d7c-c2c6fee7102b",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss/{{prsA}}",
+			"url": "{{url}}/prss/{{prsA}}",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -943,7 +943,7 @@
 		{
 			"id": "726f1d79-2968-e02f-86bb-644c912014c9",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Atts/{{Attempt}}/Stps",
+			"url": "{{url}}/atts/{{Attempt}}/Stps",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -985,7 +985,7 @@
 		{
 			"id": "7381bebf-1d77-ba8c-77df-a0b4316a6784",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Atts/{{Attempt}}",
+			"url": "{{url}}/atts/{{Attempt}}",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -1005,7 +1005,7 @@
 		{
 			"id": "76cf39ef-8e99-4f97-46f0-a6cb1924db9f",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss/{{prsB}}/Atts",
+			"url": "{{url}}/prss/{{prsB}}/atts",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -1024,7 +1024,7 @@
 		{
 			"id": "87a972c8-6820-3df4-f82f-8fc26152a11d",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss/{{prsA}}/Atts",
+			"url": "{{url}}/prss/{{prsA}}/atts",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -1043,7 +1043,7 @@
 		{
 			"id": "89e50557-5537-efe3-0c7a-42b661d610af",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss/2/Atts",
+			"url": "{{url}}/prss/2/atts",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -1064,7 +1064,7 @@
 		{
 			"id": "8c7d0498-a430-f60b-00ce-8d47409dbff6",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss",
+			"url": "{{url}}/prss",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -1103,7 +1103,7 @@
 		{
 			"id": "8f89ee17-e936-b7c9-8907-7e137705bd45",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss/{{prsA}}/Atts",
+			"url": "{{url}}/prss/{{prsA}}/atts",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -1122,7 +1122,7 @@
 		{
 			"id": "8fcdfc97-589b-e1ac-cecc-7e6736e8a9f2",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss/{{prsA}}/Atts?challengeName=CHSEdgeCases",
+			"url": "{{url}}/prss/{{prsA}}/atts?challengeName=CHSEdgeCases",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -1181,7 +1181,7 @@
 		{
 			"id": "958c3832-2dc0-8219-f84a-ca10d07d4218",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss/2/Atts",
+			"url": "{{url}}/prss/2/atts",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -1202,7 +1202,7 @@
 		{
 			"id": "99195c15-3da0-5a46-5651-a4cc226e508f",
 			"headers": "",
-			"url": "{{url}}/Prss/{{prsA}}",
+			"url": "{{url}}/prss/{{prsA}}",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "DELETE",
@@ -1242,7 +1242,7 @@
 		{
 			"id": "a5b8d646-8d78-9722-4a07-457def861737",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss",
+			"url": "{{url}}/prss",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -1345,7 +1345,7 @@
 		{
 			"id": "af055635-6cad-a9f8-5c8a-ad7acfcfe851",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss",
+			"url": "{{url}}/prss",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -1384,7 +1384,7 @@
 		{
 			"id": "b182a372-0aa0-f00a-a9a5-ed7702c6f38f",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss",
+			"url": "{{url}}/prss",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -1403,7 +1403,7 @@
 		{
 			"id": "b19b63cd-a180-9b5e-d39c-3992bc8aeaa9",
 			"headers": "",
-			"url": "{{url}}/Atts/{{Attempt}}",
+			"url": "{{url}}/atts/{{Attempt}}",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "PUT",
@@ -1441,7 +1441,7 @@
 		{
 			"id": "b9e6606e-324e-4535-86ea-09c5beb6e803",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss/{{prsB}}/Atts",
+			"url": "{{url}}/prss/{{prsB}}/atts",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -1461,7 +1461,7 @@
 		{
 			"id": "bdc7b8ea-f599-307d-0b52-e40543ceed6a",
 			"headers": "",
-			"url": "{{url}}/Atts/{{Attempt}}",
+			"url": "{{url}}/atts/{{Attempt}}",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "PUT",
@@ -1480,7 +1480,7 @@
 		{
 			"id": "c08d2592-959a-709f-c7ec-e23e6e149132",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss/{{prsB}}",
+			"url": "{{url}}/prss/{{prsB}}",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -1540,7 +1540,7 @@
 		{
 			"id": "c84f4104-d40d-6137-9d12-8bc7e7517688",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Chls/MMindF41",
+			"url": "{{url}}/chls/MMindF41",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -1559,7 +1559,7 @@
 		{
 			"id": "c8892b3a-1a85-9656-aefb-4562cc0ed024",
 			"headers": "",
-			"url": "{{url}}/Prss/{{prsA}}",
+			"url": "{{url}}/prss/{{prsA}}",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -1578,7 +1578,7 @@
 		{
 			"id": "cb9c7d0e-9b17-99b5-2628-91f344332b5e",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss/2",
+			"url": "{{url}}/prss/2",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -1598,7 +1598,7 @@
 		{
 			"id": "cd0a2d0e-b852-a7ae-8553-2ea1248bb3e5",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Chls",
+			"url": "{{url}}/chls",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -1617,7 +1617,7 @@
 		{
 			"id": "cd34da85-7e86-cba3-7537-a6ad53c91059",
 			"headers": "",
-			"url": "{{url}}/Prss/{{prsD}}",
+			"url": "{{url}}/prss/{{prsD}}",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "DELETE",
@@ -1637,7 +1637,7 @@
 		{
 			"id": "ce1fb51c-8960-0c70-9d6d-65066506e251",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss",
+			"url": "{{url}}/prss",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -1656,7 +1656,7 @@
 		{
 			"id": "d0c88e02-1402-6f7c-9968-33f6349d44ad",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Chls",
+			"url": "{{url}}/chls",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -1779,7 +1779,7 @@
 		{
 			"id": "df47f294-b014-76e8-ba49-824bb305dd3c",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Chls",
+			"url": "{{url}}/chls",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -1798,7 +1798,7 @@
 		{
 			"id": "e0193611-95ce-d4f9-da07-c9d07d85efa2",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss",
+			"url": "{{url}}/prss",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -1817,7 +1817,7 @@
 		{
 			"id": "e0b653fe-bca7-57cb-9565-6eda1228e694",
 			"headers": "",
-			"url": "{{url}}/Atts/{{Attempt}}",
+			"url": "{{url}}/atts/{{Attempt}}",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "PUT",
@@ -1835,7 +1835,7 @@
 		{
 			"id": "e49df6d1-1286-d556-c8a6-f8c8786bfed3",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Atts/{{Attempt}}/Stps/{{Step}}",
+			"url": "{{url}}/atts/{{Attempt}}/Stps/{{Step}}",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -1856,7 +1856,7 @@
 		{
 			"id": "e821f3c7-426a-3e6e-bd5e-c996f6bf786a",
 			"headers": "",
-			"url": "{{url}}/Atts/{{Attempt}}",
+			"url": "{{url}}/atts/{{Attempt}}",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "PUT",
@@ -1875,7 +1875,7 @@
 		{
 			"id": "ea961882-aee0-a0f9-70a4-af574492858c",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss",
+			"url": "{{url}}/prss",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -1894,7 +1894,7 @@
 		{
 			"id": "ec09609e-1956-665e-fdbb-94b62ea024eb",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss",
+			"url": "{{url}}/prss",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -1913,7 +1913,7 @@
 		{
 			"id": "ec43cb19-7622-9e4d-e34a-942777c51d67",
 			"headers": "",
-			"url": "{{url}}/Prss/{{prsA}}/Atts",
+			"url": "{{url}}/prss/{{prsA}}/atts",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -1931,7 +1931,7 @@
 		{
 			"id": "efce1c02-33c9-ed7d-1759-1d69cf6d589a",
 			"headers": "",
-			"url": "{{url}}/Atts/{{AttemptB}}",
+			"url": "{{url}}/atts/{{AttemptB}}",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "PUT",
@@ -1949,7 +1949,7 @@
 		{
 			"id": "f5df3261-5c60-5a8c-7e6e-a2f9dca64483",
 			"headers": "",
-			"url": "{{url}}/Atts/{{AttemptB}}",
+			"url": "{{url}}/atts/{{AttemptB}}",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "PUT",
@@ -1967,7 +1967,7 @@
 		{
 			"id": "f5e6647b-5f53-3ae6-3615-e6e15486f940",
 			"headers": "",
-			"url": "{{url}}/Atts/{{Attempt}}",
+			"url": "{{url}}/atts/{{Attempt}}",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "PUT",
@@ -1986,7 +1986,7 @@
 		{
 			"id": "f7684c44-299a-7f8c-3efb-2ccedaaa0020",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss",
+			"url": "{{url}}/prss",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -2005,13 +2005,13 @@
 		{
 			"id": "f7a115b5-3228-1db2-15bf-9078426496da",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{url}}/Prss/{{prsA}}/Atts",
+			"url": "{{url}}/prss/{{prsA}}/atts",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
 			"data": [],
 			"dataMode": "raw",
-			"tests": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\ntests[\"Body matches string\"] = responseBody.has(\"excessAtts\");",
+			"tests": "tests[\"Status code is 400\"] = responseCode.code === 400;\n\ntests[\"Body matches string\"] = responseBody.has(\"excessatts\");",
 			"currentHelper": "normal",
 			"helperAttributes": {},
 			"time": 1467872726914,

@@ -22,17 +22,17 @@ app.config(['$stateProvider', '$urlRouterProvider',
          controller: 'loginController',
       })
       .state('crss', {
-         url: '/Prss/{prsId}/Crss',
+         url: '/prss/{prsId}/crss',
          templateUrl: 'Courses/crss.template.html',
          controller: 'crssController'
       })
       .state('crs', {
-         url: '/Crss/{courseName}',
+         url: '/crss/{courseName}',
          templateUrl: 'Courses/crs.template.html',
          controller: 'crsController'
       })
       .state('chl', {
-         url: '/Chls/{challengeName}',
+         url: '/chls/{challengeName}',
          templateUrl: 'Challenges/chl.template.html',
          controller: 'chlController'
       })
