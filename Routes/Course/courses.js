@@ -131,7 +131,7 @@ router.delete('/:name', function(req, res) {
    }
 });
 
-router.post('/:name/Enrs', function(req, res) {
+router.post('/:name/enrs', function(req, res) {
    var vld = req._validator;
    var prs = req.session;
 
@@ -146,7 +146,7 @@ router.post('/:name/Enrs', function(req, res) {
                }
             }
             else {
-               res.location(router.baseURL + '/' + req.params.name + '/Enrs/'
+               res.location(router.baseURL + '/' + req.params.name + '/enrs/'
                 + result.insertId).end();
             }
 
@@ -175,7 +175,7 @@ router.post('/:name/Enrs', function(req, res) {
    });
 });
 
-router.get('/:name/Enrs', function(req, res) {
+router.get('/:name/enrs', function(req, res) {
    var vld = req._validator;
    var prs = req.session;
 
@@ -213,7 +213,7 @@ router.get('/:name/Enrs', function(req, res) {
    }
 });
 
-router.get('/:name/Enrs/:enrId', function(req, res) {
+router.get('/:name/enrs/:enrId', function(req, res) {
    var vld = req._validator;
    var prs = req.session;
 
@@ -250,7 +250,7 @@ router.get('/:name/Enrs/:enrId', function(req, res) {
    });
 });
 
-router.put('/:name/Enrs/:enrId', function(req, res) {
+router.put('/:name/enrs/:enrId', function(req, res) {
    var vld = req._validator;
    var admin = req.session && req.session.isAdmin();
    var owner = false;
@@ -292,7 +292,7 @@ router.put('/:name/Enrs/:enrId', function(req, res) {
    });
 });
 
-router.delete('/:name/Enrs/:enrId', function(req, res) {
+router.delete('/:name/enrs/:enrId', function(req, res) {
    var vld = req._validator;
    var prs = req.session;
 
@@ -341,7 +341,7 @@ router.get('/:name/chls', function(req, res) {
 
 });
 
-router.get('/:crsName/Itms', function(req, res) {
+router.get('/:crsName/itms', function(req, res) {
    var vld = req.validator;
    var admin = req.session && req.session.isAdmin();
    var enrolled = false;
@@ -379,7 +379,7 @@ router.get('/:crsName/Itms', function(req, res) {
    });
 });
 
-router.post('/:crsName/Itms', function(req, res) {
+router.post('/:crsName/itms', function(req, res) {
    var vld = req._validator;
 
    if (vld.hasFields(req.body, ["name", "cost"])) {
@@ -393,7 +393,7 @@ router.post('/:crsName/Itms', function(req, res) {
                   if (err)
                      res.status(400).json(err);
                   else {
-                     res.location(router.baseURL + '/' + req.params.crsName + '/Itms/' + result.insertId).status(200).end();
+                     res.location(router.baseURL + '/' + req.params.crsName + '/itms/' + result.insertId).status(200).end();
                   }
                });
             }
@@ -405,7 +405,7 @@ router.post('/:crsName/Itms', function(req, res) {
    }
 });
 
-router.put('/:crsName/Itms/:itmId', function(req, res) {
+router.put('/:crsName/itms/:itmId', function(req, res) {
    var vld = req._validator;
    var admin = req.session && req.session.isAdmin();
    var owner = false;
@@ -460,7 +460,7 @@ router.put('/:crsName/Itms/:itmId', function(req, res) {
    });
 });
 
-router.delete('/:crsName/Itms/:itmId', function(req, res) {
+router.delete('/:crsName/itms/:itmId', function(req, res) {
    var vld = req.validator;
    var admin = req.session && req.session.isAdmin();
 

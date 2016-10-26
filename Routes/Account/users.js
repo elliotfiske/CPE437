@@ -139,7 +139,7 @@ router.delete('/:id', function(req, res) {
 router.get('/:id/crss', function(req, res) {
    var query, qryParams;
 
-   if (req._validator.checkAdminOrTeacher(req.params.id)) {
+   if (req._validator.checkAdminOrTeacher()) {
       query = 'SELECT * from Course where ownerId = ?';
       params = [req.params.id];
 
@@ -153,6 +153,25 @@ router.get('/:id/crss', function(req, res) {
          });
       });
     }
+});
+
+router.get('/:id/enrs', function(req, res) {
+  var vld = req.validator;
+
+  vld.checkPrsOK(req.params.id)
+  .then(function() {
+    return connections.getConnectionP();
+  })
+  .then(function(conn) {
+    return conn.query("SELECT * FROM Enrollment WHERE prsId = ?", req.params.id)
+    .then(function(enrollments) {
+      res.json(enrollments);
+    })
+    .finally(function() {
+      conn.release();
+    });
+  })
+  .catch(doErrorResponse(res));
 });
 
 router.get('/:id/atts', function(req, res) {

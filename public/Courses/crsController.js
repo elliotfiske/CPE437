@@ -13,14 +13,14 @@ app.controller('crsController',
       $state.go('home');
    }
 
-   scope.refreshEnrs = function() {
-      return API.crss.Enrs.get(scope.courseName)
+   scope.refreshenrs = function() {
+      return API.crss.enrs.get(scope.courseName)
          .then(function(response) {
             scope.enrs = response.data;
          });
    };
 
-   scope.refreshEnrs();
+   scope.refreshenrs();
 
    scope.refreshchls = function() {
       return API.crss.chls.get(scope.courseName)
@@ -31,34 +31,34 @@ app.controller('crsController',
 
    scope.refreshchls();
 
-   scope.refreshItms = function() {
-      return API.crss.Itms.get(scope.courseName)
+   scope.refreshitms = function() {
+      return API.crss.itms.get(scope.courseName)
          .then(function(response) {
             scope.itms = response.data;
          });
    };
 
-   scope.makingItm = false;
-   scope.newItm = {};
+   scope.makingitm = false;
+   scope.newitm = {};
 
-    scope.createItm = function() {
-      scope.makingItm = false;
-       API.crss.Itms.post(scope.courseName, scope.newItm)
-          .then(scope.refreshItms)
+    scope.createitm = function() {
+      scope.makingitm = false;
+       API.crss.itms.post(scope.courseName, scope.newitm)
+          .then(scope.refreshitms)
           .catch(function(err) {
-            scope.shopErrors = ["There's already an item named " + scope.newItm.name];
+            scope.shopErrors = ["There's already an item named " + scope.newitm.name];
           });
     }
 
-    scope.deleteItm = function(itmId) {
-      API.crss.Itms.delete(scope.courseName, itmId)
-      .then(scope.refreshItms)
+    scope.deleteitm = function(itmId) {
+      API.crss.itms.delete(scope.courseName, itmId)
+      .then(scope.refreshitms)
       .catch(function(err) {
           scope.shopErrors = ["Error deleting item"];
       });
     }
 
-   scope.refreshItms();
+   scope.refreshitms();
 
    scope.isOpen = function(chl) {
       return chl.openTime <= new Date();
@@ -76,9 +76,9 @@ app.controller('crsController',
                scope.errors = ['No user found for that email'];
             }
             else {
-               return API.crss.Enrs.post(scope.courseName, data[0].id)
+               return API.crss.enrs.post(scope.courseName, data[0].id)
                   .then(function(data) {
-                     return scope.refreshEnrs();
+                     return scope.refreshenrs();
                   });
             }
          })
@@ -93,9 +93,9 @@ app.controller('crsController',
 
    scope.deleteEnrollment = function(enrId) {
       confirm(function() {
-         API.crss.Enrs.delete(scope.courseName, enrId)
+         API.crss.enrs.delete(scope.courseName, enrId)
             .then(function(res) {
-               return scope.refreshEnrs();
+               return scope.refreshenrs();
             });
       });
    };

@@ -93,7 +93,7 @@ angular.module('mainApp')
          post: typicalPost('crss'),
          put: typicalPut('crss'),
          delete: typicalDelete('crss'),
-         Enrs: {
+         enrs: {
             get: function(courseName, enrId) {
                enrId = enrId || '';
                return get('crss/' + courseName + '/enrs/' + enrId + '?full=true');
@@ -105,7 +105,7 @@ angular.module('mainApp')
                return post('crss/' + courseName + '/enrs', { prsId: prsId });
             }
          },
-         Itms: {
+         itms: {
             get: function(courseName, itemId) {
                itemId = itemId || '';
                return get('crss/' + courseName + '/itms/' + itemId);

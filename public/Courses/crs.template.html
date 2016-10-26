@@ -84,7 +84,7 @@
   <h2>Course Shop</h2>
 
   <div class="list-group-item" ng-repeat="itm in itms">
-     <button class="btn btn-small btn-warning pull-right" ng-click="deleteItm(itm.id)">Delete</button>
+     <button class="btn btn-small btn-warning pull-right" ng-click="deleteitm(itm.id)">Delete</button>
      <b>{{ itm.name }}</b>
      <br>
      Cost: {{ itm.cost }} credits
@@ -93,20 +93,20 @@
   <form>
      <div class="panel panel-info">
         <div class="panel-heading">
-           <div class="btn-group btn-group-justified" role="group" ng-hide="makingItm">
+           <div class="btn-group btn-group-justified" role="group" ng-hide="makingitm">
               <div class="btn-group" role="group">
-                 <button type="button" class="btn btn-default" ng-click="makingItm = true">Add new item...</button>
+                 <button type="button" class="btn btn-default" ng-click="makingitm = true">Add new item...</button>
               </div>
            </div>
-           <h2 class="panel-title input-group" ng-show="makingItm">
+           <h2 class="panel-title input-group" ng-show="makingitm">
               <span class="input-group-addon" id="basic-addon1">Name</span>
-              <input type='text' ng-model="newItm.name" class="form-control input-group" placeholder="New Item" />
+              <input type='text' ng-model="newitm.name" class="form-control input-group" placeholder="New Item" />
            </h2>
-           <h2 class="panel-title input-group" ng-show="makingItm">
+           <h2 class="panel-title input-group" ng-show="makingitm">
               <span class="input-group-addon" id="basic-addon1" >Cost</span>
-              <input type='number' ng-model="newItm.cost" class="form-control input-group" placeholder="How many credits" />
+              <input type='number' ng-model="newitm.cost" class="form-control input-group" placeholder="How many credits" />
            </h2>
-           <button class="btn btn-success" ng-show="makingItm" type="submit" ng-disabled="!newItm.name || !newItm.cost" ng-click="createItm()">Create</button>
+           <button class="btn btn-success" ng-show="makingitm" type="submit" ng-disabled="!newitm.name || !newitm.cost" ng-click="createitm()">Create</button>
            <div class="clearfix"></div>
         </div>
      </div>

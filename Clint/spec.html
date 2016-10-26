@@ -343,7 +343,7 @@
 			}
 		},
 		'Shop Item Management': {
-			'crss/{crsName}/Itms': {
+			'crss/{crsName}/itms': {
 				'get': {
 					desc: 'Return a list of all the available items to purchase for a particular course. AU must be enrolled in the course, owner of the course, or admin.',
 					return: {
@@ -368,11 +368,11 @@
 						cost: 'Cost in credits for the item'
 					},
 					return: {
-						location: 'crss/{crsid}/Itms/{itmId}',
+						location: 'crss/{crsid}/itms/{itmId}',
 					}
 				}
 			},
-			'crss/{crsName}/Itms/{itmId}': {
+			'crss/{crsName}/itms/{itmId}': {
 				'put': {
 					desc: 'Update item itmId',
 					params: {
@@ -455,14 +455,14 @@
 					desc: 'Delete course and all associated Enrollments. AU must be owner or admin.'
 				}
 			},
-			'crss/{name}/Enrs': {
+			'crss/{name}/enrs': {
 				post: {
 					desc: 'Add Enrollment to the course. Error if already enrolled. AU must be enrolled person, course owner, or admin.',
 					params: {
 						prsId: 'Person to enroll'
 					},
 					return: {
-						location: 'crss/{name}/Enrs/{enrId}'
+						location: 'crss/{name}/enrs/{enrId}'
 					}
 				},
 				get: {
@@ -482,7 +482,7 @@
 					}
 				}
 			},
-			'crss/{name}/Enrs/{enrId}': {
+			'crss/{name}/enrs/{enrId}': {
 				get: {
 					desc: 'Get Enrollment information. AU must be course owner, person enrolled, or admin',
 					return: {

@@ -1,3 +1,5 @@
+
+
 <div class="container-white row">
    <div class="col-sm-7">
       <h2>My Recent Attempts</h2>
@@ -50,5 +52,18 @@
       <h1>
          <i class="fa fa-hand-peace-o" ng-hide="(challenges | filter:notInProgress).length > 0"></i>
       </h1>
+   </div>
+</div>
+
+<div class="container-white row">
+   <h2>Available Courses – Winter 2016</h2>
+   <div class="col-sm-12 col-md-6" ng-repeat="course in availableCourses">
+      <div class="panel panel-default">
+         <div class="panel-heading">
+            <button class="btn btn-info pull-right" type="button" ng-click="enrollCourse(course.name)">Enroll</button>
+            <h3 class="panel-title">{{ course.name }}</h3>
+            <div class="clearfix"></div>
+         </div>
+      </div>
    </div>
 </div>

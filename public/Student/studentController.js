@@ -6,10 +6,14 @@ app.controller('studentController', ['$scope', '$state', 'api', 'confirm', 'logi
    scope.challenges = [];
    scope.mappedChallenges = {};
 
+   scope.enrolledCourses = [];
+   scope.availableCourses = [];
+
    if (!login.isLoggedIn()) {
       $state.go('home');
    }
 
+   /*** CHALLENGE STUFF ***/
    scope.startChallenge = function(challengeName) {
       API.prss.atts.post(scope.loggedUser.id, challengeName)
          .then(scope.refreshatts);
@@ -58,12 +62,37 @@ app.controller('studentController', ['$scope', '$state', 'api', 'confirm', 'logi
       return styles[2 - att.score] || "";
    };
 
+   /*** ENROLLMENTS ***/
+   scope.enrollCourse = function(courseName) {
+      API.crss.enrs.post(courseName, scope.loggedUser.id)
+         .then(function(data) {
+            return scope.refreshatts();
+         });
+   };
+
+   /*** INITIAL API CALLS ***/
    API.prss.chls.get(scope.loggedUser.id).then(function(response) {
       scope.challenges = response.data;
 
       scope.challenges.forEach(function(challenge) {
          scope.mappedChallenges[challenge.name] = challenge;
       })
+   });
+
+   API.prss.crss.get(scope.loggedUser.id).then(function(response) {
+      scope.enrolledCourses = response.data;
+      return API.crss.get();
+   })
+   .then(function(response) {
+      scope.availableCourses = response.data;
+      scope.availableCourses = scope.availableCourses.filter(function(course) {
+         for (var ndx = 0; ndx < scope.enrolledCourses.length; ndx++) {
+            if (scope.enrolledCourses[ndx].name == course.name) {
+               return false;
+            }
+         }
+         return true;
+      });
    });
 
    scope.refreshatts();
