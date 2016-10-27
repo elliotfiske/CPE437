@@ -202,14 +202,14 @@ router.post('/:id/atts', function(req, res) {
 
    return vld.checkPrsOK(owner)
    .then(function() {
-     return vld.hasFields(req.body, ['input']);
+     return vld.hasFields(req.body, ['input', 'challengeName']);
    })
    .then(function() {
      return connections.getConnectionP();
    })
    .then(function(conn) {
       // Verify specified challenge exists
-      return conn.query('SELECT * FROM Challenge WHERE name = ?', [chlName])
+      return conn.query('SELECT * FROM Challenge WHERE name = ?', [req.body['challengeName']])
          .then(function(result) {
             var chl = result && result.length && result[0];
             return vld.check(result.length, Tags.badChlName)
@@ -218,7 +218,7 @@ router.post('/:id/atts', function(req, res) {
                .then(function() {
                   return conn.query('SELECT * FROM Attempt WHERE ' +
                                     'ownerId = ? AND challengeName = ?',
-                                    [owner, chlName]);
+                                    [owner, req.body['challengeName']]);
                })
                .then(function(result) {
                   return vld.check(result.length < chl.attsAllowed, Tags.excessatts);

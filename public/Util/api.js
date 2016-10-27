@@ -87,6 +87,7 @@ angular.module('mainApp')
       },
       chls: {
          post: typicalPost('chls'),
+         get: typicalGet('chls')
       },
       crss: {
          get: typicalGet('crss'),
