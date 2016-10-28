@@ -14,14 +14,14 @@ var async = require('async');
 
 var app = express();
 
+// Static paths to be served like index.html and all client side js
+app.use(express.static(path.join(__dirname, 'public')));
+
 // consider all paths as lowercase yo
 app.use(function(req, res, next) {
   req.url = req.url.toLowerCase();
   next();
 });
-
-// Static paths to be served like index.html and all client side js
-app.use(express.static(path.join(__dirname, 'public')));
 
 // Parse all request bodies using JSON
 app.use(bodyParser.json());
