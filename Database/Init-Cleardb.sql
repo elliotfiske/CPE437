@@ -1,5 +1,5 @@
-#drop database if exists heroku_78b9c47b8eee261;
-#create database heroku_78b9c47b8eee261;
+drop database if exists heroku_78b9c47b8eee261;
+create database heroku_78b9c47b8eee261;
 use heroku_78b9c47b8eee261;
 
 create table Person (
@@ -81,9 +81,9 @@ create table Enrollment (
 );
 
 INSERT INTO Person (
-    id, firstName, lastName, email,
-    password, whenRegistered, termsAccepted, role
+    id, name, email,
+    password, whenRegistered, role
 ) VALUES (
-    1, "Admin", "IAM", "Admin@11.com",
-    "password", NOW(), NOW(), 2
+    1, "Admin fella", "Admin@11.com",
+    "password", NOW(), 2
 );
