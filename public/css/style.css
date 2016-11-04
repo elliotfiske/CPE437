@@ -220,3 +220,40 @@ body {
   color: #333;
   text-shadow: none;
 }
+
+/* Fix the annoying problem where list groups in the accordion floats in the middle. */
+.accordion-list-fix .panel-body {
+  padding: 0;
+}
+
+.accordion-list-fix .panel-body .list-group-item {
+  border-left: none;
+  border-right: none;
+}
+
+.accordion-list-fix .panel-body .list-group-item:last-child {
+  border-bottom: none;
+}
+
+.accordion-list-fix .panel-body .list-group-item:first-child {
+  border-top: none;
+}
+
+.accordion-list-fix:last-child {
+  margin-top: 30px !important;
+}
+
+.chl-status {
+  margin-right: 10px;
+}
+
+.accordion-list-fix .disabled {
+  background-color: white;
+  color: lightgrey;
+}
+
+/* Clever blank glyphicon from stack overflow */
+.glyphicon-none:before {
+    content: "\2122";
+    color: transparent !important;
+}

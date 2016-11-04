@@ -1,6 +1,7 @@
 var Express = require('express');
 var Promise = require('bluebird');
 var connections = require('../Connections.js');
+var seq = require('../sequelize.js');
 var Tags = require('../Validator.js').Tags;
 var doErrorResponse = require('../Validator.js').doErrorResponse;
 var router = Express.Router({caseSensitive: true});
@@ -38,27 +39,44 @@ router.get('/', function(req, res) {
 });
 
 router.post('/', function(req, res) {
-   if (req._validator.checkAdminOrTeacher() && req._validator.hasFields(req.body, ["name"])) {
-      connections.getConnection(res, function(cnn) {
-         cnn.query('SELECT * from Course where name = ?', req.body.name,
-         function(err, result) {
-            if (err) {
-               console.log(err);
-               res.status(500).end();
-               cnn.release();
-            }
-            else if (req._validator.check(!result.length, Tags.dupName)) {
-               req.body.ownerId = req.session.id;
-               cnn.query('INSERT INTO Course SET ?', req.body, function(err, result) {
-                  res.location(router.baseURL + '/' + req.body.name).status(200).end();
-                  cnn.release();
-               });
-            }
-            else
-               cnn.release();
-         });
-      });
-   }
+  var vld = req.validator;
+
+  return vld.checkAdminOrTeacher()
+  .then(function() {
+    return vld.hasFields(req.body, ["name"]);
+  })
+  .then(function() {
+    return connections.getConnectionP()
+  })
+  .then(function(conn) {
+    return conn.query('SELECT * FROM Course where name = ?', req.body.name)
+    .then(function(courseResult) {
+      return vld.check(!courseResult.length, Tags.dupName, {}, courseResult);
+    })
+    .then(function(courseResult) {
+      req.body.ownerId = req.session.id;
+      return conn.query('INSERT INTO Course SET ?', req.body);
+    })
+    .then(function(insertResult) {
+      res.location(router.basseURL + '/' + req.body.name).status(200).end();
+      return Promise.resolve();
+    })
+    .then(function() {
+      var newWeeks = [];
+      for (var i = 0; i < 7; i++) {
+        newWeeks.push(seq.Week.create({
+          weekNameTest: 'weekForCourseNamed' + req.body.name,
+          weekNum: i
+        }));
+      }
+
+      return Promise.all(newWeeks);
+    })
+    .finally(function() {
+      conn.release();
+    });
+  })
+  .catch(doErrorResponse(res));
 });
 
 router.put('/:name', function(req, res) {

@@ -1,48 +1,32 @@
 <div class="container-white row">
   <uib-accordion close-others="false">
-    <div uib-accordion-group class="panel-warning" is-open="status.open" is-disabled="status.disabled">
+    <uib-accordion-group ng-init="status.open = true" id="test1" class="list-group accordion-list-fix panel panel-success" is-open="status.open" is-disabled="status.disabled">
+      <uib-accordion-heading>
+        <i class="pull-left glyphicon glyphicon-ok"></i>
+        Week 1
+        <!-- <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i> -->
+      </uib-accordion-heading>
+      <a href="#" class="list-group-item">Calculate the determinant:<i class="pull-left glyphicon glyphicon-ok chl-status"></i><span class="badge pull-right">+5</span></a>
+      <a href="#" class="list-group-item">When can a determinant be negative?<i class="pull-left glyphicon glyphicon-ok chl-status"></i><span class="badge pull-right">+6</span></a>
+      <a href="#" class="list-group-item">Convert this point from Camera to World space:<i class="pull-left glyphicon glyphicon-ok chl-status"></i><span class="badge pull-right">+7</span></a>
+      <a href="#" class="list-group-item">What is the third stage in the Graphics Pipeline?<i class="pull-left glyphicon glyphicon-ok chl-status"></i><span class="badge pull-right">+8</span></a>
+    </uib-accordion-group>
+
+    <uib-accordion-group id="test2" class="list-group accordion-list-fix panel panel-warning" is-open="status.open" is-disabled="status.disabled">
       <uib-accordion-heading>
         <i class="pull-left glyphicon glyphicon-alert"></i>
-        Week 1
-        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+        Week 2 – One challenge due today!
+        <!-- <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i> -->
       </uib-accordion-heading>
-      This content is straight in the template.
-    </div>
+      <a href="#chls/determinant1" class="list-group-item">Calculate the determinant:<i class="pull-left glyphicon glyphicon-ok chl-status"></i><span class="badge pull-right">+9</span></a>
+      <a href="#chls/determinant-negative" class="list-group-item">When can a determinant be negative?<i class="pull-left glyphicon glyphicon-ok chl-status"></i><span class="badge pull-right">+10</span></a>
+      <a href="#chls/camera_to_world" class="list-group-item">Convert this point from Camera to World space:<i class="pull-left glyphicon glyphicon-ok chl-status"></i><span class="hidden-xs-down badge pull-right">+10</span></a>
+      <a href="#chls/graphics_pipeline_3" class="list-group-item">What is the third stage in the Graphics Pipeline?<i class="pull-left glyphicon glyphicon-alert chl-status"></i></a>
+      <a  class="list-group-item disabled">What is the fourth stage in the Graphics Pipeline?<i class="pull-left glyphicon glyphicon-none chl-status"></i></a>
+      <a  class="list-group-item disabled">Fill in the blank for this fragment shader<i class="pull-left glyphicon glyphicon-none chl-status"></i></a>
+      <a  class="list-group-item disabled">Fill in the blank for this vertex shader<i class="pull-left glyphicon glyphicon-none chl-status"></i></a>
+    </uib-accordion-group>
   </uib-accordion>
-  <!-- <div class="panel-group" id="accordion">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h4 class="panel-title">
-          <a href="javascript:;" data-toggle="collapse" data-parent="#accordion" data-target="#collapseOne">
-            Expand
-          </a>
-        </h4>
-      </div>
-      <div id="collapseOne" class="panel-collapse collapse in">
-        <div class="panel-body">
-          text txt text
-        </div>
-      </div>
-    </div>
-  </div> -->
-
-   <!-- <div class="panel panel-default">
-      <div class="panel-heading" role="tab" id="collapseListGroupHeading1">
-         <h4 class="panel-title">
-            <a href="javascript:;" data-target="#collapseListGroup1" class="collapsed" role="button" data-toggle="collapse" aria-expanded="true" aria-controls="collapseListGroup1">
-               Collapsible list group
-            </a>
-         </h4>
-      </div>
-      <div class="panel-collapse collapse in" role="tabpanel" id="collapseListGroup1" aria-labelledby="collapseListGroupHeading1" aria-expanded="true">
-         <ul class="list-group">
-            <li class="list-group-item">Bootply</li>
-            <li class="list-group-item">One itmus ac facilin</li>
-            <li class="list-group-item">Second eros</li>
-         </ul>
-         <div class="panel-footer">Footer</div>
-      </div>
-   </div> -->
 </div>
 
 <div class="container-white row">

@@ -2,6 +2,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var passport = require('./Database/passport');
+var sequelize = require('./Routes/sequelize');
 
 var bodyParser = require('body-parser');
 var Session = require('./Routes/Session.js');
