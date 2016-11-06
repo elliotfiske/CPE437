@@ -1,4 +1,5 @@
 var Sequelize = require('sequelize');
+var Promise = require('bluebird');
 
 var poolCfg = require('./connection.json');
 var env = process.env;
@@ -48,6 +49,8 @@ Person.sync();
 var Course = sequelize.define('Course', {
   name: {
     type: Sequelize.STRING,
+    unique: true,
+    primaryKey: true
   },
   ownerId: {
     type: Sequelize.INTEGER
@@ -130,6 +133,8 @@ var Week = sequelize.define('Week', {
   weekNum: {
     type: Sequelize.INTEGER
   }
+}, {
+  freezeTableName: true
 });
 Week.sync();
 
@@ -139,26 +144,50 @@ Person.belongsToMany(ShopItem, {through: 'StudentPurchase'});
 
 var Enrollment = sequelize.define('Enrollment', {
   creditsEarned: {
-    type: Sequelize.INTEGER
+    type: Sequelize.INTEGER,
+    defaultValue: 0
   }
 }, {
   freezeTableName: true
 });
 
-Course.belongsToMany(Person, {through: Enrollment});
-Person.belongsToMany(Course, {through: Enrollment});
-Enrollment.sync({force: true});
+Course.belongsToMany(Person, {as: "EnrolledDudes", through: Enrollment, foreignKey: "courseName"});
+Person.belongsToMany(Course, {as: "Classes", through: Enrollment, foreignKey: "personId"});
+Enrollment.sync();
 
-Person.findOrCreate({
+
+var makeAdmin = Person.findOrCreate({
   where: {email: 'Admin@11.com'},
   defaults: {name: 'AdminMan', password: "password", role: 2}});
-// Person.findOrCreate(
-//   {where: {
-//     name: "AdminMan",
-//     email: "Admin@11.com",
-//     password: "password",
-//     role: 2,
-//   }});
+  // .then(function(newAdmin) {
+  //   Course.findOrCreate({
+  //     where: {name: "myCourse"},
+  //     defaults: {ownerId: 1}
+  //   })
+  //   .then(function(newCourse) {
+  //     newAdmin[0].setClasses([newCourse[0]]);
+  //   })
+  //   .then(function() {
+  //
+  //   })
+  //   .catch(function(err) {
+  //     console.warn("OH NO ERROR: " + err);
+  //   });
+  // });
+
+var makeCourse = Course.findOrCreate({
+  where: {name: "myCourse"},
+  defaults: {ownerId: 1}
+});
+
+Promise.all([makeAdmin, makeCourse])
+.then(function(arr) {
+  var newAdmin = arr[0];
+  var newCourse = arr[1];
+  console.log(JSON.stringify(newAdmin));
+  newAdmin[0].setClasses([newCourse[0]]);
+});
+
 
 sequelize.sync();
 

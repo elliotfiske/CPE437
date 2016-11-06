@@ -1,7 +1,7 @@
 var Express = require('express');
 var Promise = require('bluebird');
 var connections = require('../Connections.js');
-var seq = require('../sequelize.js');
+var sequelize = require('../sequelize.js');
 var Tags = require('../Validator.js').Tags;
 var doErrorResponse = require('../Validator.js').doErrorResponse;
 var router = Express.Router({caseSensitive: true});
@@ -55,7 +55,7 @@ router.post('/', function(req, res) {
     })
     .then(function(courseResult) {
       req.body.ownerId = req.session.id;
-      return seq.Course.create(req.body); //conn.query('INSERT INTO Course SET ?', req.body);
+      return sequelize.Course.create(req.body); //conn.query('INSERT INTO Course SET ?', req.body);
     })
     .then(function(insertResult) {
       res.location(router.baseURL + '/' + req.body.name).status(200).end();
@@ -64,7 +64,7 @@ router.post('/', function(req, res) {
     .then(function() {
       var newWeeks = [];
       for (var i = 0; i < 7; i++) {
-        newWeeks.push(seq.Week.create({
+        newWeeks.push(sequelize.Week.create({
           weekNameTest: 'weekForCourseNamed' + req.body.name,
           weekNum: i
         }));
@@ -155,21 +155,34 @@ router.post('/:name/enrs', function(req, res) {
 
    connections.getConnection(res, function(cnn) {
       function doEnroll() {
-         cnn.query('INSERT INTO Enrollment (prsId, courseName) VALUES (?, ?, ?)',
-            [req.body.prsId, req.params.name], function(err, result) {
-            if (err) {
-               if (vld.check(err.code !== 'ER_DUP_ENTRY', Tags.dupName)) {
-                  console.log(err);
-                  res.status(400).end();
-               }
-            }
-            else {
-               res.location(router.baseURL + '/' + req.params.name + '/enrs/'
-                + result.insertId).end();
-            }
+        sequelize.Enrollment.create({
+          
+        })
+        .then(function(newEnr) {
 
-            cnn.release();
-         });
+        })
+        .catch(function(err) {
+            var error = {
+              tag: Tags.dupName,
+              message: "Already enrolled."
+            };
+            doErrorResponse(res)(error);
+        });
+        //  cnn.query('INSERT INTO Enrollment (PersonId, courseName) VALUES (?, ?, ?)',
+        //     [req.body.prsId, req.params.name], function(err, result) {
+        //     if (err) {
+        //        if (vld.check(err.code !== 'ER_DUP_ENTRY', Tags.dupName)) {
+        //           console.log(err);
+        //           res.status(400).end();
+        //        }
+        //     }
+        //     else {
+        //        res.location(router.baseURL + '/' + req.params.name + '/enrs/'
+        //         + result.insertId).end();
+        //     }
+         //
+        //     cnn.release();
+        //  });
       }
 
       if (vld.hasFields(req.body, ['prsId'])) {

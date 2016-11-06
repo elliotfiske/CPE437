@@ -2,6 +2,7 @@ var Express = require('express');
 var connections = require('../Connections.js');
 var Tags = require('../Validator.js').Tags;
 var router = Express.Router({caseSensitive: true});
+var sequelize = require('../sequelize.js');
 router.baseURL = '/chls';
 
 function handleError(res) {
@@ -29,19 +30,21 @@ function releaseConn(conn) {
 router.get('/', function(req, res) {
    req.validator.check(!!req.query.prsId, 'noPrsId')
       .then(function() {
-         return connections.getConnectionP();
-      })
-      .then(function(conn) {
-         var query = [
-            'SELECT name, description, attsAllowed, openTime, prsId from Challenge chl',
-            'LEFT JOIN Enrollment enr ON enr.courseName = chl.courseName',
-            'WHERE openTime <= NOW() AND prsId = ?'
-         ];
-         var params = [req.query.prsId];
+        sequelize.Challenge.findAll()
 
-         conn.query(query.join(' '), params)
-            .then(sendResult(res))
-            .finally(releaseConn(conn));
+      //    return connections.getConnectionP();
+      // })
+      // .then(function(conn) {
+      //    var query = [
+      //       'SELECT name, description, attsAllowed, openTime, prsId from Challenge chl',
+      //       'LEFT JOIN Enrollment enr ON enr.courseName = chl.courseName',
+      //       'WHERE openTime <= NOW() AND prsId = ?'
+      //    ];
+      //    var params = [req.query.prsId];
+      //
+      //    conn.query(query.join(' '), params)
+      //       .then(sendResult(res))
+      //       .finally(releaseConn(conn));
       })
       .catch(handleError(res));
 });
