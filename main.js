@@ -9,6 +9,7 @@ var Session = require('./Routes/Session.js');
 var Validator = require('./Routes/Validator.js');
 var _Validator = require('./Routes/_Validator.js');
 var cnnPool = require('./Routes/Connections.js');
+var sequelize = require('./Routes/sequelize.js');
 
 var async = require('async');
 
@@ -108,12 +109,7 @@ app.delete('/DB', function(req, res) {
             cnn.query('alter table ShopItem auto_increment = 1', callback);
          },
          function(callback){
-            cnn.query('alter table StudentPurchase auto_increment = 1', callback);
-         },
-         function(callback){
-            cnn.query('INSERT INTO Person (id, name, email,' +
-                ' password, whenRegistered, role) VALUES (' +
-                '1, "Admin man", "Admin@11.com", "password", NOW(), 2);'
+            cnn.query("INSERT INTO `Person` (`id`,`name`,`email`,`password`,`role`,`createdAt`,`updatedAt`) VALUES (DEFAULT,'AdminMan','Admin@11.com','password',2,'2016-11-06 04:02:15','2016-11-06 04:02:15');"
             , callback);
          },
          function(callback){

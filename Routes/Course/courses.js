@@ -55,10 +55,10 @@ router.post('/', function(req, res) {
     })
     .then(function(courseResult) {
       req.body.ownerId = req.session.id;
-      return conn.query('INSERT INTO Course SET ?', req.body);
+      return seq.Course.create(req.body); //conn.query('INSERT INTO Course SET ?', req.body);
     })
     .then(function(insertResult) {
-      res.location(router.basseURL + '/' + req.body.name).status(200).end();
+      res.location(router.baseURL + '/' + req.body.name).status(200).end();
       return Promise.resolve();
     })
     .then(function() {
@@ -155,8 +155,8 @@ router.post('/:name/enrs', function(req, res) {
 
    connections.getConnection(res, function(cnn) {
       function doEnroll() {
-         cnn.query('INSERT INTO Enrollment (prsId, courseName, whenEnrolled) VALUES (?, ?, ?)',
-            [req.body.prsId, req.params.name, new Date()], function(err, result) {
+         cnn.query('INSERT INTO Enrollment (prsId, courseName) VALUES (?, ?, ?)',
+            [req.body.prsId, req.params.name], function(err, result) {
             if (err) {
                if (vld.check(err.code !== 'ER_DUP_ENTRY', Tags.dupName)) {
                   console.log(err);

@@ -4,6 +4,7 @@ var Tags = require('../Validator.js').Tags;
 var doErrorResponse = require('../Validator.js').doErrorResponse;
 var router = Express.Router({caseSensitive: true});
 var PromiseUtil = require('../PromiseUtil.js');
+var sequelize = require('../sequelize.js');
 
 router.baseURL = '/prss';
 
@@ -55,7 +56,7 @@ router.post('/', function(req, res) {
           return vld.check(collidingEmailPerson.length == 0, Tags.dupEmail);
         })
         .then(function() {
-          return conn.query('INSERT INTO Person SET ?', body);
+          return sequelize.Person.create(req.body);
         })
         .then(function(result) {
           res.location(router.baseURL + '/' + result.insertId).end();
@@ -73,7 +74,7 @@ router.get('/:id', function(req, res) {
    if (vld.checkPrsOK(req.params.id)) {
       connections.getConnection(res,
       function(cnn) {
-         cnn.query('select id, email, name, whenRegistered, role from Person where id = ?', [req.params.id],
+         cnn.query('select id, email, name, createdAt, role from Person where id = ?', [req.params.id],
          function(err, prsArr) {
             if (vld.check(prsArr.length, Tags.notFound))
                res.json(prsArr);
@@ -163,7 +164,7 @@ router.get('/:id/enrs', function(req, res) {
     return connections.getConnectionP();
   })
   .then(function(conn) {
-    return conn.query("SELECT * FROM Enrollment WHERE prsId = ?", req.params.id)
+    return conn.query("SELECT * FROM Enrollment WHERE PersonId = ?", req.params.id)
     .then(function(enrollments) {
       res.json(enrollments);
     })
