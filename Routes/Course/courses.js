@@ -150,24 +150,47 @@ router.delete('/:name', function(req, res) {
 });
 
 router.post('/:name/enrs', function(req, res) {
-   var vld = req._validator;
+   var vld = req.validator;
    var prs = req.session;
+
+   var getPerson = sequelize.Person.findById(req.body.prsId);
+   var getCourse = sequelize.Course.findOne({ where: {name: req.params.name} });
+
+   vld.hasFields(req.body, ['prsId'])
+   .then(function() {
+     return Promise.all([getPerson, getCourse]);
+   })
+   .then(function(arr) {
+     var person = arr[0];
+     var course = arr[1];
+
+     return vld.check(prs.isAdmin() || prs.id === req.body.prsId ||    // Are you Admin, enrolling yourself,
+                      prs.isTeacher() && course.ownerId === person.id, // or the teacher of this course?
+                      Tags.noPermission, null, [person, course]);
+   })
+   .then(function(arr) {
+     var person = arr[0];
+     var course = arr[1];
+
+     return person.addClasses([course]);
+   })
+   .then(function(finalResult) {
+     console.log("Here's the result: " + JSON.stringify(finalResult));
+   })
+   .catch(doErrorResponse(res));
+
+   Promise.all([getPerson, getCourse])
+   .then(function(arr) {
+
+     return vld.check(prs.isAdmin() || prs.id === req.body.prsId)
+   })
+   .then(function(result) {
+     console.log("Added enrollment. Result: " + JSON.stringify(result));
+   });
 
    connections.getConnection(res, function(cnn) {
       function doEnroll() {
-        sequelize.Enrollment.create({
-          
-        })
-        .then(function(newEnr) {
 
-        })
-        .catch(function(err) {
-            var error = {
-              tag: Tags.dupName,
-              message: "Already enrolled."
-            };
-            doErrorResponse(res)(error);
-        });
         //  cnn.query('INSERT INTO Enrollment (PersonId, courseName) VALUES (?, ?, ?)',
         //     [req.body.prsId, req.params.name], function(err, result) {
         //     if (err) {

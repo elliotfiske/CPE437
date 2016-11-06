@@ -146,6 +146,11 @@ var Enrollment = sequelize.define('Enrollment', {
   creditsEarned: {
     type: Sequelize.INTEGER,
     defaultValue: 0
+  },
+  id: {
+    type: Sequelize.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
   }
 }, {
   freezeTableName: true
@@ -153,27 +158,12 @@ var Enrollment = sequelize.define('Enrollment', {
 
 Course.belongsToMany(Person, {as: "EnrolledDudes", through: Enrollment, foreignKey: "courseName"});
 Person.belongsToMany(Course, {as: "Classes", through: Enrollment, foreignKey: "personId"});
-Enrollment.sync();
+Enrollment.sync({force: true});
 
 
 var makeAdmin = Person.findOrCreate({
   where: {email: 'Admin@11.com'},
   defaults: {name: 'AdminMan', password: "password", role: 2}});
-  // .then(function(newAdmin) {
-  //   Course.findOrCreate({
-  //     where: {name: "myCourse"},
-  //     defaults: {ownerId: 1}
-  //   })
-  //   .then(function(newCourse) {
-  //     newAdmin[0].setClasses([newCourse[0]]);
-  //   })
-  //   .then(function() {
-  //
-  //   })
-  //   .catch(function(err) {
-  //     console.warn("OH NO ERROR: " + err);
-  //   });
-  // });
 
 var makeCourse = Course.findOrCreate({
   where: {name: "myCourse"},
@@ -186,8 +176,10 @@ Promise.all([makeAdmin, makeCourse])
   var newCourse = arr[1];
   console.log(JSON.stringify(newAdmin));
   newAdmin[0].setClasses([newCourse[0]]);
+})
+.then(function() {
+  console.log("GREAT SUCC!");
 });
-
 
 sequelize.sync();
 
