@@ -52,10 +52,10 @@ Validator.prototype.checkAdminOrTeacher = function(passThrough) {
 }
 
 // Validate that AU is the specified person or is an admin
-Validator.prototype.checkPrsOK = function(prsId) {
+Validator.prototype.checkPrsOK = function(prsId, passThrough) {
    prsId = parseInt(prsId);
    return this.check(this.session && (this.session.isAdmin() || this.session.id === prsId),
-      Validator.Tags.noPermission);
+      Validator.Tags.noPermission, {}, passThrough);
 }
 
 // Check presence of truthy property in |obj| for all fields in fieldList

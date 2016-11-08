@@ -25,17 +25,11 @@ function sendResult(res, status) {
 router.get('/', function(req, res) {
   var vld = req.validator;
 
-  return connections.getConnectionP()
-    .then(function(conn) {
-      return conn.query('SELECT * FROM Course')
-      .then(function(courseList) {
-        res.json(courseList);
-      })
-      .finally(function() {
-        conn.release();
-      })
-    })
-    .catch(doErrorResponse(res));
+  sequelize.Course.findAll()
+  .then(function(courseList) {
+    res.json(courseList);
+  })
+  .catch(doErrorResponse(res));
 });
 
 router.post('/', function(req, res) {
@@ -164,8 +158,8 @@ router.post('/:name/enrs', function(req, res) {
      var person = arr[0];
      var course = arr[1];
 
-     return vld.check(prs.isAdmin() || prs.id === req.body.prsId ||    // Are you Admin, enrolling yourself,
-                      prs.isTeacher() && course.ownerId === person.id, // or the teacher of this course?
+     return vld.check(prs.isAdmin() || prs.id === req.body.prsId || // Are you Admin, enrolling yourself,
+                      course.ownerId === prs.id,                    // or the teacher of this course?
                       Tags.noPermission, null, [person, course]);
    })
    .then(function(arr) {
@@ -175,96 +169,43 @@ router.post('/:name/enrs', function(req, res) {
      return person.addClasses([course]);
    })
    .then(function(finalResult) {
-     console.log("Here's the result: " + JSON.stringify(finalResult));
+     if (finalResult === []) {
+       return Promise.reject({tag: Tags.dupName});
+     }
+     else {
+       return sequelize.Enrollment.findOne({where: {courseName: req.params.name, personId: req.body.prsId}});
+     }
+   })
+   .then(function(newEnrollment) {
+     res.location(router.baseURL + '/' + req.params.name + '/Enrs/' + newEnrollment.id).end();
    })
    .catch(doErrorResponse(res));
-
-   Promise.all([getPerson, getCourse])
-   .then(function(arr) {
-
-     return vld.check(prs.isAdmin() || prs.id === req.body.prsId)
-   })
-   .then(function(result) {
-     console.log("Added enrollment. Result: " + JSON.stringify(result));
-   });
-
-   connections.getConnection(res, function(cnn) {
-      function doEnroll() {
-
-        //  cnn.query('INSERT INTO Enrollment (PersonId, courseName) VALUES (?, ?, ?)',
-        //     [req.body.prsId, req.params.name], function(err, result) {
-        //     if (err) {
-        //        if (vld.check(err.code !== 'ER_DUP_ENTRY', Tags.dupName)) {
-        //           console.log(err);
-        //           res.status(400).end();
-        //        }
-        //     }
-        //     else {
-        //        res.location(router.baseURL + '/' + req.params.name + '/enrs/'
-        //         + result.insertId).end();
-        //     }
-         //
-        //     cnn.release();
-        //  });
-      }
-
-      if (vld.hasFields(req.body, ['prsId'])) {
-         if (prs.isAdmin() || prs.id === req.body.prsId) {
-            doEnroll();
-         }
-         else if (vld.check(prs.isTeacher(), Tags.noPermission)) {
-            cnn.query('SELECT ownerId FROM Course WHERE name = ?', [req.params.name], function(err, result) {
-               if (vld.check(result && result[0].ownerId === prs.id, Tags.noPermission)) {
-                  doEnroll();
-               }
-               else
-                  cnn.release();
-            });
-         }
-         else
-            cnn.release();
-      }
-      else
-         cnn.release();
-   });
 });
 
 router.get('/:name/enrs', function(req, res) {
-   var vld = req._validator;
+   var vld = req.validator;
    var prs = req.session;
 
-   if (vld.checkAdminOrTeacher()) {
-      connections.getConnection(res, function(cnn) {
-         function getResult() {
-            var queryArr = [
-               'SELECT enrId, whenEnrolled, prsId',
-               'FROM Enrollment enr',
-               'WHERE enr.courseName = ?'
-            ];
-            if (req.query.full) {
-               queryArr[0] += ', lastName, firstName, email';
-               queryArr[1] += ' INNER JOIN Person p ON p.id = prsId'
-            }
-            cnn.query(queryArr.join(' '), [req.params.name], function(err, result) {
-               res.json(result);
-               cnn.release();
-            });
-         }
-
-         if (prs.isAdmin()) {
-            getResult();
-         }
-         else {
-            cnn.query('SELECT ownerId FROM Course WHERE name = ?', [req.params.name], function(err, result) {
-               if (vld.check(result && result[0].ownerId === prs.id, Tags.noPermission)) {
-                  getResult();
-               }
-               else
-                  cnn.release();
-            });
-         }
-      });
-   }
+   sequelize.Course.findOne({
+     where: {name: req.params.name},
+     include: [{ model: sequelize.Person, as: 'EnrolledDudes', attributes: ['name', 'email'] }]
+   })
+   .then(function(course) {
+     console.log(JSON.stringify(course));
+     if (!course) {
+       console.log("OH no :(");
+     }
+     else {
+       console.log("HAAHAHAHAHAHHA");
+     }
+     return vld.checkPrsOK(course.ownerId, course);
+   })
+   .then(function(course) {
+     console.log(JSON.stringify(course));
+       console.log(JSON.stringify(course["EnrolledDudes"]));
+     res.json(course["EnrolledDudes"]);
+   })
+   .catch(handleError(res));
 });
 
 router.get('/:name/enrs/:enrId', function(req, res) {
@@ -318,7 +259,7 @@ router.put('/:name/enrs/:enrId', function(req, res) {
             if (result.ownerId === req.session.id)
                owner = true;
 
-            cnn.query('Select * from Enrollment where enrId = ?', req.params.enrId,
+            cnn.query('Select * from Enrollment where id = ?', req.params.enrId,
             function(err, result) {
                if (vld.check(result.length, Tags.notFound)) {
                   result = result[0];
@@ -326,7 +267,7 @@ router.put('/:name/enrs/:enrId', function(req, res) {
                      enrolled = true;
 
                   if (vld.check(owner || enrolled || admin, Tags.noPermission)) {
-                     cnn.query('Update Enrollment set ? where enrId = ?', [req.body, req.params.enrId],
+                     cnn.query('Update Enrollment set ? where id = ?', [req.body, req.params.enrId],
                      function(err, result) {
                         res.status(200).end();
                         cnn.release();
@@ -353,7 +294,7 @@ router.delete('/:name/enrs/:enrId', function(req, res) {
    if (vld.checkAdminOrTeacher()) {
       connections.getConnection(res, function(cnn) {
          function doDelete() {
-            cnn.query('DELETE FROM Enrollment WHERE enrId = ?', [req.params.enrId], function(err, result) {
+            cnn.query('DELETE FROM Enrollment WHERE id = ?', [req.params.enrId], function(err, result) {
                res.end();
                cnn.release();
             });
