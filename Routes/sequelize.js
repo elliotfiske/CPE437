@@ -74,6 +74,9 @@ var Challenge = sequelize.define('Challenge', {
     type: Sequelize.STRING
   },
   type: {
+    type: Sequelize.ENUM('mult_choice', 'shortanswer', 'number')
+  },
+  image: {
     type: Sequelize.STRING
   },
   answer: {
@@ -86,6 +89,15 @@ var Challenge = sequelize.define('Challenge', {
   freezeTableName: true
 });
 Challenge.sync();
+
+var MultChoiceAnswer = sequelize.define('MultChoiceAnswer', {
+  index: {
+    type: Sequelize.INTEGER
+  },
+  text: {
+    type: Sequelize.STRING
+  }
+});
 
 var Attempt = sequelize.define('Attempt', {
   ownerId: {
@@ -158,8 +170,10 @@ var Enrollment = sequelize.define('Enrollment', {
 
 Course.belongsToMany(Person, {as: "EnrolledDudes", through: Enrollment, foreignKey: "courseName"});
 Person.belongsToMany(Course, {as: "Classes", through: Enrollment, foreignKey: "personId"});
-Enrollment.sync({force: true});
+Enrollment.sync();
 
+Challenge.hasMany(MultChoiceAnswer, {as: 'Possibilities'});
+MultChoiceAnswer.sync();
 
 var makeAdmin = Person.findOrCreate({
   where: {email: 'Admin@11.com'},
@@ -181,6 +195,24 @@ Promise.all([makeAdmin, makeCourse])
   console.log("GREAT SUCC!");
 });
 
+Challenge.findOrCreate({
+  where: {name: "testChallenge", courseName: "myCourse"},
+  defaults: {attsAllowed: 5, type: 'shortanswer'}
+})
+.then(function(arr) {
+  // return MultChoiceAnswer.create({index: 5, text: "test me out"}).then(function(answer) {
+  //   return arr[0].addPossibilities([answer]);
+  // });
+  return arr[0].getPossibilities();
+})
+.then(function(stuff) {
+  console.log(stuff);
+})
+.catch(function(err){
+  console.log("Whatever, " + err);
+});
+
+
 sequelize.sync();
 
 module.exports = {
@@ -190,5 +222,6 @@ module.exports = {
   Challenge: Challenge,
   Attempt: Attempt,
   ShopItem: ShopItem,
-  Enrollment: Enrollment
+  Enrollment: Enrollment,
+  MultChoiceAnswer: MultChoiceAnswer
 };

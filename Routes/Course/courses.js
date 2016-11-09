@@ -158,6 +158,10 @@ router.post('/:name/enrs', function(req, res) {
      var person = arr[0];
      var course = arr[1];
 
+     if (!person || !course) {
+       return Promise.reject({tag: Tags.notFound});
+     }
+
      return vld.check(prs.isAdmin() || prs.id === req.body.prsId || // Are you Admin, enrolling yourself,
                       course.ownerId === prs.id,                    // or the teacher of this course?
                       Tags.noPermission, null, [person, course]);
@@ -191,18 +195,9 @@ router.get('/:name/enrs', function(req, res) {
      include: [{ model: sequelize.Person, as: 'EnrolledDudes', attributes: ['name', 'email'] }]
    })
    .then(function(course) {
-     console.log(JSON.stringify(course));
-     if (!course) {
-       console.log("OH no :(");
-     }
-     else {
-       console.log("HAAHAHAHAHAHHA");
-     }
      return vld.checkPrsOK(course.ownerId, course);
    })
    .then(function(course) {
-     console.log(JSON.stringify(course));
-       console.log(JSON.stringify(course["EnrolledDudes"]));
      res.json(course["EnrolledDudes"]);
    })
    .catch(handleError(res));
