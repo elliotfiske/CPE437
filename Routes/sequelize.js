@@ -58,7 +58,7 @@ var Course = sequelize.define('Course', {
 }, {
   freezeTableName: true
 });
-Course.sync();
+// Course.sync();
 
 var Challenge = sequelize.define('Challenge', {
   name: {
@@ -68,13 +68,11 @@ var Challenge = sequelize.define('Challenge', {
     type: Sequelize.TEXT
   },
   attsAllowed: {
-    type: Sequelize.INTEGER
-  },
-  courseName: {
-    type: Sequelize.STRING
+    type: Sequelize.INTEGER,
+    defaultValue: 1
   },
   type: {
-    type: Sequelize.ENUM('mult_choice', 'shortanswer', 'number')
+    type: Sequelize.ENUM('multchoice', 'shortanswer', 'number')
   },
   image: {
     type: Sequelize.STRING
@@ -88,7 +86,7 @@ var Challenge = sequelize.define('Challenge', {
 }, {
   freezeTableName: true
 });
-Challenge.sync();
+// Challenge.sync();
 
 var MultChoiceAnswer = sequelize.define('MultChoiceAnswer', {
   index: {
@@ -118,7 +116,7 @@ var Attempt = sequelize.define('Attempt', {
 }, {
   freezeTableName: true
 });
-Attempt.sync();
+// Attempt.sync();
 
 var ShopItem = sequelize.define('ShopItem', {
   name: {
@@ -136,7 +134,7 @@ var ShopItem = sequelize.define('ShopItem', {
 }, {
   freezeTableName: true
 });
-ShopItem.sync();
+// ShopItem.sync();
 
 var Week = sequelize.define('Week', {
   weekNameTest: {
@@ -148,7 +146,7 @@ var Week = sequelize.define('Week', {
 }, {
   freezeTableName: true
 });
-Week.sync();
+// Week.sync();
 
 /* ASSOCIATIONS! */
 ShopItem.belongsToMany(Person, {through: 'StudentPurchase'});
@@ -170,50 +168,50 @@ var Enrollment = sequelize.define('Enrollment', {
 
 Course.belongsToMany(Person, {as: "EnrolledDudes", through: Enrollment, foreignKey: "courseName"});
 Person.belongsToMany(Course, {as: "Classes", through: Enrollment, foreignKey: "personId"});
-Enrollment.sync();
+// Enrollment.sync();
+
+Course.hasMany(Challenge, {as: "Challenges"});
 
 Challenge.hasMany(MultChoiceAnswer, {as: 'Possibilities'});
-MultChoiceAnswer.sync();
+// MultChoiceAnswer.sync();
 
-var makeAdmin = Person.findOrCreate({
-  where: {email: 'Admin@11.com'},
-  defaults: {name: 'AdminMan', password: "password", role: 2}});
-
-var makeCourse = Course.findOrCreate({
-  where: {name: "myCourse"},
-  defaults: {ownerId: 1}
-});
-
-Promise.all([makeAdmin, makeCourse])
-.then(function(arr) {
-  var newAdmin = arr[0];
-  var newCourse = arr[1];
-  console.log(JSON.stringify(newAdmin));
-  newAdmin[0].setClasses([newCourse[0]]);
+sequelize.sync().then(function() {
+  return Person.findOrCreate({
+    where: {email: 'Admin@11.com'},
+    defaults: {name: 'AdminMan', password: "password", role: 2}});
+})
+.then(function(ok) {
+  console.log(JSON.stringify(ok));
 })
 .then(function() {
-  console.log("GREAT SUCC!");
-});
-
-Challenge.findOrCreate({
-  where: {name: "testChallenge", courseName: "myCourse"},
-  defaults: {attsAllowed: 5, type: 'shortanswer'}
+  return Challenge.find({where: {name: 'challenge2'},
+                include: [{model: MultChoiceAnswer, as: "Possibilities"}]});
 })
-.then(function(arr) {
-  // return MultChoiceAnswer.create({index: 5, text: "test me out"}).then(function(answer) {
-  //   return arr[0].addPossibilities([answer]);
-  // });
-  return arr[0].getPossibilities();
+.then(function(chl) {
+  console.log(JSON.stringify(chl));
 })
-.then(function(stuff) {
-  console.log(stuff);
-})
-.catch(function(err){
-  console.log("Whatever, " + err);
+.catch(function(err) {
+  console.log("uh oh " + err)
 });
 
 
-sequelize.sync();
+//
+// var makeCourse = Course.findOrCreate({
+//   where: {name: "myCourse"},
+//   defaults: {ownerId: 1}
+// });
+//
+// Promise.all([makeAdmin, makeCourse])
+// .then(function(arr) {
+//   var newAdmin = arr[0];
+//   var newCourse = arr[1];
+//   console.log(JSON.stringify(newAdmin));
+//   newAdmin[0].setClasses([newCourse[0]]);
+// })
+// .then(function() {
+//   console.log("GREAT SUCC!");
+// });
+
 
 module.exports = {
   Course: Course,

@@ -2,17 +2,10 @@ var Express = require('express');
 var connections = require('../Connections.js');
 var Tags = require('../Validator.js').Tags;
 var router = Express.Router({caseSensitive: true});
+var doErrorResponse = require('../Validator.js').doErrorResponse;
 var sequelize = require('../sequelize.js');
+var Promise = require('bluebird');
 router.baseURL = '/chls';
-
-function handleError(res) {
-   return function(error) {
-      var code = error.code || 400;
-      delete error.code
-
-      res.status(code).json(error);
-   }
-}
 
 function sendResult(res, status) {
   return function(result) {
@@ -46,33 +39,68 @@ router.get('/', function(req, res) {
       //       .then(sendResult(res))
       //       .finally(releaseConn(conn));
       })
-      .catch(handleError(res));
+      .catch(doErrorResponse(res));
 });
 
 router.post('/', function(req, res) {
-   if (req._validator.checkAdminOrTeacher() && req._validator.hasFields(req.body, ["name", "courseName", "type", "answer", "openTime"])) {
-      req.body.openTime = new Date(req.body.openTime);
-      connections.getConnection(res, function(cnn) {
-         cnn.query('SELECT * from Challenge where name = ? AND courseName = ?', [req.body.name, req.body.courseName],
-         function(err, result) {
-            if (err) {
-               console.log(err);
-               res.status(500).end();
-               cnn.release();
-            }
-            else if (req._validator.check(!result.length, Tags.dupName)) {
-               cnn.query('INSERT INTO Challenge SET ?', req.body, function(err, result) {
-                  console.log(err, result);
-                  res.location(router.baseURL + '/' + req.body.name).send(200).end();
-                  cnn.release();
-               });
-            }
-            else
-               cnn.release();
-         });
-      });
-   }
+  var vld = req.validator;
+
+  vld.checkAdminOrTeacher()
+  .then(function() {
+    return vld.hasFields(req.body, ["name", "description", "courseName", "type", "answer", "openTime"]);
+  })
+  .then(function() {
+    if (req.body["type"] === "multchoice") {
+      console.log(req.body);
+      return vld.check(req.body["choices"] && Array.isArray(req.body["choices"]), Tags.badValue);
+    }
+    else if (req.body["type"] === "number") {
+      return vld.check(parseInt(req.body["answer"]));
+    }
+  })
+  .then(function() {
+    return sequelize.Course.findOne({
+      where: {name: req.body["courseName"]}
+    });
+  })
+  .then(function(course) {
+    delete req.body["courseName"];
+    return vld.check(course, Tags.notFound, null, course);
+  })
+  .then(function(course) {
+  console.log(JSON.stringify(course));
+    return vld.checkPrsOK(course.ownerId, course);
+  })
+  .then(function(course) {
+    var makeChallenge = sequelize.Challenge.create(req.body);
+    var promiseList = [makeChallenge];
+
+    if (req.body["type"] === "multchoice") {
+      for (var ndx = 0; ndx < req.body["choices"].length; ndx++) {
+        var answerText = req.body["choices"][ndx];
+        var answer = sequelize.MultChoiceAnswer.create({index: ndx, text: answerText});
+        promiseList.push(answer);
+      }
+    }
+
+    return Promise.all(promiseList)
+    .then(function(arr) {
+      console.log(JSON.stringify(arr));
+      var newChallenge = arr[0];
+      var choices = arr.slice(1);
+
+      var addChlToCourse = course.addChallenges([newChallenge]);
+      var addChoicesToChl = newChallenge.addPossibilities(choices);
+
+      return Promise.all([addChlToCourse, addChoicesToChl]);
+    })
+    .then(function() {
+      res.location(router.baseURL + '/' + req.body.name).sendStatus(200).end();
+    });
+  })
+  .catch(doErrorResponse(res));
 });
+
 
 router.get('/:name', function(req, res) {
    connections.getConnection(res, function(cnn) {
