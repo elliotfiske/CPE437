@@ -31,6 +31,11 @@ app.config(['$stateProvider', '$urlRouterProvider',
          templateUrl: 'Courses/crs.template.html',
          controller: 'crsController'
       })
+      .state('newchl', {
+         url: '/crss/{courseName}/newchl?w={week}&d={day}',
+         templateUrl: 'Challenges/newchl.template.html',
+         controller: 'newchlController'
+      })
       .state('chl', {
          url: '/chls/{challengeName}',
          templateUrl: 'Challenges/chl.template.html',

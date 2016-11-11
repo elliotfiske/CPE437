@@ -1,6 +1,6 @@
 app.controller('crsController',
-['$scope', '$state', '$stateParams', 'api', 'confirm', 'login',
- function(scope, $state, $stateParams, API, confirm, login) {
+['$scope', '$state', '$stateParams', 'api', 'confirm', 'login', '$location',
+ function(scope, $state, $stateParams, API, confirm, login, $location) {
    scope.courseName = $stateParams.courseName;
 
    scope.challenge = {
@@ -101,24 +101,10 @@ app.controller('crsController',
    };
 
    scope.createChallenge = function() {
-      if (scope.challenge.type === 'term') {
-         scope.challenge.answer = {};
-         scope.challenge.answer.inexact = scope.inexact.split(',').map(function(str) {
-            return str.trim();
-         });
-         scope.challenge.answer.exact = scope.exact.split(',').map(function(str) {
-            return str.trim();
-         });
-
-         scope.challenge.answer = JSON.stringify(scope.challenge.answer);
-         console.log(scope.challenge);
-      }
-
-      API.chls.post(scope.challenge)
-         .then(scope.refreshchls);
+      $state.go('newchl', {courseName: scope.courseName, week: 0, day: 0, type: "multchoice" });
    }
 
    scope.viewChallenge = function(challengeName) {
-      $state.go('chl', { challengeName: challengeName });
+      $state.go('chl', { challengeName: challengeName});
    }
 }])

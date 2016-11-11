@@ -1,0 +1,52 @@
+
+   <h1>New Challenge</h1>
+
+   <uib-tabset active="activeJustified" justified="true">
+    <uib-tab index="0" heading="Numerical">
+      <div class="container-white row">
+
+        <form ng-submit="createMultChoice()">
+          <input type='text' ng-model="challenge.name" class="form-control input-group" placeholder="Challenge Name" />
+          <textarea class="form-control" rows="3" ng-model="challenge.description" placeholder="Challenge Description"></textarea>
+          <input type='number' ng-model="challenge.inexactAnswers" class="form-control input-group" placeholder="Answer" />          
+
+          <button type="submit" class="btn btn-primary" ng-disabled="challengeNotReady()">Create</button>
+        </form>
+      </div>
+    </uib-tab>
+    <uib-tab index="1" heading="Short Answer">
+      <div class="container-white row">
+
+        <form ng-submit="createMultChoice()">
+          <input type='text' ng-model="challenge.name" class="form-control input-group" placeholder="Challenge Name" />
+          <textarea class="form-control" rows="3" ng-model="challenge.description" placeholder="Challenge Description"></textarea>
+          <input type='text' ng-model="challenge.inexactAnswers" class="form-control input-group" placeholder="Inexact Answers" />
+          <input type='text' ng-model="challenge.inexactAnswers" class="form-control input-group" placeholder="Exact Answers" />
+
+          <button type="submit" class="btn btn-primary" ng-disabled="challengeNotReady()">Create</button>
+        </form>
+      </div>
+    </uib-tab>
+    <uib-tab index="2" heading="Multiple Choice">
+      <div class="container-white row">
+        <form ng-submit="createMultChoice()">
+          <input type='text' ng-model="challenge.name" class="form-control input-group" placeholder="Challenge Name" />
+          <textarea class="form-control" rows="3" ng-model="challenge.description" placeholder="Challenge Description"></textarea>
+
+          <div class="radio" ng-repeat="radioAnswer in radioAnswers">
+            <label>
+              <input type="radio" name="optradio" ng-model="correctRadioOption.chosen" value="{{$index}}">
+              <input type='text' ng-model="radioAnswer.answerText" class="form-control input-group" placeholder="Answer {{$index + 1}}" />
+              <button type="submit" class="btn btn-danger" ng-click="removeOption($index)">Remove</button>
+            </label>
+          </div>
+
+          <button type="button" class="btn btn-info" ng-click="addOption()">+ Add Option</button>
+
+          <br />
+
+          <button type="submit" class="btn btn-primary" ng-disabled="challengeNotReady()">Create</button>
+        </form>
+      </div>
+    </uib-tab>
+  </uib-tabset>
