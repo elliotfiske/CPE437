@@ -1,7 +1,7 @@
 var Express = require('express');
 var connections = require('../Connections.js');
 var Tags = require('../Validator.js').Tags;
-var router = Express.Router({caseSensitive: true});
+var router = Express.Router({caseSensitive: false});
 var async = require('async');
 router.baseURL = '/atts';
 

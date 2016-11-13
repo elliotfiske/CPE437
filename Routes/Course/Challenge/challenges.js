@@ -1,23 +1,9 @@
 var Express = require('express');
-var connections = require('../Connections.js');
-var Tags = require('../Validator.js').Tags;
-var router = Express.Router({caseSensitive: true});
-var doErrorResponse = require('../Validator.js').doErrorResponse;
-var sequelize = require('../sequelize.js');
+var Tags = require('../../Validator.js').Tags;
+var router = Express.Router({mergeParams: true});
+var doErrorResponse = require('../../Validator.js').doErrorResponse;
+var sequelize = require('../../sequelize.js');
 var Promise = require('bluebird');
-router.baseURL = '/chls';
-
-function sendResult(res, status) {
-  return function(result) {
-    res.status(status || 200).json(result);
-  }
-}
-
-function releaseConn(conn) {
-   return function() {
-      conn.release();
-   }
-}
 
 // Get only OPEN challenges
 router.get('/', function(req, res) {
@@ -45,7 +31,7 @@ router.get('/', function(req, res) {
 function validateChallengeData(vld, req) {
   return vld.checkAdminOrTeacher()
   .then(function() {
-    return vld.hasFields(req.body, ["name", "description", "courseName", "type", "answer", "openTime"]);
+    return vld.hasFields(req.body, ["name", "description", "type", "answer", "openTime"]);
   })
   .then(function() {
     if (req.body["type"] === "multchoice") {
@@ -71,12 +57,13 @@ router.post('/', function(req, res) {
 
   validateChallengeData(vld, req)
   .then(function() {
+    console.log(JSON.stringify(req.params));
     return sequelize.Course.findOne({
-      where: {name: req.body["courseName"]}
+      where: {name: req.params.courseName}
     });
   })
   .then(function(course) {
-    delete req.body["courseName"];
+    console.log(JSON.stringify(course));
     return vld.check(course, Tags.notFound, null, course);
   })
   .then(function(course) {
@@ -116,7 +103,7 @@ router.post('/', function(req, res) {
 
 router.get('/:name', function(req, res) {
   sequelize.Challenge.findOne({where: {name: req.params.name}})
-  .then(function(chl) {
+  .then(function(chl) { // TODO: remove answer
     if (chl) {
       res.json(result[0]);
     }

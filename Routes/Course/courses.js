@@ -4,8 +4,11 @@ var connections = require('../Connections.js');
 var sequelize = require('../sequelize.js');
 var Tags = require('../Validator.js').Tags;
 var doErrorResponse = require('../Validator.js').doErrorResponse;
-var router = Express.Router({caseSensitive: true});
+var router = Express.Router({caseSensitive: false});
 router.baseURL = '/crss';
+
+var challengeRouter = require('./Challenge/challenges.js');
+router.use('/:courseName/challenge', challengeRouter);
 
 function handleError(res) {
   return function(error) {

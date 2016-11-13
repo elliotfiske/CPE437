@@ -2,7 +2,7 @@ var Express = require('express');
 var connections = require('../Connections.js');
 var Tags = require('../Validator.js').Tags;
 var doErrorResponse = require('../Validator.js').doErrorResponse;
-var router = Express.Router({caseSensitive: true});
+var router = Express.Router({caseSensitive: false});
 var PromiseUtil = require('../PromiseUtil.js');
 var sequelize = require('../sequelize.js');
 

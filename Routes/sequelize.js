@@ -1,6 +1,8 @@
 var Sequelize = require('sequelize');
 var Promise = require('bluebird');
 
+var sanitize = require("sanitize-filename");
+
 var poolCfg = require('./connection.json');
 var env = process.env;
 
@@ -64,6 +66,9 @@ var Challenge = sequelize.define('Challenge', {
   name: {
     type: Sequelize.STRING
   },
+  sanitizedName: {
+    type: Sequelize.STRING,
+  },
   description: {
     type: Sequelize.TEXT
   },
@@ -72,7 +77,13 @@ var Challenge = sequelize.define('Challenge', {
     defaultValue: 1
   },
   type: {
-    type: Sequelize.ENUM('multchoice', 'shortanswer', 'number')
+    type: Sequelize.ENUM('multchoice', 'shortanswer', 'number'),
+    validate: {
+      isIn: {
+          args: [['multchoice', 'shortanswer', 'number']],
+          message: "Challenge type must be one of ['multchoice', 'shortanswer', 'number']"
+      }
+    }
   },
   image: {
     type: Sequelize.STRING
@@ -82,11 +93,28 @@ var Challenge = sequelize.define('Challenge', {
   },
   openTime: {
     type: Sequelize.DATE
+  },
+  courseName: {
+    type: Sequelize.STRING,
   }
 }, {
-  freezeTableName: true
+  freezeTableName: true,
+  hooks: {
+    beforeValidate: function(challenge, options) {
+      if (challenge.name) {
+        challenge.name = challenge.name.trim();
+        challenge.sanitizedName = sanitize(challenge.name).toLowerCase().replace(" ", "-");
+      }
+    }
+  },
+  indexes: [{
+    unique: {
+      args: true,
+      msg: "test this message thing out"
+    },
+    fields: ['courseName', 'sanitizedName']
+  }]
 });
-// Challenge.sync();
 
 var MultChoiceAnswer = sequelize.define('MultChoiceAnswer', {
   index: {
@@ -170,12 +198,12 @@ Course.belongsToMany(Person, {as: "EnrolledDudes", through: Enrollment, foreignK
 Person.belongsToMany(Course, {as: "Classes", through: Enrollment, foreignKey: "personId"});
 // Enrollment.sync();
 
-Course.hasMany(Challenge, {as: "Challenges"});
+Course.hasMany(Challenge, {as: "Challenges", foreignKey: "courseName"});
 
 Challenge.hasMany(MultChoiceAnswer, {as: 'Possibilities'});
 // MultChoiceAnswer.sync();
 
-sequelize.sync().then(function() {
+sequelize.sync({force: true}).then(function() {
   return Person.findOrCreate({
     where: {email: 'Admin@11.com'},
     defaults: {name: 'AdminMan', password: "password", role: 2}});

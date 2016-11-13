@@ -69,6 +69,12 @@ Validator.prototype.hasFields = function(obj, fieldList) {
 
 Validator.doErrorResponse = function(res) {
   return function(error) {
+    if (error.name === "SequelizeUniqueConstraintError") {
+      error = {
+        tag: "nameTaken"
+      };
+    }
+
     var code = error.code || 400;
     delete error.code
 
