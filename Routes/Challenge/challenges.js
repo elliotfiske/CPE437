@@ -42,22 +42,34 @@ router.get('/', function(req, res) {
       .catch(doErrorResponse(res));
 });
 
-router.post('/', function(req, res) {
-  var vld = req.validator;
-
-  vld.checkAdminOrTeacher()
+function validateChallengeData(vld, req) {
+  return vld.checkAdminOrTeacher()
   .then(function() {
     return vld.hasFields(req.body, ["name", "description", "courseName", "type", "answer", "openTime"]);
   })
   .then(function() {
     if (req.body["type"] === "multchoice") {
       console.log(req.body);
-      return vld.check(req.body["choices"] && Array.isArray(req.body["choices"]), Tags.badValue);
+      return vld.check(req.body["choices"] &&
+                       Array.isArray(req.body["choices"]) &&
+                       req.body["choices"].length >= 2, Tags.badValue);
     }
     else if (req.body["type"] === "number") {
-      return vld.check(parseInt(req.body["answer"]));
+      return vld.check(!isNaN(parseInt(req.body["answer"])), Tags.badValue);
     }
-  })
+    else if (req.body["type"] === "shortanswer") {
+      // short answer just gotta be non-null
+    }
+    else {
+      return Promise.reject({tags: Tags.badValue});
+    }
+  });
+}
+
+router.post('/', function(req, res) {
+  var vld = req.validator;
+
+  validateChallengeData(vld, req)
   .then(function() {
     return sequelize.Course.findOne({
       where: {name: req.body["courseName"]}
@@ -68,7 +80,7 @@ router.post('/', function(req, res) {
     return vld.check(course, Tags.notFound, null, course);
   })
   .then(function(course) {
-  console.log(JSON.stringify(course));
+    console.log(JSON.stringify(course));
     return vld.checkPrsOK(course.ownerId, course);
   })
   .then(function(course) {
@@ -103,17 +115,16 @@ router.post('/', function(req, res) {
 
 
 router.get('/:name', function(req, res) {
-   connections.getConnection(res, function(cnn) {
-      cnn.query('SELECT name, description, attsAllowed, openTime from Challenge where name = ?', req.params.name, function(err, result) {
-         if (result.length === 1) {
-            res.json(result[0]);
-         }
-         else {
-            res.status(404).send();
-         }
-         cnn.release();
-      });
-   });
+  sequelize.Challenge.findOne({where: {name: req.params.name}})
+  .then(function(chl) {
+    if (chl) {
+      res.json(result[0]);
+    }
+    else {
+      res.sendStatus(404);
+    }
+  })
+  .catch(doErrorResponse(res));
 });
 
 router.get('/:name/atts', function(req, res) {

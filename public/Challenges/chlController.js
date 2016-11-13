@@ -15,6 +15,9 @@ app.controller('chlController',
    API.chls.get(challengeName)
       .then(function(response) {
          scope.challenge = response.data;
+      })
+      .catch(function(err) {
+         
       });
 
    scope.createAttempt = function() {

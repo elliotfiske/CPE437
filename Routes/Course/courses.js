@@ -315,21 +315,18 @@ router.get('/:name/chls', function(req, res) {
    var vld = req.validator;
    var prs = req.session;
 
+   // TODO: change to check if it's an enrolled student
    vld.checkAdminOrTeacher()
-      .then(function() {
-         return connections.getConnectionP();
-      })
-      .then(function(conn) {
-
-         return conn.query('SELECT name, description, attsAllowed, openTime from Challenge WHERE courseName = ?', [req.params.name])
-            .then(sendResult(res))
-            .finally(function() {
-               conn.release();
-            });
-      })
-      .catch(handleError(res));
-
-});
+   .then(function() {
+     return sequelize.Course.findOne({where: {name: req.params.name},
+       include: [{model: sequelize.Challenge, as: 'Challenges', attributes: {exclude: ['answer']}}]
+     });
+   })
+   .then(function(chls) {
+     res.json(chls["Challenges"]);
+   })
+   .catch(handleError(res));
+ });
 
 router.get('/:crsName/itms', function(req, res) {
    var vld = req.validator;
