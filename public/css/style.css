@@ -257,3 +257,10 @@ body {
     content: "\2122";
     color: transparent !important;
 }
+
+
+
+/* Toastr default shadow looks like hot garbage */
+#toast-container .toast {
+  box-shadow: 0 0 12px #191919;
+}

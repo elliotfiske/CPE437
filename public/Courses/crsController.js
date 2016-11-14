@@ -105,6 +105,6 @@ app.controller('crsController',
    }
 
    scope.viewChallenge = function(challengeName) {
-      $state.go('chl', { challengeName: challengeName});
+      $state.go('chl', { courseName: scope.courseName, challengeName: challengeName});
    }
 }])

@@ -17,7 +17,9 @@ app.controller('chlController',
          scope.challenge = response.data;
       })
       .catch(function(err) {
-         
+         if (err.tag == "notFound") {
+            errors.push("")
+         }
       });
 
    scope.createAttempt = function() {

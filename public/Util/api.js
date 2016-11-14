@@ -85,10 +85,6 @@ angular.module('mainApp')
          post: typicalPost('ssns'),
          delete: typicalDelete('ssns')
       },
-      chls: {
-         post: typicalPost('chls'),
-         get: typicalGet('chls')
-      },
       crss: {
          get: typicalGet('crss'),
          post: typicalPost('crss'),
@@ -121,19 +117,17 @@ angular.module('mainApp')
                return del('crss/' + courseName + '/itms/' + itemId);
             }
          },
-         chls: {
-            get: function(courseName, challengeName) {
-               challengeName = challengeName || '';
-               return get('crss/' + courseName + '/chls/' + challengeName).
-                  then(function(response) {
-                     response.data = response.data.map(function(chl) {
-                        chl.openTime = new Date(chl.openTime);
-                        return chl;
-                     });
-                     return response;
-                  });
+         challenge: {
+            get: function(courseName) {
+               return get('crss/' + courseName + '/challenge');
+            },
+            delete: function(courseName, challengeName) {
+               return del('crss/' + courseName + '/challenge/' + challengeName);
+            },
+            post: function(courseName, challengeBody) {
+               return post('crss/' + courseName + '/enrs', challengeBody);
             }
-         }
+         },
       }
    }
 }])

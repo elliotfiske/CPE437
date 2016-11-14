@@ -1,6 +1,6 @@
 app.controller('teacherController',
-['$scope', '$state', 'api', 'confirm', 'login', '$rootScope',
- function(scope, $state, API, confirm, login, $rootScope) {
+['$scope', '$state', 'api', 'confirm', 'login', '$rootScope', 'toastr',
+ function(scope, $state, API, confirm, login, $rootScope, toastr) {
    $rootScope.page = 'teacher';
 
    scope.courses = [];
@@ -26,8 +26,8 @@ app.controller('teacherController',
       API.crss.post({ name: scope.courseName })
          .then(scope.refreshcrss)
          .catch(function(err) {
-            if (err.data[0].tag === 'dupName') {
-               scope.errors = ['Course name ' + scope.courseName + ' is taken'];
+            if (err.data.tag === 'dupName') {
+               toastr.error("There's already a course named '" + scope.courseName + ".'", 'Uh oh!');
             }
             else
                scope.errors = err.data;
