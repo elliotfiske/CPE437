@@ -23,7 +23,7 @@ app.controller('crsController',
    scope.refreshenrs();
 
    scope.refreshchls = function() {
-      return API.crss.chls.get(scope.courseName)
+      return API.crss.challenge.get(scope.courseName)
          .then(function(response) {
             scope.chls = response.data;
          });
@@ -61,7 +61,12 @@ app.controller('crsController',
    scope.refreshitms();
 
    scope.isOpen = function(chl) {
-      return chl.openTime <= new Date();
+      if (scope.loggedUser.role == 0) {
+         return chl.openTime <= new Date();
+      }
+      else {
+         return true;
+      }
    }
 
    scope.addEnrollment = function() {
@@ -101,10 +106,10 @@ app.controller('crsController',
    };
 
    scope.createChallenge = function() {
-      $state.go('newchl', {courseName: scope.courseName, week: 0, day: 0, type: "multchoice" });
+      $state.go('newchallenge', {courseName: scope.courseName, week: 0, day: 0, type: "multchoice" });
    }
 
    scope.viewChallenge = function(challengeName) {
-      $state.go('chl', { courseName: scope.courseName, challengeName: challengeName});
+      $state.go('challenge', { courseName: scope.courseName, challengeName: challengeName});
    }
 }])

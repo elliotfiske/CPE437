@@ -1,33 +1,33 @@
 
    <h1>New Challenge</h1>
 
-   <uib-tabset active="activeJustified" justified="true">
-    <uib-tab index="0" heading="Numerical">
+   <uib-tabset active="activeJustified" justified="true" ng-model="currTab">
+    <uib-tab index="0" heading="Numerical" ng-click="currTab.name = 'numerical'">
       <div class="container-white row">
 
-        <form ng-submit="createMultChoice()">
+        <form ng-submit="createNumerical()">tml
           <input type='text' ng-model="challenge.name" class="form-control input-group" placeholder="Challenge Name" />
           <textarea class="form-control" rows="3" ng-model="challenge.description" placeholder="Challenge Description"></textarea>
-          <input type='number' ng-model="challenge.inexactAnswers" class="form-control input-group" placeholder="Answer" />          
+          <input type='number' ng-model="challenge.answer" class="form-control input-group" placeholder="Answer" step="any"/>
 
-          <button type="submit" class="btn btn-primary" ng-disabled="challengeNotReady()">Create</button>
+          <button type="submit" class="btn btn-primary" ng-disabled="numChallengeNotReady()">Create</button>
         </form>
       </div>
     </uib-tab>
-    <uib-tab index="1" heading="Short Answer">
+    <uib-tab index="1" heading="Short Answer" ng-click="currTab.name = 'shortanswer'">
       <div class="container-white row">
 
-        <form ng-submit="createMultChoice()">
+        <form ng-submit="createShortAnswer()">
           <input type='text' ng-model="challenge.name" class="form-control input-group" placeholder="Challenge Name" />
           <textarea class="form-control" rows="3" ng-model="challenge.description" placeholder="Challenge Description"></textarea>
-          <input type='text' ng-model="challenge.inexactAnswers" class="form-control input-group" placeholder="Inexact Answers" />
-          <input type='text' ng-model="challenge.inexactAnswers" class="form-control input-group" placeholder="Exact Answers" />
+          <input type='text' ng-model="challenge.inexact" class="form-control input-group" placeholder="Inexact Answers" />
+          <input type='text' ng-model="challenge.exact" class="form-control input-group" placeholder="Exact Answers" />
 
-          <button type="submit" class="btn btn-primary" ng-disabled="challengeNotReady()">Create</button>
+          <button type="submit" class="btn btn-primary" ng-disabled="shortChallengeNotReady()">Create</button>
         </form>
       </div>
     </uib-tab>
-    <uib-tab index="2" heading="Multiple Choice">
+    <uib-tab index="2" heading="Multiple Choice" ng-click="currTab.name = 'multchoice'">
       <div class="container-white row">
         <form ng-submit="createMultChoice()">
           <input type='text' ng-model="challenge.name" class="form-control input-group" placeholder="Challenge Name" />
@@ -45,7 +45,7 @@
 
           <br />
 
-          <button type="submit" class="btn btn-primary" ng-disabled="challengeNotReady()">Create</button>
+          <button type="submit" class="btn btn-primary" ng-disabled="mcChallengeNotReady()">Create</button>
         </form>
       </div>
     </uib-tab>

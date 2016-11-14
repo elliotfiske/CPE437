@@ -7,25 +7,11 @@ var Promise = require('bluebird');
 
 // Get only OPEN challenges
 router.get('/', function(req, res) {
-   req.validator.check(!!req.query.prsId, 'noPrsId')
-      .then(function() {
-        sequelize.Challenge.findAll()
-
-      //    return connections.getConnectionP();
-      // })
-      // .then(function(conn) {
-      //    var query = [
-      //       'SELECT name, description, attsAllowed, openTime, prsId from Challenge chl',
-      //       'LEFT JOIN Enrollment enr ON enr.courseName = chl.courseName',
-      //       'WHERE openTime <= NOW() AND prsId = ?'
-      //    ];
-      //    var params = [req.query.prsId];
-      //
-      //    conn.query(query.join(' '), params)
-      //       .then(sendResult(res))
-      //       .finally(releaseConn(conn));
-      })
-      .catch(doErrorResponse(res));
+  return sequelize.Challenge.findAll()
+  .then(function(allChls) {
+    res.json(allChls);
+  })
+  .catch(doErrorResponse(res));
 });
 
 function validateChallengeData(vld, req) {
@@ -47,7 +33,7 @@ function validateChallengeData(vld, req) {
       // short answer just gotta be non-null
     }
     else {
-      return Promise.reject({tags: Tags.badValue});
+      return Promise.reject({message: 'Invalid type', tags: Tags.badValue});
     }
   });
 }
@@ -102,10 +88,11 @@ router.post('/', function(req, res) {
 
 
 router.get('/:name', function(req, res) {
-  sequelize.Challenge.findOne({where: {name: req.params.name}})
+  sequelize.Challenge.findOne({where: {name: req.params.name},
+  include: {model: sequelize.MultChoiceAnswer, as: "Possibilities"}})
   .then(function(chl) { // TODO: remove answer
     if (chl) {
-      res.json(result[0]);
+      res.json(chl);
     }
     else {
       res.sendStatus(404);

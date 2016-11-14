@@ -118,14 +118,15 @@ angular.module('mainApp')
             }
          },
          challenge: {
-            get: function(courseName) {
-               return get('crss/' + courseName + '/challenge');
+            get: function(courseName, challengeName) {
+               challengeName = challengeName || '';
+               return get('crss/' + courseName + '/challenge/' + challengeName);
             },
             delete: function(courseName, challengeName) {
                return del('crss/' + courseName + '/challenge/' + challengeName);
             },
             post: function(courseName, challengeBody) {
-               return post('crss/' + courseName + '/enrs', challengeBody);
+               return post('crss/' + courseName + '/challenge', challengeBody);
             }
          },
       }
