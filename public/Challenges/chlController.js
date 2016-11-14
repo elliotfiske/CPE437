@@ -46,11 +46,11 @@ app.controller('chlController',
       scope.attempt.input = scope.attempt.input.toString();
       API.prss.atts.post(scope.loggedUser.id, scope.attempt)
       .then(function(wasCorrect) {
-         if (wasCorrect.data.score == 2) {
-            toastr.success("You did it!", "You got the right answer. Nice!");
+         if (wasCorrect.data.score >= 2) {
+            toastr.success("Correct!", "Good job!");
          }
          else if (wasCorrect.data.score == 1) {
-            toastr.warning("Almost!", "That answer wasn't quite right. Consider rephrasing it!");
+            toastr.warning("That answer wasn't quite right. Consider rephrasing it!");
          }
          else {
             toastr.error("Sorry! That's incorrect.");
