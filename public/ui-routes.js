@@ -1,3 +1,12 @@
+app.config(function(toastrConfig) {
+   angular.extend(toastrConfig, {
+      autoDismiss: false,
+      timeOut: 0,
+      closeButton: true,
+      tapToDismiss: false
+   })
+});
+
 
 app.config(['$stateProvider', '$urlRouterProvider',
    function($stateProvider, $router) {
@@ -31,8 +40,13 @@ app.config(['$stateProvider', '$urlRouterProvider',
          templateUrl: 'Courses/crs.template.html',
          controller: 'crsController'
       })
-      .state('chl', {
-         url: '/chls/{challengeName}',
+      .state('newchallenge', {
+         url: '/crss/{courseName}/newchallenge?w={week}&d={day}',
+         templateUrl: 'Challenges/newchl.template.html',
+         controller: 'newchlController'
+      })
+      .state('challenge', {
+         url: '/course/{courseName}/challenges/{challengeName}',
          templateUrl: 'Challenges/chl.template.html',
          controller: 'chlController'
       })

@@ -54,7 +54,6 @@ app.use(function(req, res, next) {
 app.use('/crss', require('./Routes/Course/courses'));
 app.use('/prss', require('./Routes/Account/users'));
 app.use('/ssns', require('./Routes/Account/sessions'));
-app.use('/chls', require('./Routes/Challenge/challenges'));
 app.use('/atts', require('./Routes/Challenge/attempts'));
 
 // Redirect the user to Facebook for authentication.  When complete,

@@ -2,7 +2,7 @@ var Express = require('express');
 var connections = require('../Connections.js');
 var Tags = require('../Validator.js').Tags;
 var ssnUtil = require('../Session.js');
-var router = Express.Router({caseSensitive: true});
+var router = Express.Router({caseSensitive: false});
 
 router.baseURL = '/Ssns';
 

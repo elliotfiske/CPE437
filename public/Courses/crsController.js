@@ -1,6 +1,6 @@
 app.controller('crsController',
-['$scope', '$state', '$stateParams', 'api', 'confirm', 'login',
- function(scope, $state, $stateParams, API, confirm, login) {
+['$scope', '$state', '$stateParams', 'api', 'confirm', 'login', '$location',
+ function(scope, $state, $stateParams, API, confirm, login, $location) {
    scope.courseName = $stateParams.courseName;
 
    scope.challenge = {
@@ -23,7 +23,7 @@ app.controller('crsController',
    scope.refreshenrs();
 
    scope.refreshchls = function() {
-      return API.crss.chls.get(scope.courseName)
+      return API.crss.challenge.get(scope.courseName)
          .then(function(response) {
             scope.chls = response.data;
          });
@@ -61,7 +61,12 @@ app.controller('crsController',
    scope.refreshitms();
 
    scope.isOpen = function(chl) {
-      return chl.openTime <= new Date();
+      if (scope.loggedUser.role == 0) {
+         return chl.openTime <= new Date();
+      }
+      else {
+         return true;
+      }
    }
 
    scope.addEnrollment = function() {
@@ -101,24 +106,10 @@ app.controller('crsController',
    };
 
    scope.createChallenge = function() {
-      if (scope.challenge.type === 'term') {
-         scope.challenge.answer = {};
-         scope.challenge.answer.inexact = scope.inexact.split(',').map(function(str) {
-            return str.trim();
-         });
-         scope.challenge.answer.exact = scope.exact.split(',').map(function(str) {
-            return str.trim();
-         });
-
-         scope.challenge.answer = JSON.stringify(scope.challenge.answer);
-         console.log(scope.challenge);
-      }
-
-      API.chls.post(scope.challenge)
-         .then(scope.refreshchls);
+      $state.go('newchallenge', {courseName: scope.courseName, week: 0, day: 0, type: "multchoice" });
    }
 
    scope.viewChallenge = function(challengeName) {
-      $state.go('chl', { challengeName: challengeName });
+      $state.go('challenge', { courseName: scope.courseName, challengeName: challengeName});
    }
 }])
