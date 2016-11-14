@@ -203,7 +203,7 @@ Course.hasMany(Challenge, {as: "Challenges", foreignKey: "courseName"});
 Challenge.hasMany(MultChoiceAnswer, {as: 'Possibilities'});
 // MultChoiceAnswer.sync();
 
-sequelize.sync({force: true}).then(function() {
+sequelize.sync().then(function() {
   return Person.findOrCreate({
     where: {email: 'Admin@11.com'},
     defaults: {name: 'AdminMan', password: "password", role: 2}});
