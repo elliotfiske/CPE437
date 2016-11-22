@@ -103,7 +103,7 @@ var Challenge = sequelize.define('Challenge', {
     beforeValidate: function(challenge, options) {
       if (challenge.name) {
         challenge.name = challenge.name.trim();
-        challenge.sanitizedName = sanitize(challenge.name).toLowerCase().replace(" ", "-");
+        challenge.sanitizedName = sanitize(challenge.name).toLowerCase().replace(/ /g, '-');
       }
     }
   },

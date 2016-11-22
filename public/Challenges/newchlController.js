@@ -1,21 +1,16 @@
 app.controller('newchlController',
 ['$scope', '$state', '$stateParams', 'api', 'confirm', 'login', 'toastr',
 function(scope, $state, $stateParams, API, confirm, login, toastr) {
-   scope.currTab = {
-      nane: "numerical"
-   };
-
-   scope.numericalChallenge = false;
-   scope.multchoiceChallenge = false;
-   scope.shortanswerChallenge = false;
 
    scope.challenge = {
       name: "",
       description: "",
       courseName: $stateParams.courseName,
+      type: "numerical",
       openTime: new Date(),
       attsAllowed: 1
    };
+   
    scope.radioAnswers = [
       { answerText: "" },
       { answerText: "" }
