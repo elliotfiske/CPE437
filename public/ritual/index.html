@@ -9,24 +9,24 @@
     <script src="TemplateData/UnityProgress.js"></script>
   </head>
   <body class="template">
-    <p class="header"><span>Unity WebGL Player | </span>ld34</p>
     <div class="template-wrap clear">
       <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" height="700px" width="400px"></canvas>
-      <br>
-      <div class="logo"></div>
-      <div class="fullscreen"><img src="TemplateData/fullscreen.png" width="38" height="38" alt="Fullscreen" title="Fullscreen" onclick="SetFullscreen(1);" /></div>
-      <div class="title">ld34</div>
     </div>
-    <p class="footer">&laquo; created with <a href="http://unity3d.com/" title="Go to unity3d.com">Unity</a> &raquo;</p>
     <script type='text/javascript'>
   var Module = {
     TOTAL_MEMORY: 268435456,
     errorhandler: null,			// arguments: err, url, line. This function must return 'true' if the error is handled, otherwise 'false'
     compatibilitycheck: null,
-    dataUrl: "Release/v7.data",
-    codeUrl: "Release/v7.js",
-    memUrl: "Release/v7.mem",
+    dataUrl: "Release/ritual-test.data",
+    codeUrl: "Release/ritual-test.js",
+    memUrl: "Release/ritual-test.mem",
   };
+
+    window.addEventListener("keydown", function(e) {
+        if ([32,37,38,39,40].indexOf(e.keyCode) > -1) {
+            e.preventDefault();
+}
+}, false);
 </script>
 <script src="Release/UnityLoader.js"></script>
 
