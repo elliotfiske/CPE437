@@ -79,14 +79,14 @@
           <div class="form-group">
             <label class="control-label col-sm-2" for="mc-chlname">Name:</label>
             <div class="col-sm-10">
-              <input type='text' ng-model="challenge.name" class="form-control" placeholder="Challenge Name" id="mc-chlname"/>
+              <input type='text' ng-model="challenge.name" class="form-control" placeholder="Challenge Name" id="mc-chlname" tabindex="1"/>
             </div>
           </div>
 
           <div class="form-group">
             <label class="control-label col-sm-2" for="mc-chldesc">Description:</label>
             <div class="col-sm-10">
-              <textarea class="form-control" rows="3" ng-model="challenge.description" placeholder="Challenge Description" id="mc-chldesc"></textarea>
+              <textarea class="form-control" rows="3" ng-model="challenge.description" placeholder="Challenge Description" id="mc-chldesc" tabindex="2"></textarea>
             </div>
           </div>
 
@@ -97,9 +97,9 @@
                 <!-- <label> -->
                   <div class="radio">
                     <input type="radio" name="optradio" ng-model="correctRadioOption.chosen" value="{{$index}}">
-                    <input type='text' class="form-control" id="expand-long" ng-model="radioAnswer.answerText" ng-class="correctRadioOption.chosen == $index ? 'correct-mc' : 'wrong-mc'"
+                    <input type='text' tabindex="{{$index + 3}}" class="form-control" id="expand-long" ng-model="radioAnswer.answerText" ng-class="correctRadioOption.chosen == $index ? 'correct-mc' : 'wrong-mc'"
                     placeholder="Answer {{$index + 1}}" />
-                    <button type="button" class="btn btn-danger" ng-click="removeOption($index)">Remove</button>
+                    <button type="button" class="btn btn-danger" tabindex="{{$index + radioAnswers.length + 3}}" ng-click="removeOption($index)">Remove</button>
                   </div>
                 <!-- </label> -->
               </div>

@@ -5,7 +5,7 @@
       <a href="#register" class="btn btn-lg btn-default">Register</a>
    </p>
    <p class="lead" ng-show="loggedUser">
-      <!-- <a href="#student" class="btn btn-lg btn-primary">{{ loggedUser.role > 0 ? 'Student' : 'Go!' }}</a> -->
+      <a href="#student" class="btn btn-lg btn-primary">{{ loggedUser.role > 0 ? 'Student' : 'Go!' }}</a>
       <a href="#teacher" class="btn btn-lg btn-default" ng-show="loggedUser.role > 0">Teacher</a>
    </p>
 </div>
