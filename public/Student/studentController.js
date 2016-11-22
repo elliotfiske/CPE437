@@ -9,6 +9,11 @@ app.controller('studentController', ['$scope', '$state', 'api', 'confirm', 'logi
    scope.enrolledCourses = [];
    scope.availableCourses = [];
 
+   scope.accordionStatus = [
+      {open: true, disabled: false},
+      {open: false, disabled: true}
+   ];
+
    if (!login.isLoggedIn()) {
       $state.go('home');
    }
