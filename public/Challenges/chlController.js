@@ -1,6 +1,6 @@
 app.controller('chlController',
 ['$scope', '$state', '$stateParams', 'api', 'confirm', 'login', 'toastr',
- function(scope, $state, $stateParams, API, confirm, login, toastr) {
+function(scope, $state, $stateParams, API, confirm, login, toastr) {
    var challengeName = $stateParams.challengeName;
 
    scope.challenge = {};
@@ -17,30 +17,23 @@ app.controller('chlController',
    }
 
    API.crss.challenge.get($stateParams.courseName, challengeName)
-      .then(function(response) {
-         scope.challenge = response.data;
-      })
-      .catch(function(err) {
-         if (err.tag == "notFound") {
-            toastr.error("Uh oh!", "Couldn't find a challenge called '"
-                           + challengeName + "'");
-         }
-         else {
-            toastr.error("Uh oh!", err.errMsg);
-         }
-      });
-
-   scope.createAttempt = function() {
-      API.prss.atts.post(scope.loggedUser.id, scope.attempt)
-         .then(function() {
-            $state.go('student');
-         });
-   }
+   .then(function(response) {
+      scope.challenge = response.data;
+   })
+   .catch(function(err) {
+      if (err.tag == "notFound") {
+         toastr.error("Uh oh!", "Couldn't find a challenge called '"
+         + challengeName + "'");
+      }
+      else {
+         toastr.error("Uh oh!", err.errMsg);
+      }
+   });
 
    scope.answerMultipleChoice = function() {
       scope.attempt.input = scope.multChoice.chosen;
       scope.createAttempt();
-   }
+   };
 
    scope.createAttempt = function() {
       scope.attempt.input = scope.attempt.input.toString();

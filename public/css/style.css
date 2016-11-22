@@ -258,9 +258,45 @@ body {
     color: transparent !important;
 }
 
-
-
 /* Toastr default shadow looks like hot garbage */
 #toast-container .toast {
   box-shadow: 0 0 12px #191919;
+}
+
+/* Form junk */
+.correct-mc {
+    background-color: rgb(187, 255, 187);
+}
+
+.wrong-mc {
+    background-color: #FFDBDB;
+}
+
+#fix-tab-border>a {
+  border-color: rgba(0, 0, 0, 0);
+  padding: 11px;
+}
+
+#fix-tab-border>a:hover {
+  background-color: #888;
+}
+
+#fix-tab-border.active>a, #fix-tab-border.active>a {
+  background-color: #EEE;
+}
+
+.square-top {
+  border-radius: 0px 0px 5px 5px;
+}
+
+@media screen and (max-width: 767px) {
+  .smol-push {
+    margin-left: 22px;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  #expand-long {
+    width: 454px;
+  }
 }

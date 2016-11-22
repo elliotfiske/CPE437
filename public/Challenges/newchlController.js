@@ -13,7 +13,8 @@ function(scope, $state, $stateParams, API, confirm, login, toastr) {
       name: "",
       description: "",
       courseName: $stateParams.courseName,
-      openTime: new Date()
+      openTime: new Date(),
+      attsAllowed: 1
    };
    scope.radioAnswers = [
       { answerText: "" },
@@ -47,13 +48,17 @@ function(scope, $state, $stateParams, API, confirm, login, toastr) {
             allAnswersFilled = false;
          }
       });
-      return scope.challenge.name === ""        ||
+      return scope.challenge.name === "" ||
       scope.challenge.description === "" ||
       scope.radioAnswers.length <= 1     ||
       !allAnswersFilled;
    };
 
    scope.addOption = function() {
+      if (scope.radioAnswers.length >= 11) {
+         toastr.error("That's ridiculous. It's not even funny.", "11 is enough");
+         return;
+      }
       scope.radioAnswers.push({answerText: ""});
    };
 
@@ -61,29 +66,7 @@ function(scope, $state, $stateParams, API, confirm, login, toastr) {
       scope.radioAnswers.splice(ndx, 1);
    };
 
-   scope.createMultChoice = function() {
-      var newChallenge = {
-         name: scope.challenge.name,
-         description: scope.challenge.description,
-         answer: scope.correctRadioOption.chosen,
-         attsAllowed: 1,
-         type: "multchoice",
-         choices: scope.radioAnswers.map(function(answer) {return answer.answerText}),
-         courseName: $stateParams.courseName,
-         openTime: new Date(), // TODO: calculate based on $stateParams.week and $stateParams.day
-      };
-
-      API.crss.challenge.post($stateParams.courseName, newChallenge)
-      .then(function() {
-         $state.go('crs', { courseName: $stateParams.courseName });
-      })
-      .catch(function(err) {
-         toastr.error("Oh no!", err.errMsg);
-      });
-   };
-
-   scope.createNumerical = function() {
-      scope.challenge.type = "number";
+   scope.doChallengePost = function() {
       API.crss.challenge.post($stateParams.courseName, scope.challenge)
       .then(function() {
          $state.go('crs', { courseName: $stateParams.courseName });
@@ -91,17 +74,20 @@ function(scope, $state, $stateParams, API, confirm, login, toastr) {
       .catch(function(err) {
          toastr.error("Oh no!", err.errMsg);
       });
+   }
+
+   scope.createMultChoice = function() {
+      scope.challenge.choices = scope.radioAnswers.map(function(answer) {return answer.answerText});
+      scope.challenge.answer = scope.correctRadioOption.chosen;
+      scope.doChallengePost();
+   };
+
+   scope.createNumerical = function() {
+      scope.doChallengePost();
    };
 
    scope.createShortAnswer = function() {
       scope.challenge.answer = JSON.stringify({exact: scope.challenge.exact.split(","), inexact: scope.challenge.inexact.split(",")});
-      scope.challenge.type = "shortanswer";
-      API.crss.challenge.post($stateParams.courseName, scope.challenge)
-      .then(function() {
-         $state.go('crs', { courseName: $stateParams.courseName });
-      })
-      .catch(function(err) {
-         toastr.error("Oh no!", err.errMsg);
-      });
+      scope.doChallengePost();
    };
 }])
