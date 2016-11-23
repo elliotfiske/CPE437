@@ -46,7 +46,6 @@ var Person = sequelize.define('Person', {
 }, {
   freezeTableName: true
 });
-Person.sync();
 
 var Course = sequelize.define('Course', {
   name: {
@@ -58,9 +57,31 @@ var Course = sequelize.define('Course', {
     type: Sequelize.INTEGER
   }
 }, {
-  freezeTableName: true
+  freezeTableName: true,
+  hooks: {
+    beforeCreate: function(newCourse, options) {
+      var weekPromises = [];
+      var startDate = new Date(process.env.START_DATE);
+
+      for (var ndx = 0; ndx < 10; ndx++) {
+        weekPromises.push(
+          Week.create({
+            weekIndexInCourse: ndx,
+            startDate: startDate.getTime()
+          })
+        );
+
+        startDate.setDate(startDate.getDate()+7);
+      }
+
+      Promise.all(weekPromises)
+      .then(function(weeks) {
+        console.log("das weeks"  + JSON.stringify(weeks));
+        newCourse.setWeeks(weeks);
+      })
+    }
+  }
 });
-// Course.sync();
 
 var Challenge = sequelize.define('Challenge', {
   name: {
@@ -81,7 +102,7 @@ var Challenge = sequelize.define('Challenge', {
     validate: {
       isIn: {
           args: [['multchoice', 'shortanswer', 'number']],
-          message: "Challenge type must be one of ['multchoice', 'shortanswer', 'number']"
+          msg: "Challenge type must be one of ['multchoice', 'shortanswer', 'number']"
       }
     }
   },
@@ -96,9 +117,17 @@ var Challenge = sequelize.define('Challenge', {
   },
   courseName: {
     type: Sequelize.STRING,
+  },
+  dayIndex: {
+    type: Sequelize.INTEGER
   }
 }, {
   freezeTableName: true,
+  instanceMethods: {
+    getOpenDate: function() {
+      console.log("Test what 'this' is: " + JSON.stringify(this));
+    }
+  },
   hooks: {
     beforeValidate: function(challenge, options) {
       if (challenge.name) {
@@ -144,7 +173,6 @@ var Attempt = sequelize.define('Attempt', {
 }, {
   freezeTableName: true
 });
-// Attempt.sync();
 
 var ShopItem = sequelize.define('ShopItem', {
   name: {
@@ -162,19 +190,17 @@ var ShopItem = sequelize.define('ShopItem', {
 }, {
   freezeTableName: true
 });
-// ShopItem.sync();
 
 var Week = sequelize.define('Week', {
-  weekNameTest: {
-    type: Sequelize.STRING
-  },
-  weekNum: {
+  weekIndexInCourse: {
     type: Sequelize.INTEGER
+  },
+  startDate: {
+    type: Sequelize.DATE
   }
 }, {
   freezeTableName: true
 });
-// Week.sync();
 
 /* ASSOCIATIONS! */
 ShopItem.belongsToMany(Person, {through: 'StudentPurchase'});
@@ -196,32 +222,22 @@ var Enrollment = sequelize.define('Enrollment', {
 
 Course.belongsToMany(Person, {as: "EnrolledDudes", through: Enrollment, foreignKey: "courseName"});
 Person.belongsToMany(Course, {as: "Classes", through: Enrollment, foreignKey: "personId"});
-// Enrollment.sync();
 
 Course.hasMany(Challenge, {as: "Challenges", foreignKey: "courseName"});
 
 Challenge.hasMany(MultChoiceAnswer, {as: 'Possibilities'});
-// MultChoiceAnswer.sync();
 
-sequelize.sync().then(function() {
+Course.hasMany(Week);
+Week.hasMany(Challenge, {as: "DailyChallenges"})
+
+sequelize.sync({force: true}).then(function() {
   return Person.findOrCreate({
     where: {email: 'Admin@11.com'},
     defaults: {name: 'AdminMan', password: "password", role: 2}});
 })
 .then(function(ok) {
   console.log(JSON.stringify(ok));
-})
-.then(function() {
-  return Challenge.find({where: {name: 'challenge2'},
-                include: [{model: MultChoiceAnswer, as: "Possibilities"}]});
-})
-.then(function(chl) {
-  console.log(JSON.stringify(chl));
-})
-.catch(function(err) {
-  console.log("uh oh " + err)
 });
-
 
 //
 // var makeCourse = Course.findOrCreate({

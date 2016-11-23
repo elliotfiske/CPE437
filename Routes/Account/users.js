@@ -72,172 +72,166 @@ router.get('/:id', function(req, res) {
   var vld = req._validator;
 
   if (vld.checkPrsOK(req.params.id)) {
-    connections.getConnection(res,
-      function(cnn) {
-        cnn.query('select id, email, name, createdAt, role from Person where id = ?', [req.params.id],
-        function(err, prsArr) {
-          if (vld.check(prsArr.length, Tags.notFound))
-          res.json(prsArr);
-          cnn.release();
-        });
-      });
-    }
-  });
-
-  router.put('/:id', function(req, res) {
-    var vld = req.validator;
-    var body = req.body;
-    var admin = req.session.isAdmin();
-
-    // Validation
-    return vld.checkPrsOK(req.params.id)
-    .then(function() {
-      return vld.check(!body.role || admin, Tags.noPermission);
-    })
-    .then(function() {
-      return vld.check(body.password === undefined || body.oldPassword || admin, Tags.noOldPwd);
-    })
-    .then(function() {
-      // Get connection
-      return connections.getConnectionP();
-    })
-    .then(function(conn) {
-
-      // Run queries
-      return conn.query('SELECT * FROM Person WHERE id = ?', [req.params.id, body.oldPassword])
-      .then(function(result) {
-        return vld.check(body.password === undefined || result[0].password === body.oldPassword || admin, Tags.oldPwdMismatch);
-      })
-      .then(function() {
-
-        // Update the person object
-        delete body.oldPassword;
-        return conn.query('Update Person SET ? WHERE id = ?', [body, req.params.id]);
-      })
-      .then(sendResult(res))
-      .finally(function() {
-        conn.release();
-      });
-    })
-    .catch(doErrorResponse(res));
-  });
-
-  router.delete('/:id', function(req, res) {
-    var vld = req._validator;
-
-    if (vld.checkAdmin())
     connections.getConnection(res, function(cnn) {
-      cnn.query('DELETE from Person where id = ?', [req.params.id],
-      function (err, result) {
-        if (vld.check(result.affectedRows, Tags.notFound))
-        res.end();
+      cnn.query('select id, email, name, createdAt, role from Person where id = ?', [req.params.id], function(err, prsArr) {
+        if (vld.check(prsArr.length, Tags.notFound)) {
+          res.json(prsArr);
+        }
         cnn.release();
       });
     });
+  }
+});
+
+router.put('/:id', function(req, res) {
+  var vld = req.validator;
+  var body = req.body;
+  var admin = req.session.isAdmin();
+
+  // Validation
+  return vld.checkPrsOK(req.params.id)
+  .then(function() {
+    return vld.check(!body.role || admin, Tags.noPermission);
+  })
+  .then(function() {
+    return vld.check(body.password === undefined || body.oldPassword || admin, Tags.noOldPwd);
+  })
+  .then(function() {
+    // Get connection
+    return connections.getConnectionP();
+  })
+  .then(function(conn) {
+
+    // Run queries
+    return conn.query('SELECT * FROM Person WHERE id = ?', [req.params.id, body.oldPassword])
+    .then(function(result) {
+      return vld.check(body.password === undefined || result[0].password === body.oldPassword || admin, Tags.oldPwdMismatch);
+    })
+    .then(function() {
+
+      // Update the person object
+      delete body.oldPassword;
+      return conn.query('Update Person SET ? WHERE id = ?', [body, req.params.id]);
+    })
+    .then(sendResult(res))
+    .finally(function() {
+      conn.release();
+    });
+  })
+  .catch(doErrorResponse(res));
+});
+
+router.delete('/:id', function(req, res) {
+  var vld = req._validator;
+
+  if (vld.checkAdmin())
+  connections.getConnection(res, function(cnn) {
+    cnn.query('DELETE from Person where id = ?', [req.params.id], function (err, result) {
+      if (vld.check(result.affectedRows, Tags.notFound))
+      res.end();
+      cnn.release();
+    });
   });
+});
 
-  // If teacher, returns list of courses OWNED by teacher.
-  router.get('/:id/crss', function(req, res) {
-    var query, qryParams;
+// If teacher, returns list of courses OWNED by teacher.
+router.get('/:id/crss', function(req, res) {
+  var query, qryParams;
 
-    if (req._validator.checkAdminOrTeacher()) {
-      query = 'SELECT * from Course where ownerId = ?';
-      params = [req.params.id];
+  if (req._validator.checkAdminOrTeacher()) {
+    query = 'SELECT * from Course where ownerId = ?';
+    params = [req.params.id];
 
-      connections.getConnection(res,
-        function(cnn) {
-          cnn.query(query, params,
-            function(err, result) {
-              res.json(result);
+    connections.getConnection(res, function(cnn) {
+      cnn.query(query, params, function(err, result) {
+        res.json(result);
 
-              cnn.release();
-            });
-          });
-        }
+        cnn.release();
       });
+    });
+  }
+});
 
-      router.get('/:id/enrs', function(req, res) {
-        var vld = req.validator;
+router.get('/:id/enrs', function(req, res) {
+  var vld = req.validator;
 
-        vld.checkPrsOK(req.params.id)
-        .then(function() {
-          return connections.getConnectionP();
-        })
-        .then(function(conn) {
-          return conn.query("SELECT * FROM Enrollment WHERE PersonId = ?", req.params.id)
-          .then(function(enrollments) {
-            res.json(enrollments);
-          })
-          .finally(function() {
-            conn.release();
-          });
-        })
-        .catch(doErrorResponse(res));
-      });
+  vld.checkPrsOK(req.params.id)
+  .then(function() {
+    return connections.getConnectionP();
+  })
+  .then(function(conn) {
+    return conn.query("SELECT * FROM Enrollment WHERE PersonId = ?", req.params.id)
+    .then(function(enrollments) {
+      res.json(enrollments);
+    })
+    .finally(function() {
+      conn.release();
+    });
+  })
+  .catch(doErrorResponse(res));
+});
 
-      router.get('/:id/atts', function(req, res) {
-        var query, qryParams;
+router.get('/:id/atts', function(req, res) {
+  var query, qryParams;
 
-        if (req._validator.checkPrsOK(req.params.id))
-        query = 'SELECT * from Attempt where ownerId = ?';
-        params = [req.params.id];
-        if (req.query.challengeName) {
-          query += ' and challengeName = ?';
-          params.push(req.query.challengeName);
+  if (req._validator.checkPrsOK(req.params.id))
+  query = 'SELECT * from Attempt where ownerId = ?';
+  params = [req.params.id];
+  if (req.query.challengeName) {
+    query += ' and challengeName = ?';
+    params.push(req.query.challengeName);
+  }
+
+  connections.getConnection(res, function(cnn) {
+    cnn.query(query, params, function(err, result) {
+      res.json(result);
+
+      cnn.release();
+    });
+  });
+});
+
+router.post('/:id/atts', function(req, res) {
+  var vld = req.validator;
+  var owner = req.params.id;
+
+  return vld.checkPrsOK(owner)
+  .then(function() {
+    return vld.hasFields(req.body, ['input', 'challengeName']);
+  })
+  .then(function() {
+    return sequelize.Challenge.findOne({where: {name: req.body.challengeName}});
+  })
+  .then(function(chl) {
+    // Score the attempt
+    var input = req.body.input.toLowerCase();
+    var answer = chl.answer.toLowerCase();
+
+    req.body.score = 0;
+    if (chl.type === 'number' || chl.type === 'multchoice') {
+      input = parseInt(input);
+      answer = parseInt(answer);
+      if (!Number.isNaN(input)) {
+        if (Math.abs(input - answer) < 0.01) {
+          req.body.score = 2;
         }
+      }
+    }
+    else if (chl.type === 'shortanswer') {
+      answer = JSON.parse(answer);
+      var exact =  answer.exact;
+      var inexact = answer.inexact;
 
-        connections.getConnection(res,
-          function(cnn) {
-            cnn.query(query, params,
-              function(err, result) {
-                res.json(result);
+      if (exact.indexOf(input) >= 0) {
+        req.body.score = 2;
+      }
+      else if (inexact.indexOf(input) >= 0) {
+        req.body.score = 1;
+      }
+    }
+    res.json({score: req.body.score}).end();
+  })
+  .catch(doErrorResponse(res));
+});
 
-                cnn.release();
-              });
-            });
-          });
-
-          router.post('/:id/atts', function(req, res) {
-            var vld = req.validator;
-            var owner = req.params.id;
-
-            return vld.checkPrsOK(owner)
-            .then(function() {
-              return vld.hasFields(req.body, ['input', 'challengeName']);
-            })
-            .then(function() {
-              return sequelize.Challenge.findOne({where: {name: req.body.challengeName}});
-            })
-            .then(function(chl) {
-              // Score the attempt
-              var input = req.body.input.toLowerCase();
-              var answer = chl.answer.toLowerCase();
-
-              req.body.score = 0;
-              if (chl.type === 'number' || chl.type === 'multchoice') {
-                input = parseInt(input);
-                answer = parseInt(answer);
-                if (!Number.isNaN(input)) {
-                  if (Math.abs(input - answer) < 0.01) {
-                    req.body.score = 2;
-                  }
-                }
-              }
-              else if (chl.type === 'shortanswer') {
-                answer = JSON.parse(answer);
-                var exact =  answer.exact;
-                var inexact = answer.inexact;
-
-                if (exact.indexOf(input) >= 0) {
-                  req.body.score = 2;
-                }
-                else if (inexact.indexOf(input) >= 0) {
-                  req.body.score = 1;
-                }
-              }
-              res.json({score: req.body.score}).end();
-            })
-            .catch(doErrorResponse(res));
-          });
-
-          module.exports = router;
+module.exports = router;

@@ -17,7 +17,7 @@ router.get('/', function(req, res) {
 function validateChallengeData(vld, req) {
   return vld.checkAdminOrTeacher()
   .then(function() {
-    return vld.hasFields(req.body, ["name", "description", "type", "answer", "openTime"]);
+    return vld.hasFields(req.body, ["name", "description", "type", "answer", "weekIndex", "dayIndex"]);
   })
   .then(function() {
     if (req.body["type"] === "multchoice") {
@@ -45,15 +45,21 @@ router.post('/', function(req, res) {
   .then(function() {
     console.log(JSON.stringify(req.params));
     return sequelize.Course.findOne({
-      where: {name: req.params.courseName}
+      where: {name: req.params.courseName},
+      include: [{
+        model: sequelize.Week,
+        where: {weekIndexInCourse: req.body.weekIndex}
+      }]
     });
   })
   .then(function(course) {
-    console.log(JSON.stringify(course));
+    console.log("course guy " + JSON.stringify(course));
     return vld.check(course, Tags.notFound, null, course);
   })
   .then(function(course) {
-    console.log(JSON.stringify(course));
+    return vld.check(course.weeks[0], course);
+  })
+  .then(function(course) {
     return vld.checkPrsOK(course.ownerId, course);
   })
   .then(function(course) {
@@ -88,9 +94,15 @@ router.post('/', function(req, res) {
 
 
 router.get('/:name', function(req, res) {
-  sequelize.Challenge.findOne({where: {name: req.params.name},
-  include: {model: sequelize.MultChoiceAnswer, as: "Possibilities"}})
+  sequelize.Challenge.findOne({where:
+    {name: req.params.name},
+    include: [
+      {model: sequelize.MultChoiceAnswer, as: "Possibilities"},
+      {model: sequelize.Week, as: "DailyChallenges"}
+    ]
+  })
   .then(function(chl) { // TODO: remove answer
+    chl.getOpenDate();
     if (chl) {
       res.json(chl);
     }
