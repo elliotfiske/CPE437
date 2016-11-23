@@ -59,7 +59,7 @@ var Course = sequelize.define('Course', {
 }, {
   freezeTableName: true,
   hooks: {
-    beforeCreate: function(newCourse, options) {
+    afterCreate: function(newCourse, options) {
       var weekPromises = [];
       var startDate = new Date(process.env.START_DATE);
 
@@ -223,20 +223,21 @@ var Enrollment = sequelize.define('Enrollment', {
 Course.belongsToMany(Person, {as: "EnrolledDudes", through: Enrollment, foreignKey: "courseName"});
 Person.belongsToMany(Course, {as: "Classes", through: Enrollment, foreignKey: "personId"});
 
-Course.hasMany(Challenge, {as: "Challenges", foreignKey: "courseName"});
-
 Challenge.hasMany(MultChoiceAnswer, {as: 'Possibilities'});
 
 Course.hasMany(Week);
 Week.hasMany(Challenge, {as: "DailyChallenges"})
 
-sequelize.sync({force: true}).then(function() {
+sequelize.sync().then(function() {
   return Person.findOrCreate({
     where: {email: 'Admin@11.com'},
     defaults: {name: 'AdminMan', password: "password", role: 2}});
 })
 .then(function(ok) {
   console.log(JSON.stringify(ok));
+})
+.catch(function(err) {
+  console.err("EXTREMELY UNLIKELY ERROR DETECTED " + JSON.stringify(err));
 });
 
 //

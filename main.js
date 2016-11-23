@@ -69,62 +69,17 @@ app.get('/auth/facebook/callback',
   passport.authenticate('facebook', { successRedirect: '/',
                                       failureRedirect: '/login'}));
 
-
 app.delete('/DB', function(req, res) {
-
-   cnnPool.getConnection(res, function(cnn) {
-      async.series([
-         function(callback){
-            cnn.query('delete from Attempt', callback);
-         },
-         function(callback){
-            cnn.query('delete from Challenge', callback);
-         },
-         function(callback){
-            cnn.query('delete from Person', callback);
-         },
-         function(callback){
-            cnn.query('delete from Course', callback);
-         },
-         function(callback){
-            cnn.query('delete from Enrollment', callback);
-         },
-         function(callback){
-            cnn.query('delete from StudentPurchase', callback);
-         },
-         function(callback){
-            cnn.query('delete from ShopItem', callback);
-         },
-         function(callback){
-            cnn.query('alter table Attempt auto_increment = 1', callback);
-         },
-         function(callback){
-            cnn.query('alter table Person auto_increment = 1', callback);
-         },
-         function(callback){
-            cnn.query('alter table Enrollment auto_increment = 1', callback);
-         },
-         function(callback){
-            cnn.query('alter table ShopItem auto_increment = 1', callback);
-         },
-         function(callback){
-            cnn.query("INSERT INTO `Person` (`id`,`name`,`email`,`password`,`role`,`createdAt`,`updatedAt`) VALUES (DEFAULT,'AdminMan','Admin@11.com','password',2,'2016-11-06 04:02:15','2016-11-06 04:02:15');"
-            , callback);
-         },
-         function(callback){
-            for (var session in Session.sessions)
-               delete Session.sessions[session];
-            res.send();
-         }
-      ],
-      function(err, status) {
-         console.log(err);
-
-         res.end(500);
-      }
-   );
-   cnn.release();
-   });
+  sequelize.sync({force: true})
+  .then(function() {
+    return Person.findOrCreate({
+      where: {email: 'Admin@11.com'},
+      defaults: {name: 'AdminMan', password: "password", role: 2}
+    });
+  })
+  .catch(function(err) {
+    console.error("OH NO COULDN'T MAKE ADMIN GUY " + JSON.stringify(err));
+  });
 });
 
 /* Testing Material */

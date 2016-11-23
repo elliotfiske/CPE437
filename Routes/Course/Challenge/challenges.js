@@ -24,10 +24,10 @@ function validateChallengeData(vld, req) {
       console.log(req.body);
       return vld.check(req.body["choices"] &&
                        Array.isArray(req.body["choices"]) &&
-                       req.body["choices"].length >= 2, Tags.badValue);
+                       req.body["choices"].length >= 2, Tags.badValue, {field: "choices"});
     }
     else if (req.body["type"] === "number") {
-      return vld.check(!isNaN(parseInt(req.body["answer"])), Tags.badValue);
+      return vld.check(!isNaN(parseInt(req.body["answer"])), Tags.badValue, {field: "answer"});
     }
     else if (req.body["type"] === "shortanswer") {
       // short answer just gotta be non-null
@@ -57,7 +57,7 @@ router.post('/', function(req, res) {
     return vld.check(course, Tags.notFound, null, course);
   })
   .then(function(course) {
-    return vld.check(course.weeks[0], course);
+    return vld.check(course.Weeks[0], Tags.badValue, {field: "weekIndex"}, course);
   })
   .then(function(course) {
     return vld.checkPrsOK(course.ownerId, course);
@@ -94,14 +94,18 @@ router.post('/', function(req, res) {
 
 
 router.get('/:name', function(req, res) {
+  var vld = req.validator;
   sequelize.Challenge.findOne({where:
     {name: req.params.name},
     include: [
       {model: sequelize.MultChoiceAnswer, as: "Possibilities"},
-      {model: sequelize.Week, as: "DailyChallenges"}
-    ]
+      {model: sequelize.Week, as: "DailyChallenges"},
+    ],
+    exclude: {
+      attributes: [vld.checkAdminOrTeacher() ? '' : 'answer']
+    }
   })
-  .then(function(chl) { // TODO: remove answer
+  .then(function(chl) {
     chl.getOpenDate();
     if (chl) {
       res.json(chl);
