@@ -1,38 +1,37 @@
+<div class="container-white">
+   <div class="row">
+      <h1>{{ challenge.name }}</h1>
 
+      <p>{{ challenge.description }}</p>
+      <hr />
 
-<div class="container-white row">
-   <h1>{{ challenge.name }}</h1>
+      <div ng-show="challenge.type == 'multchoice'">
+         <form ng-submit="answerMultipleChoice()">
+            <div class="radio" ng-repeat="possibility in challenge.Possibilities">
+               <label>
+                  <input type="radio" id="{{'radioguy' + $index}}" name="optradio" ng-model="multChoice.chosen" value="{{$index}}" />
+                  <label for="{{'radioguy' + $index}}">{{possibility.text}}</label>
+               </label>
+            </div>
+            <button type="submit" class="btn btn-primary" ng-disabled="multChoice.chosen === null">Submit</button>
+         </form>
+      </div>
 
-   <p>{{ challenge.description }}</p>
-   <hr />
+      <div ng-show="challenge.type == 'number'">
+         <form ng-submit="createAttempt()">
+            <label for="attempt-input">Your answer:</label>
+            <input type="number" class="form-control" ng-model="attempt.input" step="any"></input><br />
+            <button type="submit" class="btn btn-primary" ng-disabled="attempt.input === null">Submit</button>
+         </form>
+      </div>
 
-   <div ng-show="challenge.type == 'multchoice'">
-      <form ng-submit="answerMultipleChoice()">
-         <div class="radio" ng-repeat="possibility in challenge.Possibilities">
-            <label>
-               <input type="radio" id="{{'radioguy' + $index}}" name="optradio" ng-model="multChoice.chosen" value="{{$index}}" />
-               <label for="{{'radioguy' + $index}}">{{possibility.text}}</label>
-            </label>
-         </div>
-         <button type="submit" class="btn btn-primary" ng-disabled="multChoice.chosen === null">Submit</button>
-      </form>
+      <div ng-show="challenge.type == 'shortanswer'">
+         <form ng-submit="createAttempt()">
+            <label for="attempt-input">Your answer:</label>
+            <textarea class="form-control" rows="3" ng-model="attempt.input"></textarea><br />
+            <button type="submit" class="btn btn-primary" ng-disabled="!attempt.input.trim()">Submit</button>
+         </form>
+      </div>
+
    </div>
-
-   <div ng-show="challenge.type == 'number'">
-      <form ng-submit="createAttempt()">
-         <label for="attempt-input">Your answer:</label>
-         <input type="number" class="form-control" ng-model="attempt.input" step="any"></input><br />
-         <button type="submit" class="btn btn-primary" ng-disabled="attempt.input === null">Submit</button>
-      </form>
-   </div>
-
-   <div ng-show="challenge.type == 'shortanswer'">
-      <form ng-submit="createAttempt()">
-         <label for="attempt-input">Your answer:</label>
-         <textarea class="form-control" rows="3" ng-model="attempt.input"></textarea><br />
-         <button type="submit" class="btn btn-primary" ng-disabled="!attempt.input.trim()">Submit</button>
-      </form>
-   </div>
-
-
 </div>
