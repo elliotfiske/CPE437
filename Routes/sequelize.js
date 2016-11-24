@@ -128,6 +128,19 @@ var Challenge = sequelize.define('Challenge', {
       console.log("Test what 'this' is: " + JSON.stringify(this));
     }
   },
+  validate: {
+    dayIndexNotColliding: function() {
+      Week.findById(this.weekId)
+      .then(function(week) {
+        return week.findOne({where: {dayIndex: this.dayIndex}});
+      })
+      .then(function(chl) {
+        if (chl !== this) {
+          throw new Error("There's already a challenge on day " + this.dayIndex);
+        }
+      });
+    }
+  },
   hooks: {
     beforeValidate: function(challenge, options) {
       if (challenge.name) {
@@ -199,7 +212,22 @@ var Week = sequelize.define('Week', {
     type: Sequelize.DATE
   }
 }, {
-  freezeTableName: true
+  freezeTableName: true,
+  instanceMethods: {
+    // Verify that there's not already a challenge for a day,
+    //  then add the challenge!
+    checkDayAddChallenge: function(newChallenge) {
+      this.getChallenges({where: {dayIndex: newChallenge.dayIndex}})
+      .then(function(chls) {
+        if (chls.length >= 1) {
+          throw new Error("There's already a challenge for day " + newChallenge.dayIndex);
+        }
+      })
+      .then(function() {
+        return this.addChallenges([newChallenge]);
+      });
+    }
+  }
 });
 
 /* ASSOCIATIONS! */
@@ -226,7 +254,7 @@ Person.belongsToMany(Course, {as: "Classes", through: Enrollment, foreignKey: "p
 Challenge.hasMany(MultChoiceAnswer, {as: 'Possibilities'});
 
 Course.hasMany(Week);
-Week.hasMany(Challenge, {as: "DailyChallenges"})
+Week.hasMany(Challenge);
 
 sequelize.sync().then(function() {
   return Person.findOrCreate({
@@ -257,7 +285,6 @@ sequelize.sync().then(function() {
 //   console.log("GREAT SUCC!");
 // });
 
-
 module.exports = {
   Course: Course,
   Week: Week,
@@ -266,5 +293,6 @@ module.exports = {
   Attempt: Attempt,
   ShopItem: ShopItem,
   Enrollment: Enrollment,
-  MultChoiceAnswer: MultChoiceAnswer
+  MultChoiceAnswer: MultChoiceAnswer,
+  do: sequelize
 };

@@ -70,15 +70,21 @@ app.get('/auth/facebook/callback',
                                       failureRedirect: '/login'}));
 
 app.delete('/DB', function(req, res) {
-  sequelize.sync({force: true})
+  return req.validator.checkAdmin()
   .then(function() {
-    return Person.findOrCreate({
+    return sequelize.do.sync({force: true});
+  })
+  .then(function() {
+    return sequelize.Person.findOrCreate({
       where: {email: 'Admin@11.com'},
       defaults: {name: 'AdminMan', password: "password", role: 2}
     });
   })
+  .then(function() {
+    res.sendStatus(200);
+  })
   .catch(function(err) {
-    console.error("OH NO COULDN'T MAKE ADMIN GUY " + JSON.stringify(err));
+    res.sendStatus(500).json({error: "OH NO: " + JSON.stringify(err)})
   });
 });
 

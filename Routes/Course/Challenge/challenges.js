@@ -7,9 +7,14 @@ var Promise = require('bluebird');
 
 // Get only OPEN challenges
 router.get('/', function(req, res) {
-  return sequelize.Challenge.findAll()
-  .then(function(allChls) {
-    res.json(allChls);
+  return sequelize.Week.findAll({
+    where: {courseName: req.params.courseName},
+    include: [
+      {model: sequelize.Challenge}
+    ]
+  })
+  .then(function(allWeeks) {
+    res.json(allWeeks);
   })
   .catch(doErrorResponse(res));
 });
@@ -63,6 +68,7 @@ router.post('/', function(req, res) {
     return vld.checkPrsOK(course.ownerId, course);
   })
   .then(function(course) {
+    req.body.courseName = req.params.courseName;
     var makeChallenge = sequelize.Challenge.create(req.body);
     var promiseList = [makeChallenge];
 
@@ -80,10 +86,10 @@ router.post('/', function(req, res) {
       var newChallenge = arr[0];
       var choices = arr.slice(1);
 
-      var addChlToCourse = course.addChallenges([newChallenge]);
+      var addChlToWeek = course.Weeks[0].checkDayAddChallenge([newChallenge]);
       var addChoicesToChl = newChallenge.addPossibilities(choices);
 
-      return Promise.all([addChlToCourse, addChoicesToChl]);
+      return Promise.all([addChlToWeek, addChoicesToChl]);
     })
     .then(function() {
       res.location(router.baseURL + '/' + req.body.name).sendStatus(200).end();
