@@ -95,14 +95,20 @@ var Challenge = sequelize.define('Challenge', {
   },
   attsAllowed: {
     type: Sequelize.INTEGER,
-    defaultValue: 1
+    defaultValue: 1,
+    validate: {
+      min: {
+        args: [1],
+        msg: "AttsAllowed must be greater than 1"
+      }
+    }
   },
   type: {
     type: Sequelize.ENUM('multchoice', 'shortanswer', 'number'),
     validate: {
       isIn: {
-          args: [['multchoice', 'shortanswer', 'number']],
-          msg: "Challenge type must be one of ['multchoice', 'shortanswer', 'number']"
+        args: [['multchoice', 'shortanswer', 'number']],
+        msg: "Challenge type must be one of ['multchoice', 'shortanswer', 'number']"
       }
     }
   },
@@ -128,8 +134,15 @@ var Challenge = sequelize.define('Challenge', {
       console.log("Test what 'this' is: " + JSON.stringify(this));
     }
   },
-  validate: {
-    dayIndexNotColliding: function() {
+  hooks: {
+    beforeValidate: function(challenge, options) {
+      if (challenge.name) {
+        challenge.name = challenge.name.trim();
+        challenge.sanitizedName = sanitize(challenge.name).toLowerCase().replace(/ /g, '-');
+      }
+    },
+    beforeUpdate: function(challenge, options) {
+      console.log("YES THIS IS BEING RUN YES YES YES YES YES YSE");
       Week.findById(this.weekId)
       .then(function(week) {
         return week.findOne({where: {dayIndex: this.dayIndex}});
@@ -141,19 +154,22 @@ var Challenge = sequelize.define('Challenge', {
       });
     }
   },
-  hooks: {
-    beforeValidate: function(challenge, options) {
-      if (challenge.name) {
-        challenge.name = challenge.name.trim();
-        challenge.sanitizedName = sanitize(challenge.name).toLowerCase().replace(/ /g, '-');
-      }
+  validate: {
+    checkCollidingDay: function() {
+      console.log("AHAHAHOIWEHFOIAHWEOIFAHWOIEFHAIOWHEOIFAIHOWEHFIOAWEHOFOIAWHEFIAEW");
+      Week.findById(this.weekId)
+      .then(function(week) {
+        return week.getChallenges({where: {dayIndex: this.dayIndex}});
+      })
+      .then(function(chl) {
+        if (chl !== this) {
+          throw new Error("There's already a challenge on day " + this.dayIndex);
+        }
+      });
     }
   },
   indexes: [{
-    unique: {
-      args: true,
-      msg: "test this message thing out"
-    },
+    unique: true,
     fields: ['courseName', 'sanitizedName']
   }]
 });
@@ -217,14 +233,15 @@ var Week = sequelize.define('Week', {
     // Verify that there's not already a challenge for a day,
     //  then add the challenge!
     checkDayAddChallenge: function(newChallenge) {
-      this.getChallenges({where: {dayIndex: newChallenge.dayIndex}})
+      var that = this;
+      return this.getChallenges({where: {dayIndex: newChallenge.dayIndex}})
       .then(function(chls) {
         if (chls.length >= 1) {
           throw new Error("There's already a challenge for day " + newChallenge.dayIndex);
         }
       })
       .then(function() {
-        return this.addChallenges([newChallenge]);
+        return that.addChallenges([newChallenge]);
       });
     }
   }
@@ -260,39 +277,39 @@ sequelize.sync().then(function() {
   return Person.findOrCreate({
     where: {email: 'Admin@11.com'},
     defaults: {name: 'AdminMan', password: "password", role: 2}});
-})
-.then(function(ok) {
-  console.log(JSON.stringify(ok));
-})
-.catch(function(err) {
-  console.err("EXTREMELY UNLIKELY ERROR DETECTED " + JSON.stringify(err));
-});
+  })
+  .then(function(ok) {
+    console.log(JSON.stringify(ok));
+  })
+  .catch(function(err) {
+    console.err("EXTREMELY UNLIKELY ERROR DETECTED " + JSON.stringify(err));
+  });
 
-//
-// var makeCourse = Course.findOrCreate({
-//   where: {name: "myCourse"},
-//   defaults: {ownerId: 1}
-// });
-//
-// Promise.all([makeAdmin, makeCourse])
-// .then(function(arr) {
-//   var newAdmin = arr[0];
-//   var newCourse = arr[1];
-//   console.log(JSON.stringify(newAdmin));
-//   newAdmin[0].setClasses([newCourse[0]]);
-// })
-// .then(function() {
-//   console.log("GREAT SUCC!");
-// });
+  //
+  // var makeCourse = Course.findOrCreate({
+  //   where: {name: "myCourse"},
+  //   defaults: {ownerId: 1}
+  // });
+  //
+  // Promise.all([makeAdmin, makeCourse])
+  // .then(function(arr) {
+  //   var newAdmin = arr[0];
+  //   var newCourse = arr[1];
+  //   console.log(JSON.stringify(newAdmin));
+  //   newAdmin[0].setClasses([newCourse[0]]);
+  // })
+  // .then(function() {
+  //   console.log("GREAT SUCC!");
+  // });
 
-module.exports = {
-  Course: Course,
-  Week: Week,
-  Person: Person,
-  Challenge: Challenge,
-  Attempt: Attempt,
-  ShopItem: ShopItem,
-  Enrollment: Enrollment,
-  MultChoiceAnswer: MultChoiceAnswer,
-  do: sequelize
-};
+  module.exports = {
+    Course: Course,
+    Week: Week,
+    Person: Person,
+    Challenge: Challenge,
+    Attempt: Attempt,
+    ShopItem: ShopItem,
+    Enrollment: Enrollment,
+    MultChoiceAnswer: MultChoiceAnswer,
+    do: sequelize
+  };

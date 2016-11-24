@@ -80,14 +80,22 @@ router.post('/', function(req, res) {
       }
     }
 
-    return Promise.all(promiseList)
+    return course.Weeks[0].getChallenges({where: {dayIndex: req.body.dayIndex}})
+    .then(function(chls) {
+      return vld.check(chls.length !== 0, Tags.dupName); // verify there's not already a challenge on that day
+    })
+    .then(function() {
+      return Promise.all(promiseList);
+    })
     .then(function(arr) {
       console.log(JSON.stringify(arr));
       var newChallenge = arr[0];
       var choices = arr.slice(1);
 
-      var addChlToWeek = course.Weeks[0].checkDayAddChallenge([newChallenge]);
+      var addChlToWeek = course.Weeks[0].addChallenges([newChallenge]);
       var addChoicesToChl = newChallenge.addPossibilities(choices);
+
+      console.log(newChallenge.validate());
 
       return Promise.all([addChlToWeek, addChoicesToChl]);
     })
