@@ -19,12 +19,6 @@ function handleError(res) {
   }
 }
 
-function sendResult(res, status) {
-  return function(result) {
-    res.status(status || 200).json(result);
-  }
-}
-
 router.get('/', function(req, res) {
   var vld = req.validator;
 
@@ -57,17 +51,6 @@ router.post('/', function(req, res) {
     .then(function(insertResult) {
       res.location(router.baseURL + '/' + req.body.name).status(200).end();
       return Promise.resolve();
-    })
-    .then(function() {
-      var newWeeks = [];
-      for (var i = 0; i < 7; i++) {
-        newWeeks.push(sequelize.Week.create({
-          weekNameTest: 'weekForCourseNamed' + req.body.name,
-          weekNum: i
-        }));
-      }
-
-      return Promise.all(newWeeks);
     })
     .finally(function() {
       conn.release();

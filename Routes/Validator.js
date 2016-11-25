@@ -20,6 +20,7 @@ Validator.Tags = {
    noTerms: "noTerms",              // Acceptance of terms is required.
    noOldPwd: "noOldPwd",            // Change of password requires an old password
    dupName: "dupName",              // Name duplicates an existing Challenge Name
+   dupDay: "dupDay",                // Attempt to create/move a challenge to a day where there's already a challenge
    incompAttempt: "incompAttempt",  // Standing Attempt
    badChlName: "badChlName",        // Bad Challenge Name
    attNotClosable: "attNotClosable",// Attempt not in a closable state
@@ -69,7 +70,7 @@ Validator.prototype.hasFields = function(obj, fieldList) {
 
 Validator.doErrorResponse = function(res) {
   return function(error) {
-    console.log("ERROR: " + error.message);
+    console.log("ERROR: " + error.message || err.tag);
     if (error.name === "SequelizeUniqueConstraintError") {
       error = {
         tag: "nameTaken"

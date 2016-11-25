@@ -76,15 +76,16 @@ app.controller('studentController', ['$scope', '$state', 'api', 'confirm', 'logi
    };
 
    /*** INITIAL API CALLS ***/
+   API.crss.challenge.get(course)
    API.prss.chls.get(scope.loggedUser.id).then(function(response) {
-      scope.challenges = response.data;
+      scope.weeks = response.data;
 
-      scope.challenges.forEach(function(challenge) {
-         scope.mappedChallenges[challenge.name] = challenge;
-      })
+      // scope.challenges.forEach(function(challenge) {
+      //    scope.mappedChallenges[challenge.name] = challenge;
+      // });
    });
 
-   API.prss.crss.get(scope.loggedUser.id).then(function(response) {
+   API.prss.enrs.get(scope.loggedUser.id).then(function(response) {
       scope.enrolledCourses = response.data;
       return API.crss.get();
    })

@@ -67,7 +67,7 @@ var Course = sequelize.define('Course', {
         weekPromises.push(
           Week.create({
             weekIndexInCourse: ndx,
-            startDate: startDate.getTime()
+            startDate: startDate.getTime(),
           })
         );
 
@@ -140,32 +140,6 @@ var Challenge = sequelize.define('Challenge', {
         challenge.name = challenge.name.trim();
         challenge.sanitizedName = sanitize(challenge.name).toLowerCase().replace(/ /g, '-');
       }
-    },
-    beforeUpdate: function(challenge, options) {
-      console.log("YES THIS IS BEING RUN YES YES YES YES YES YSE");
-      Week.findById(this.weekId)
-      .then(function(week) {
-        return week.findOne({where: {dayIndex: this.dayIndex}});
-      })
-      .then(function(chl) {
-        if (chl !== this) {
-          throw new Error("There's already a challenge on day " + this.dayIndex);
-        }
-      });
-    }
-  },
-  validate: {
-    checkCollidingDay: function() {
-      console.log("AHAHAHOIWEHFOIAHWEOIFAHWOIEFHAIOWHEOIFAIHOWEHFIOAWEHOFOIAWHEFIAEW");
-      Week.findById(this.weekId)
-      .then(function(week) {
-        return week.getChallenges({where: {dayIndex: this.dayIndex}});
-      })
-      .then(function(chl) {
-        if (chl !== this) {
-          throw new Error("There's already a challenge on day " + this.dayIndex);
-        }
-      });
     }
   },
   indexes: [{
@@ -230,20 +204,7 @@ var Week = sequelize.define('Week', {
 }, {
   freezeTableName: true,
   instanceMethods: {
-    // Verify that there's not already a challenge for a day,
-    //  then add the challenge!
-    checkDayAddChallenge: function(newChallenge) {
-      var that = this;
-      return this.getChallenges({where: {dayIndex: newChallenge.dayIndex}})
-      .then(function(chls) {
-        if (chls.length >= 1) {
-          throw new Error("There's already a challenge for day " + newChallenge.dayIndex);
-        }
-      })
-      .then(function() {
-        return that.addChallenges([newChallenge]);
-      });
-    }
+    // TODO: moving challenges around will happen here :3
   }
 });
 

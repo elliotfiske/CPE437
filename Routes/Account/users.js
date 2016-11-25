@@ -155,18 +155,15 @@ router.get('/:id/crss', function(req, res) {
 router.get('/:id/enrs', function(req, res) {
   var vld = req.validator;
 
-  vld.checkPrsOK(req.params.id)
+  return vld.checkPrsOK(req.params.id)
   .then(function() {
-    return connections.getConnectionP();
+    return sequelize.Person.findById(req.params.id);
   })
-  .then(function(conn) {
-    return conn.query("SELECT * FROM Enrollment WHERE PersonId = ?", req.params.id)
-    .then(function(enrollments) {
-      res.json(enrollments);
-    })
-    .finally(function() {
-      conn.release();
-    });
+  .then(function(me) {
+    return me.getClasses();
+  })
+  .then(function(classes) {
+    res.json(classes).sendStatus(200).end();
   })
   .catch(doErrorResponse(res));
 });
