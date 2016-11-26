@@ -105,350 +105,344 @@ router.put('/:name', function(req, res) {
 });
 
 router.delete('/:name', function(req, res) {
-   if (req._validator.checkAdminOrTeacher()) {
-      connections.getConnection(res, function(cnn) {
-         cnn.query('SELECT * from Course where name = ?', [req.params.name], function(err, result) {
-            if (req._validator.check(result.length === 1, Tags.notFound) &&
-                req._validator.check(req.session.isAdmin() || req.session.id === result[0].ownerId, Tags.noPermission)) {
+  if (req._validator.checkAdminOrTeacher()) {
+    connections.getConnection(res, function(cnn) {
+      cnn.query('SELECT * from Course where name = ?', [req.params.name], function(err, result) {
+        if (req._validator.check(result.length === 1, Tags.notFound) &&
+        req._validator.check(req.session.isAdmin() || req.session.id === result[0].ownerId, Tags.noPermission)) {
 
-               cnn.query('DELETE from Course where name = ?', [req.params.name], function(err, result) {
-                  if (err) {
-                     res.status(500).end();
-                  }
-                  else if (req._validator.check(result.affectedRows, Tags.notFound))
-                     res.status(200).end();
+          cnn.query('DELETE from Course where name = ?', [req.params.name], function(err, result) {
+            if (err) {
+              res.status(500).end();
+            }
+            else if (req._validator.check(result.affectedRows, Tags.notFound))
+            res.status(200).end();
 
-                  cnn.release();
-               });
-            }
-            else {
-               cnn.release();
-            }
-         });
+            cnn.release();
+          });
+        }
+        else {
+          cnn.release();
+        }
       });
-   }
+    });
+  }
 });
 
 router.post('/:name/enrs', function(req, res) {
-   var vld = req.validator;
-   var prs = req.session;
+  var vld = req.validator;
+  var prs = req.session;
 
-   var getPerson = sequelize.Person.findById(req.body.prsId);
-   var getCourse = sequelize.Course.findOne({ where: {name: req.params.name} });
+  var getPerson = sequelize.Person.findById(req.body.prsId);
+  var getCourse = sequelize.Course.findOne({ where: {name: req.params.name} });
 
-   vld.hasFields(req.body, ['prsId'])
-   .then(function() {
-     return Promise.all([getPerson, getCourse]);
-   })
-   .then(function(arr) {
-     var person = arr[0];
-     var course = arr[1];
+  vld.hasFields(req.body, ['prsId'])
+  .then(function() {
+    return Promise.all([getPerson, getCourse]);
+  })
+  .then(function(arr) {
+    var person = arr[0];
+    var course = arr[1];
 
-     if (!person || !course) {
-       return Promise.reject({tag: Tags.notFound});
-     }
+    if (!person || !course) {
+      return Promise.reject({tag: Tags.notFound});
+    }
 
-     return vld.check(prs.isAdmin() || prs.id === req.body.prsId || // Are you Admin, enrolling yourself,
-                      course.ownerId === prs.id,                    // or the teacher of this course?
-                      Tags.noPermission, null, [person, course]);
-   })
-   .then(function(arr) {
-     var person = arr[0];
-     var course = arr[1];
-
-     return person.hasClass(course)
-     .then(function(alreadyAdded) {
-       if (alreadyAdded) {
-         return Promise.reject({tag: Tags.dupName});
-       }
-     })
-     .then(function() {
-       return person.addClasses([course]);
-     })
-     .then(function() {
-       return person.getClasses();
-     })
-     .then(function(classes) {
-        res.json(classes).end();
-     });
-   })
-   .catch(doErrorResponse(res));
+    return vld.check(prs.isAdmin() || prs.id === req.body.prsId || // Are you Admin, enrolling yourself,
+    course.ownerId === prs.id, Tags.noPermission) // or the teacher of this course?
+    .then(function() {
+      return person.hasClass(course)
+    })
+    .then(function(alreadyAdded) {
+      return vld.check(!alreadyAdded, Tags.dupName);
+    })
+    .then(function() {
+      return person.addClasses([course]);
+    })
+    .then(function() {
+      return person.getClasses();
+    })
+    .then(function(classes) {
+      res.json(classes).end();
+    });
+  })
+  .catch(doErrorResponse(res));
 });
 
 router.get('/:name/enrs', function(req, res) {
-   var vld = req.validator;
-   var prs = req.session;
+  var vld = req.validator;
+  var prs = req.session;
 
-   sequelize.Course.findOne({
-     where: {name: req.params.name},
-     include: [{ model: sequelize.Person, as: 'EnrolledDudes', attributes: ['name', 'email'] }]
-   })
-   .then(function(course) {
-     return vld.checkPrsOK(course.ownerId, course);
-   })
-   .then(function(course) {
-     res.json(course["EnrolledDudes"]);
-   })
-   .catch(handleError(res));
+  sequelize.Course.findOne({
+    where: {name: req.params.name},
+    include: [{ model: sequelize.Person, as: 'EnrolledDudes', attributes: ['name', 'email'] }]
+  })
+  .then(function(course) {
+    return vld.checkPrsOK(course.ownerId, course);
+  })
+  .then(function(course) {
+    res.json(course["EnrolledDudes"]);
+  })
+  .catch(handleError(res));
 });
 
 router.get('/:name/enrs/:enrId', function(req, res) {
-   var vld = req._validator;
-   var prs = req.session;
+  var vld = req._validator;
+  var prs = req.session;
 
-   connections.getConnection(res, function(cnn) {
-      function getResult(needsIdCheck) {
-         var queryArr = [
-            'SELECT enrId, whenEnrolled, prsId, lastName, firstName',
-            'FROM Enrollment enr INNER JOIN Person p ON p.id = prsId',
-            'WHERE enr.enrId = ? AND enr.courseName = ?'
-         ];
-         cnn.query(queryArr.join(' '), [req.params.enrId, req.params.name], function(err, result) {
-            if (vld.check(result && result.length, Tags.notFound) &&
-               (!needsIdCheck || vld.check(result[0].prsId === prs.id, Tags.noPermission)))
-               res.json(result[0]);
+  connections.getConnection(res, function(cnn) {
+    function getResult(needsIdCheck) {
+      var queryArr = [
+        'SELECT enrId, whenEnrolled, prsId, lastName, firstName',
+        'FROM Enrollment enr INNER JOIN Person p ON p.id = prsId',
+        'WHERE enr.enrId = ? AND enr.courseName = ?'
+      ];
+      cnn.query(queryArr.join(' '), [req.params.enrId, req.params.name], function(err, result) {
+        if (vld.check(result && result.length, Tags.notFound) &&
+        (!needsIdCheck || vld.check(result[0].prsId === prs.id, Tags.noPermission)))
+        res.json(result[0]);
 
-            cnn.release();
-         });
-      }
+        cnn.release();
+      });
+    }
 
-      if (prs.isAdmin()) {
-         getResult(false);
-      }
-      else if (prs.isTeacher()) {
-         cnn.query('SELECT ownerId FROM Course WHERE name = ?', [req.params.name], function(err, result) {
-            if (result && result[0].ownerId === prs.id) {
-               getResult(false);
-            }
-            else
-               getResult(true);
-         });
-      }
-      else
-         getResult(true);
-   });
+    if (prs.isAdmin()) {
+      getResult(false);
+    }
+    else if (prs.isTeacher()) {
+      cnn.query('SELECT ownerId FROM Course WHERE name = ?', [req.params.name], function(err, result) {
+        if (result && result[0].ownerId === prs.id) {
+          getResult(false);
+        }
+        else
+        getResult(true);
+      });
+    }
+    else
+    getResult(true);
+  });
 });
 
 router.put('/:name/enrs/:enrId', function(req, res) {
-   var vld = req._validator;
-   var admin = req.session && req.session.isAdmin();
-   var owner = false;
-   var enrolled = false;
+  var vld = req._validator;
+  var admin = req.session && req.session.isAdmin();
+  var owner = false;
+  var enrolled = false;
 
-   connections.getConnection(res, function(cnn) {
-      cnn.query('Select * from Course where name = ?', req.params.name,
-      function(err, result) {
-         if (vld.check(result.length, Tags.notFound)) {
+  connections.getConnection(res, function(cnn) {
+    cnn.query('Select * from Course where name = ?', req.params.name,
+    function(err, result) {
+      if (vld.check(result.length, Tags.notFound)) {
+        result = result[0];
+        if (result.ownerId === req.session.id)
+        owner = true;
+
+        cnn.query('Select * from Enrollment where id = ?', req.params.enrId,
+        function(err, result) {
+          if (vld.check(result.length, Tags.notFound)) {
             result = result[0];
-            if (result.ownerId === req.session.id)
-               owner = true;
+            if(result.prsId === req.session.id)
+            enrolled = true;
 
-            cnn.query('Select * from Enrollment where id = ?', req.params.enrId,
-            function(err, result) {
-               if (vld.check(result.length, Tags.notFound)) {
-                  result = result[0];
-                  if(result.prsId === req.session.id)
-                     enrolled = true;
-
-                  if (vld.check(owner || enrolled || admin, Tags.noPermission)) {
-                     cnn.query('Update Enrollment set ? where id = ?', [req.body, req.params.enrId],
-                     function(err, result) {
-                        res.status(200).end();
-                        cnn.release();
-                     });
-                  }
-                  else {
-                     cnn.release();
-                  }
-               }
-               else
-                  cnn.release();
-            });
-         }
-         else
-            cnn.release();
-      });
-   });
+            if (vld.check(owner || enrolled || admin, Tags.noPermission)) {
+              cnn.query('Update Enrollment set ? where id = ?', [req.body, req.params.enrId],
+              function(err, result) {
+                res.status(200).end();
+                cnn.release();
+              });
+            }
+            else {
+              cnn.release();
+            }
+          }
+          else
+          cnn.release();
+        });
+      }
+      else
+      cnn.release();
+    });
+  });
 });
 
 router.delete('/:name/enrs/:enrId', function(req, res) {
-   var vld = req._validator;
-   var prs = req.session;
+  var vld = req._validator;
+  var prs = req.session;
 
-   if (vld.checkAdminOrTeacher()) {
-      connections.getConnection(res, function(cnn) {
-         function doDelete() {
-            cnn.query('DELETE FROM Enrollment WHERE id = ?', [req.params.enrId], function(err, result) {
-               res.end();
-               cnn.release();
-            });
-         }
+  if (vld.checkAdminOrTeacher()) {
+    connections.getConnection(res, function(cnn) {
+      function doDelete() {
+        cnn.query('DELETE FROM Enrollment WHERE id = ?', [req.params.enrId], function(err, result) {
+          res.end();
+          cnn.release();
+        });
+      }
 
-         if (prs.isAdmin()) {
+      if (prs.isAdmin()) {
+        doDelete();
+      }
+      else {
+        cnn.query('SELECT ownerId FROM Course WHERE name = ?', [req.params.name], function(err, result) {
+          if (vld.check(result && result[0].ownerId === prs.id, Tags.noPermission)) {
             doDelete();
-         }
-         else {
-            cnn.query('SELECT ownerId FROM Course WHERE name = ?', [req.params.name], function(err, result) {
-               if (vld.check(result && result[0].ownerId === prs.id, Tags.noPermission)) {
-                  doDelete();
-               }
-               else
-                  cnn.release();
-            });
-         }
-      });
-   }
+          }
+          else
+          cnn.release();
+        });
+      }
+    });
+  }
 });
 
 router.get('/:name/chls', function(req, res) {
-   var vld = req.validator;
-   var prs = req.session;
+  var vld = req.validator;
+  var prs = req.session;
 
-   // TODO: change to check if it's an enrolled student
-   vld.checkAdminOrTeacher()
-   .then(function() {
-     return sequelize.Course.findOne({where: {name: req.params.name},
-       include: [{model: sequelize.Challenge, as: 'Challenges', attributes: {exclude: ['answer']}}]
-     });
-   })
-   .then(function(chls) {
-     res.json(chls["Challenges"]);
-   })
-   .catch(handleError(res));
- });
+  // TODO: change to check if it's an enrolled student
+  vld.checkAdminOrTeacher()
+  .then(function() {
+    return sequelize.Course.findOne({where: {name: req.params.name},
+      include: [{model: sequelize.Challenge, as: 'Challenges', attributes: {exclude: ['answer']}}]
+    });
+  })
+  .then(function(chls) {
+    res.json(chls["Challenges"]);
+  })
+  .catch(handleError(res));
+});
 
 router.get('/:crsName/itms', function(req, res) {
-   var vld = req.validator;
-   var admin = req.session && req.session.isAdmin();
-   var enrolled = false;
-   var owner = false;
+  var vld = req.validator;
+  var admin = req.session && req.session.isAdmin();
+  var enrolled = false;
+  var owner = false;
 
-   connections.getConnection(res, function(cnn) {
-      cnn.query('Select * from Enrollment where courseName = ?', req.params.crsName,
+  connections.getConnection(res, function(cnn) {
+    cnn.query('Select * from Enrollment where courseName = ?', req.params.crsName,
+    function(err, result) {
+      if (result.length) {
+        for (var i = 0; i < result.length; i++) {
+          if (result[i].prsId === req.session.id)
+          enrolled = true;
+        }
+      }
+      cnn.query('Select * from Course where name = ?', req.params.crsName,
       function(err, result) {
-            if (result.length) {
-               for (var i = 0; i < result.length; i++) {
-                  if (result[i].prsId === req.session.id)
-                     enrolled = true;
-               }
-            }
-            cnn.query('Select * from Course where name = ?', req.params.crsName,
-            function(err, result) {
-               if (result.length) {
-                  for (var i = 0; i < result.length; i++) {
-                     if (result[i].ownerId == req.session.id)
-                        owner = true;
-                  }
-               }
-               if (vld.check(enrolled || owner || admin, Tags.noPermission)) {
-                  cnn.query('Select name, cost, id from ShopItem where courseName = ?', req.params.crsName,
-                  function(err, result) {
-                     res.json(result);
-                     cnn.release();
-                  });
-               }
-               else {
-                  cnn.release();
-               }
-            });
+        if (result.length) {
+          for (var i = 0; i < result.length; i++) {
+            if (result[i].ownerId == req.session.id)
+            owner = true;
+          }
+        }
+        if (vld.check(enrolled || owner || admin, Tags.noPermission)) {
+          cnn.query('Select name, cost, id from ShopItem where courseName = ?', req.params.crsName,
+          function(err, result) {
+            res.json(result);
+            cnn.release();
+          });
+        }
+        else {
+          cnn.release();
+        }
       });
-   });
+    });
+  });
 });
 
 router.post('/:crsName/itms', function(req, res) {
-   var vld = req._validator;
+  var vld = req._validator;
 
-   if (vld.hasFields(req.body, ["name", "cost"])) {
-      connections.getConnection(res, function(cnn) {
-         cnn.query('Select name from ShopItem where name = ?', req.body.name,
-         function(err, result) {
-            if (vld.check(!result.length, Tags.dupName)) {
-               cnn.query('Insert into ShopItem (name, courseName, cost) value (?, ?, ?)',
-               [req.body.name, req.params.crsName, req.body.cost],
-               function(err, result) {
-                  if (err)
-                     res.status(400).json(err);
-                  else {
-                     res.location(router.baseURL + '/' + req.params.crsName + '/itms/' + result.insertId).status(200).end();
-                  }
-               });
-            }
+  if (vld.hasFields(req.body, ["name", "cost"])) {
+    connections.getConnection(res, function(cnn) {
+      cnn.query('Select name from ShopItem where name = ?', req.body.name,
+      function(err, result) {
+        if (vld.check(!result.length, Tags.dupName)) {
+          cnn.query('Insert into ShopItem (name, courseName, cost) value (?, ?, ?)',
+          [req.body.name, req.params.crsName, req.body.cost],
+          function(err, result) {
+            if (err)
+            res.status(400).json(err);
             else {
-               cnn.release();
+              res.location(router.baseURL + '/' + req.params.crsName + '/itms/' + result.insertId).status(200).end();
             }
-         });
+          });
+        }
+        else {
+          cnn.release();
+        }
       });
-   }
+    });
+  }
 });
 
 router.put('/:crsName/itms/:itmId', function(req, res) {
-   var vld = req._validator;
-   var admin = req.session && req.session.isAdmin();
-   var owner = false;
-   var purchase = false;
-   var name = req.body.name;
-   var cost = req.body.cost;
-   var purchased = req.body.purchased;
-   var error = false;
+  var vld = req._validator;
+  var admin = req.session && req.session.isAdmin();
+  var owner = false;
+  var purchase = false;
+  var name = req.body.name;
+  var cost = req.body.cost;
+  var purchased = req.body.purchased;
+  var error = false;
 
-   connections.getConnection(res, function(cnn) {
-      cnn.query('Select * from Course where name = ?', req.params.crsName,
-      function(err, result) {
-         if (vld.check(result && result.length, Tags.notFound)) {
-            result = result[0];
-            if (result.ownerId === req.session.id)
-               owner = true;
+  connections.getConnection(res, function(cnn) {
+    cnn.query('Select * from Course where name = ?', req.params.crsName,
+    function(err, result) {
+      if (vld.check(result && result.length, Tags.notFound)) {
+        result = result[0];
+        if (result.ownerId === req.session.id)
+        owner = true;
 
-            cnn.query('Select * from ShopItem where id = ?', req.params.itmId,
-            function(err, result) {
-               if (vld.check(result && result.length, Tags.notFound)) {
-                  purchase = result[0].purchased;
+        cnn.query('Select * from ShopItem where id = ?', req.params.itmId,
+        function(err, result) {
+          if (vld.check(result && result.length, Tags.notFound)) {
+            purchase = result[0].purchased;
 
-                  if (name && !vld.check(admin || owner, Tags.noPermission))
-                     error = true;
-                  if (cost && !vld.check(admin || owner, Tags.noPermission))
-                     error = true;
+            if (name && !vld.check(admin || owner, Tags.noPermission))
+            error = true;
+            if (cost && !vld.check(admin || owner, Tags.noPermission))
+            error = true;
 
-                  if ((purchased !== undefined) && purchased && !vld.check(!purchase || admin || owner, Tags.noPermission))
-                     error = true;
+            if ((purchased !== undefined) && purchased && !vld.check(!purchase || admin || owner, Tags.noPermission))
+            error = true;
 
-                  if (!error) {
-                     cnn.query('Update ShopItem set ? where id = ?', [req.body, req.params.itmId],
-                     function(err) {
-                        if(err)
-                           res.status(400).json(err);
-                        else {
-                           res.end();
-                        }
-                        cnn.release();
-                     });
-                  }
-               }
-               else {
-                  cnn.release();
-               }
-            });
-         }
-         else {
+            if (!error) {
+              cnn.query('Update ShopItem set ? where id = ?', [req.body, req.params.itmId],
+              function(err) {
+                if(err)
+                res.status(400).json(err);
+                else {
+                  res.end();
+                }
+                cnn.release();
+              });
+            }
+          }
+          else {
             cnn.release();
-         }
-      });
-   });
+          }
+        });
+      }
+      else {
+        cnn.release();
+      }
+    });
+  });
 });
 
 router.delete('/:crsName/itms/:itmId', function(req, res) {
-   var vld = req.validator;
-   var admin = req.session && req.session.isAdmin();
+  var vld = req.validator;
+  var admin = req.session && req.session.isAdmin();
 
-   if (vld.check(admin, Tags.noPermission)) {
-      connections.getConnection(res, function(cnn) {
-         cnn.query('Delete from ShopItem where id = ?', req.params.itmId,
-         function(err, result) {
-            res.end();
-            cnn.release();
-         });
+  if (vld.check(admin, Tags.noPermission)) {
+    connections.getConnection(res, function(cnn) {
+      cnn.query('Delete from ShopItem where id = ?', req.params.itmId,
+      function(err, result) {
+        res.end();
+        cnn.release();
       });
-   }
+    });
+  }
 });
 
 module.exports = router;
