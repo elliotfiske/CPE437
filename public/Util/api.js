@@ -76,7 +76,7 @@ angular.module('mainApp')
          },
          enrs: {
             get: function(prsId) {
-               return get('prss/' + prsId + 'enrs');
+               return get('prss/' + prsId + '/enrs');
             }
          },
          chls: {

@@ -156,18 +156,21 @@ router.post('/:name/enrs', function(req, res) {
      var person = arr[0];
      var course = arr[1];
 
-     return person.addClasses([course]);
-   })
-   .then(function(finalResult) {
-     if (finalResult === []) {
-       return Promise.reject({tag: Tags.dupName});
-     }
-     else {
-       return sequelize.Enrollment.findOne({where: {courseName: req.params.name, personId: req.body.prsId}});
-     }
-   })
-   .then(function(newEnrollment) {
-     res.location(router.baseURL + '/' + req.params.name + '/Enrs/' + newEnrollment.id).end();
+     return person.hasClass(course)
+     .then(function(alreadyAdded) {
+       if (alreadyAdded) {
+         return Promise.reject({tag: Tags.dupName});
+       }
+     })
+     .then(function() {
+       return person.addClasses([course]);
+     })
+     .then(function() {
+       return person.getClasses();
+     })
+     .then(function(classes) {
+        res.json(classes).end();
+     });
    })
    .catch(doErrorResponse(res));
 });

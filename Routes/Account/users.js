@@ -163,7 +163,7 @@ router.get('/:id/enrs', function(req, res) {
     return me.getClasses();
   })
   .then(function(classes) {
-    res.json(classes).sendStatus(200).end();
+    res.json(classes).end();
   })
   .catch(doErrorResponse(res));
 });

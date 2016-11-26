@@ -7,7 +7,6 @@ app.config(function(toastrConfig) {
    })
 });
 
-
 app.config(['$stateProvider', '$urlRouterProvider',
    function($stateProvider, $router) {
 
