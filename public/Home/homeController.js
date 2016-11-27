@@ -1,10 +1,18 @@
 app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'api', 'toastr', function(scope, state, login, $rootScope, API, toastr) {
    $rootScope.page = 'home';
 
+   if (!login.isLoggedIn()) {
+      $state.go('login');
+   }
+
+   scope.gotoCourse = function(courseName) {
+      state.go('course', {courseName: courseName});
+   };
+
    scope.enrollCourse = function(courseName) {
       API.crss.enrs.post(courseName, scope.loggedUser.id)
-         .then(function(data) {
-            
+         .then(function(response) {
+            scope.enrolledCourses = response.data;
             onlyShowAvailableCourses();
          })
          .catch(function(err) {

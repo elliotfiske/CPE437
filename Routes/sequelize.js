@@ -50,8 +50,15 @@ var Person = sequelize.define('Person', {
 var Course = sequelize.define('Course', {
   name: {
     type: Sequelize.STRING,
-    unique: true,
-    primaryKey: true
+    unique: true
+  },
+  sanitizedName: {
+    type: Sequelize.STRING,
+    primaryKey: true,
+    unique: {
+      args: [true],
+      msg: "There is already a course named that."
+    }
   },
   ownerId: {
     type: Sequelize.INTEGER
@@ -79,6 +86,12 @@ var Course = sequelize.define('Course', {
         console.log("das weeks"  + JSON.stringify(weeks));
         newCourse.setWeeks(weeks);
       })
+    },
+    beforeValidate: function(course, options) {
+      if (course.name) {
+        course.name = course.name.trim();
+        course.sanitizedName = sanitize(course.name).toLowerCase().replace(/ /g, '-');
+      }
     }
   }
 });
@@ -243,25 +256,8 @@ sequelize.sync().then(function() {
     console.log(JSON.stringify(ok));
   })
   .catch(function(err) {
-    console.err("EXTREMELY UNLIKELY ERROR DETECTED " + JSON.stringify(err));
+    console.error("EXTREMELY UNLIKELY ERROR DETECTED " + JSON.stringify(err));
   });
-
-  //
-  // var makeCourse = Course.findOrCreate({
-  //   where: {name: "myCourse"},
-  //   defaults: {ownerId: 1}
-  // });
-  //
-  // Promise.all([makeAdmin, makeCourse])
-  // .then(function(arr) {
-  //   var newAdmin = arr[0];
-  //   var newCourse = arr[1];
-  //   console.log(JSON.stringify(newAdmin));
-  //   newAdmin[0].setClasses([newCourse[0]]);
-  // })
-  // .then(function() {
-  //   console.log("GREAT SUCC!");
-  // });
 
   module.exports = {
     Course: Course,

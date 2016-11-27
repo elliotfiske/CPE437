@@ -9,9 +9,9 @@
 <div class="container-white" ng-show="loggedUser">
   <div class="row">
     <h1>Classes</h1>
-    <div class="panel panel-success clickable-panel">
+    <div class="panel panel-success" ng-repeat="course in enrolledCourses">
       <div class="panel-heading">
-        <h2 class="panel-title">CPE 101</h2>
+        <h2 class="panel-title">{{course.name}}</h2>
       </div>
       <div class="panel-body list-group">
         <div class="row list-group-item">
@@ -24,7 +24,7 @@
           <div class="btn btn-info pull-right">Go!</div>
         </div>
         <div clas="row list-group-item">
-          <div class="btn btn-primary pull-right">See all challenges</div>
+          <div class="btn btn-primary pull-right" ng-click="gotoCourse(course.sanitizedName)">See all challenges</div>
         </div>
       </div>
     </div>
@@ -42,13 +42,13 @@
       </uib-accordion-group>
     </uib-accordion>
   </div>
-  
-  <div class="row">
+
+  <div class="row" ng-hide="availableCourses.length === 0">
     <h2>Available Courses – Winter 2016</h2>
     <div class="col-sm-12 col-md-6" ng-repeat="course in availableCourses">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <button class="btn btn-info pull-right" type="button" ng-click="enrollCourse(course.name)">Enroll</button>
+          <button class="btn btn-info pull-right" type="button" ng-click="enrollCourse(course.sanitizedName)">Enroll</button>
           <h3 class="panel-title">{{ course.name }}</h3>
           <div class="clearfix"></div>
         </div>

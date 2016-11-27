@@ -104,37 +104,12 @@ router.put('/:name', function(req, res) {
   .catch(doErrorResponse(res));
 });
 
-router.delete('/:name', function(req, res) {
-  if (req._validator.checkAdminOrTeacher()) {
-    connections.getConnection(res, function(cnn) {
-      cnn.query('SELECT * from Course where name = ?', [req.params.name], function(err, result) {
-        if (req._validator.check(result.length === 1, Tags.notFound) &&
-        req._validator.check(req.session.isAdmin() || req.session.id === result[0].ownerId, Tags.noPermission)) {
-
-          cnn.query('DELETE from Course where name = ?', [req.params.name], function(err, result) {
-            if (err) {
-              res.status(500).end();
-            }
-            else if (req._validator.check(result.affectedRows, Tags.notFound))
-            res.status(200).end();
-
-            cnn.release();
-          });
-        }
-        else {
-          cnn.release();
-        }
-      });
-    });
-  }
-});
-
 router.post('/:name/enrs', function(req, res) {
   var vld = req.validator;
   var prs = req.session;
 
   var getPerson = sequelize.Person.findById(req.body.prsId);
-  var getCourse = sequelize.Course.findOne({ where: {name: req.params.name} });
+  var getCourse = sequelize.Course.findOne({ where: {sanitizedName: req.params.name} });
 
   vld.hasFields(req.body, ['prsId'])
   .then(function() {
@@ -174,8 +149,11 @@ router.get('/:name/enrs', function(req, res) {
   var prs = req.session;
 
   sequelize.Course.findOne({
-    where: {name: req.params.name},
+    where: {sanitizedName: req.params.name},
     include: [{ model: sequelize.Person, as: 'EnrolledDudes', attributes: ['name', 'email'] }]
+  })
+  .then(function(course) {
+    return vld.check(course !== null, Tags.notFound, null, course);
   })
   .then(function(course) {
     return vld.checkPrsOK(course.ownerId, course);
@@ -223,48 +201,6 @@ router.get('/:name/enrs/:enrId', function(req, res) {
   });
 });
 
-router.put('/:name/enrs/:enrId', function(req, res) {
-  var vld = req._validator;
-  var admin = req.session && req.session.isAdmin();
-  var owner = false;
-  var enrolled = false;
-
-  connections.getConnection(res, function(cnn) {
-    cnn.query('Select * from Course where name = ?', req.params.name,
-    function(err, result) {
-      if (vld.check(result.length, Tags.notFound)) {
-        result = result[0];
-        if (result.ownerId === req.session.id)
-        owner = true;
-
-        cnn.query('Select * from Enrollment where id = ?', req.params.enrId,
-        function(err, result) {
-          if (vld.check(result.length, Tags.notFound)) {
-            result = result[0];
-            if(result.prsId === req.session.id)
-            enrolled = true;
-
-            if (vld.check(owner || enrolled || admin, Tags.noPermission)) {
-              cnn.query('Update Enrollment set ? where id = ?', [req.body, req.params.enrId],
-              function(err, result) {
-                res.status(200).end();
-                cnn.release();
-              });
-            }
-            else {
-              cnn.release();
-            }
-          }
-          else
-          cnn.release();
-        });
-      }
-      else
-      cnn.release();
-    });
-  });
-});
-
 router.delete('/:name/enrs/:enrId', function(req, res) {
   var vld = req._validator;
   var prs = req.session;
@@ -298,15 +234,24 @@ router.get('/:name/chls', function(req, res) {
   var vld = req.validator;
   var prs = req.session;
 
-  // TODO: change to check if it's an enrolled student
-  vld.checkAdminOrTeacher()
-  .then(function() {
-    return sequelize.Course.findOne({where: {name: req.params.name},
-      include: [{model: sequelize.Challenge, as: 'Challenges', attributes: {exclude: ['answer']}}]
+  var getPerson = sequelize.Person.findById(prs.id);
+  var getCourse = sequelize.Course.findOne({ where: {sanitizedName: req.params.name} });
+
+  return Promise.all([getPerson, getCourse])
+  .then(function(arr) {
+    var person = arr[0];
+    var course = arr[1];
+
+    return person.hasClass(course)
+    .then(function(isEnrolled) {
+      return vld.check(isEnrolled || course.ownerId === prs.id || req.isAdmin(), Tags.noPermission);
+    })
+    .then(function() {
+      return course.getWeeks({include: [{model: sequelize.Challenge}]});
+    })
+    .then(function(weeks) {
+      res.json(weeks);
     });
-  })
-  .then(function(chls) {
-    res.json(chls["Challenges"]);
   })
   .catch(handleError(res));
 });

@@ -3,7 +3,10 @@ app.config(function(toastrConfig) {
       autoDismiss: false,
       timeOut: 0,
       closeButton: true,
-      tapToDismiss: false
+      tapToDismiss: false,
+      onclick: function() {
+         debugger;
+      },
    })
 });
 
@@ -34,8 +37,8 @@ app.config(['$stateProvider', '$urlRouterProvider',
          templateUrl: 'Courses/crss.template.html',
          controller: 'crssController'
       })
-      .state('crs', {
-         url: '/crss/{courseName}',
+      .state('course', {
+         url: '/course/{courseName}',
          templateUrl: 'Courses/crs.template.html',
          controller: 'crsController'
       })

@@ -84,7 +84,7 @@ app.delete('/DB', function(req, res) {
     res.sendStatus(200);
   })
   .catch(function(err) {
-    res.sendStatus(500).json({error: "OH NO: " + JSON.stringify(err)})
+    res.status(500).json({error: "OH NO: " + JSON.stringify(err)}).end();
   });
 });
 

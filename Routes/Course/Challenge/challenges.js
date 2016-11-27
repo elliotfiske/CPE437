@@ -5,10 +5,10 @@ var doErrorResponse = require('../../Validator.js').doErrorResponse;
 var sequelize = require('../../sequelize.js');
 var Promise = require('bluebird');
 
-// Get only OPEN challenges
+// Get all weeks, which contain the challenges
 router.get('/', function(req, res) {
   return sequelize.Week.findAll({
-    where: {courseName: req.params.courseName},
+    where: {courseSanitizedName: req.params.courseName},
     include: [
       {model: sequelize.Challenge}
     ]
@@ -82,7 +82,7 @@ router.post('/', function(req, res) {
   validateChallengeData(vld, req)
   .then(function() {
     return sequelize.Course.findOne({
-      where: {name: req.params.courseName},
+      where: {sanitizedName: req.params.courseName},
       include: [{
         model: sequelize.Week,
         where: {weekIndexInCourse: req.body.weekIndex}
