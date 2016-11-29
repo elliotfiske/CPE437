@@ -13,7 +13,7 @@ function(scope, $state, $stateParams, API, confirm, login, toastr) {
    };
 
    if (!login.isLoggedIn()) {
-      $state.go('home');
+      $state.go('login');
    }
 
    API.crss.challenge.get($stateParams.courseName, challengeName)
@@ -48,7 +48,7 @@ function(scope, $state, $stateParams, API, confirm, login, toastr) {
          else {
             toastr.error("Sorry! That's incorrect.");
          }
-         $state.go('crs', {courseName: $stateParams.courseName});
+         $state.go('course', {courseName: $stateParams.courseName});
       })
       .catch(function(err) {
          toastr.error("Uh oh!", "Error: " + err.message);

@@ -10,7 +10,7 @@ function(scope, $state, $stateParams, API, confirm, login, $location) {
    };
 
    if (!login.isLoggedIn()) {
-      $state.go('home');
+      $state.go('login');
    }
 
    scope.refreshenrs = function() {
@@ -26,6 +26,9 @@ function(scope, $state, $stateParams, API, confirm, login, $location) {
       return API.crss.challenge.get(scope.courseName)
       .then(function(response) {
          scope.weeks = response.data;
+         scope.weeks.sort(function(a, b) {
+            return a.weekIndexInCourse - b.weekIndexInCourse;
+         });
       });
    };
 

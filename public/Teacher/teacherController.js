@@ -6,7 +6,7 @@ app.controller('teacherController',
    scope.courses = [];
 
    if (!login.isLoggedIn()) {
-      $state.go('home');
+      $state.go('login');
    }
 
    scope.refreshcrss = function() {

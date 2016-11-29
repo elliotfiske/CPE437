@@ -5,13 +5,10 @@
       <uib-accordion-group  ng-repeat="week in weeks" id="test1" class="list-group accordion-list-fix panel panel-success" is-open="status[0].open" is-disabled="status[0].disabled">
         <uib-accordion-heading>
           <i class="pull-left glyphicon glyphicon-ok"></i>
-          Week {{$index}}
+          Week {{$index + 1}}
           <!-- <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i> -->
         </uib-accordion-heading>
-        <a href="#" class="list-group-item">Calculate the determinant:<i class="pull-left glyphicon glyphicon-ok chl-status"></i><span class="badge pull-right">+5</span></a>
-        <a href="#" class="list-group-item">When can a determinant be negative?<i class="pull-left glyphicon glyphicon-ok chl-status"></i><span class="badge pull-right">+6</span></a>
-        <a href="#" class="list-group-item">Convert this point from Camera to World space:<i class="pull-left glyphicon glyphicon-ok chl-status"></i><span class="badge pull-right">+7</span></a>
-        <a href="#" class="list-group-item">What is the third stage in the Graphics Pipeline?<i class="pull-left glyphicon glyphicon-ok chl-status"></i><span class="badge pull-right">+8</span></a>
+        <a ng-repeat="challenge in week.Challenges" ng-click="viewChallenge(challenge.sanitizedName)" class="list-group-item">{{challenge.name}}<i class="pull-left glyphicon glyphicon-ok chl-status"></i><span class="badge pull-right">+5</span></a>
       </uib-accordion-group>
     </uib-accordion>
   </div>

@@ -15,7 +15,7 @@ app.controller('studentController', ['$scope', '$state', 'api', 'confirm', 'logi
    ];
 
    if (!login.isLoggedIn()) {
-      $state.go('home');
+      $state.go('login');
    }
 
    /*** CHALLENGE STUFF ***/

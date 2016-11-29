@@ -6,11 +6,13 @@ function(scope, $state, $stateParams, API, confirm, login, toastr) {
       name: "",
       description: "",
       courseName: $stateParams.courseName,
-      type: "numerical",
+      type: "number",
       openTime: new Date(),
-      attsAllowed: 1
+      attsAllowed: 1,
+      weekIndex: $stateParams.week,
+      dayIndex: $stateParams.day
    };
-   
+
    scope.radioAnswers = [
       { answerText: "" },
       { answerText: "" }
@@ -21,7 +23,7 @@ function(scope, $state, $stateParams, API, confirm, login, toastr) {
    };
 
    if (!login.isLoggedIn()) {
-      $state.go('home');
+      $state.go('login');
    }
 
    scope.numChallengeNotReady = function() {
@@ -64,7 +66,7 @@ function(scope, $state, $stateParams, API, confirm, login, toastr) {
    scope.doChallengePost = function() {
       API.crss.challenge.post($stateParams.courseName, scope.challenge)
       .then(function() {
-         $state.go('crs', { courseName: $stateParams.courseName });
+         $state.go('course', { courseName: $stateParams.courseName });
       })
       .catch(function(err) {
          toastr.error("Oh no!", err.errMsg);
