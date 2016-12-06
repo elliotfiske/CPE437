@@ -93,6 +93,51 @@ var Course = sequelize.define('Course', {
         course.sanitizedName = sanitize(course.name).toLowerCase().replace(/ /g, '-');
       }
     }
+  },
+  instanceMethods: {
+    // This returns the current consecutive days the user has answered questions.
+    // 0 if they haven't started or missed a day.
+    getCurrentStreak: function(personId) {
+      var streak = 0;
+      this.getWeeks()
+      .then(function(weeks) {
+        return weeks.getChallenges({
+          include: [{
+            model: Attempt,
+            where: {PersonId: personId}
+          }]
+        });
+      })
+      .then(function(chls) {
+
+      });
+
+      // game plan:
+      //  CHANGE THIS to "checkMissedStreak"
+      //  when the user logs in or whatever, query for all challenges in the past
+      //  that do not have attempts on them.
+      //
+      //  If there is a challenge before today that is missing
+    },
+    getChallenges: function(personId) {
+      // return sequelize.Week.findAll({
+      //   where: {courseSanitizedName: req.params.courseName},
+      //   include: [{
+      //     model: sequelize.Challenge, {
+      //       include: [{
+      //         model: sequelize.Attempt,
+      //         where: {PersonId: personId}
+      //       }]
+      //     }
+      //   }]
+      // })
+      // .then(function(weeks) {
+      //
+      // });
+   },
+   getWeeks: function() {
+
+   }
   }
 });
 
@@ -171,20 +216,14 @@ var MultChoiceAnswer = sequelize.define('MultChoiceAnswer', {
 });
 
 var Attempt = sequelize.define('Attempt', {
-  ownerId: {
+  pointsEarned: {
     type: Sequelize.INTEGER
   },
-  challengeName: {
-    type: Sequelize.STRING
-  },
-  score: {
-    type: Sequelize.INTEGER
-  },
-  startTime: {
-    type: Sequelize.DATE
+  correct: {
+    type: Sequelize.BOOLEAN
   },
   input: {
-    type: Sequelize.STRING(1024)
+    type: Sequelize.STRING
   }
 }, {
   freezeTableName: true
@@ -243,6 +282,9 @@ Course.belongsToMany(Person, {as: "EnrolledDudes", through: Enrollment, foreignK
 Person.belongsToMany(Course, {as: "Classes", through: Enrollment, foreignKey: "personId"});
 
 Challenge.hasMany(MultChoiceAnswer, {as: 'Possibilities'});
+
+Attempt.belongsTo(Challenge);
+Person.hasMany(Attempt);
 
 Course.hasMany(Week);
 Week.hasMany(Challenge);

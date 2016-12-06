@@ -29,8 +29,6 @@ app.controller('teacherController',
             if (err.data.tag === 'dupName') {
                toastr.error("There's already a course named '" + scope.courseName + ".'", 'Uh oh!');
             }
-            else
-               scope.errors = err.data;
          });
    };
 
@@ -44,6 +42,6 @@ app.controller('teacherController',
    };
 
    scope.viewCourse = function(courseName) {
-      $state.go('crs', { courseName: courseName });
+      $state.go('course', { courseName: courseName });
    };
 }])
