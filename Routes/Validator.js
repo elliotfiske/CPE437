@@ -70,7 +70,8 @@ Validator.prototype.hasFields = function(obj, fieldList) {
 
 Validator.doErrorResponse = function(res) {
   return function(error) {
-    console.log("ERROR: " + error.message || err.tag);
+    console.log("!! ERROR: " + error.message || err.tag);
+    console.log("Stack: " + error.stack);
     if (error.name === "SequelizeUniqueConstraintError") {
       error = {
         tag: "nameTaken"

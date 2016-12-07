@@ -5,6 +5,9 @@ var doErrorResponse = require('../../Validator.js').doErrorResponse;
 var sequelize = require('../../sequelize.js');
 var Promise = require('bluebird');
 
+var attemptRouter = require('./Attempt/attempts.js');
+router.use('/:challengeName/attempt', attemptRouter);
+
 // Get all weeks, which contain the challenges
 router.get('/', function(req, res) {
   return sequelize.Week.findAll({
@@ -114,14 +117,18 @@ router.post('/', function(req, res) {
 
 router.get('/:name', function(req, res) {
   var vld = req.validator;
+
+  var excludeAnswer = { exclude: ['answer'] };
+  if (req.session.isAdminOrTeacher()) {
+    excludeAnswer = {}; // let teachers see the answer
+  }
+
   sequelize.Challenge.findOne({where:
     {name: req.params.name},
     include: [
       {model: sequelize.MultChoiceAnswer, as: "Possibilities"}
     ],
-    exclude: {
-      attributes: [vld.checkAdminOrTeacher() ? '' : 'answer']
-    }
+    attributes: excludeAnswer
   })
   .then(function(chl) {
     if (chl) {

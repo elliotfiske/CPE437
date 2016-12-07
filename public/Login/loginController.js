@@ -7,7 +7,7 @@ app.controller('loginController',
    scope.login = function() {
       login.login(scope.user.email, scope.user.password)
       .then(function() {
-         $state.go('teacher');
+         $state.go('home');
       })
       .catch(function(err) {
          scope.error = 'Login failed';
@@ -15,6 +15,6 @@ app.controller('loginController',
    }
 
    scope.goBack = function() {
-      $state.go('teacher');
+      $state.go('home');
    }
 }])

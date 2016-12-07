@@ -38,6 +38,10 @@ Session.prototype.isTeacher = function() {
    return this.role == 1;
 };
 
+Session.prototype.isAdminOrTeacher = function() {
+   return this.role == 1 || this.role == 2;
+};
+
 exports.makeSession = function makeSession(user, res) {
    var cookie = crypto.randomBytes(16).toString('hex');
    var session = new Session(user);

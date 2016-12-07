@@ -17,6 +17,13 @@ var app = angular.module('mainApp', [
     return items.slice().reverse();
   };
 })
+.service('elliot-toast', ['toastr', 'API', function(toastr, API) {
+  toastr.doErrorMessage = function() {
+      console.log("TODO: this thingy");
+  }
+
+  return toastr;
+}])
 .service('login', ['$rootScope', 'api', '$state', function($rootScope, API, $state){
    $rootScope.loggedUser = null;
 
@@ -34,7 +41,7 @@ var app = angular.module('mainApp', [
    $rootScope.logout = function() {
       $rootScope.loggedUser = null;
       delete localStorage.user;
-      $state.go('home');
+      $state.go('login');
    };
 
    return {

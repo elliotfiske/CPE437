@@ -1,13 +1,7 @@
 app.controller('crsController',
 ['$scope', '$state', '$stateParams', 'api', 'confirm', 'login', '$location',
 function(scope, $state, $stateParams, API, confirm, login, $location) {
-   scope.courseName = $stateParams.courseName;
-
-   scope.challenge = {
-      courseName: scope.courseName,
-      attsAllowed: 5,
-      openTime: new Date()
-   };
+   scope.courseName = $stateParams.courseName; // TODO: gonna need to make a network call here I think, unfortunately.
 
    if (!login.isLoggedIn()) {
       $state.go('login');
