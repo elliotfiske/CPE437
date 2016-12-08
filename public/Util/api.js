@@ -132,6 +132,14 @@ angular.module('mainApp')
             },
             post: function(courseName, challengeBody) {
                return post('crss/' + courseName + '/challenge', challengeBody);
+            },
+            attempt: {
+               get: function(courseName, challengeName) {
+                  return get('crss/' + courseName + '/challenge/' + challengeName + '/attempt');
+               },
+               post: function(courseName, challengeName, attemptBody) {
+                  return post('crss/' + courseName + '/challenge/' + challengeName + '/attempt', attemptBody);
+               }
             }
          },
       }

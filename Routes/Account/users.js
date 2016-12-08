@@ -59,7 +59,7 @@ router.post('/', function(req, res) {
       return sequelize.Person.create(req.body);
     })
     .then(function(result) {
-      res.location(router.baseURL + '/' + result.insertId).end();
+      res.location(router.baseURL + '/' + result.id).end();
     })
     .finally(function() {
       conn.release();
@@ -186,49 +186,6 @@ router.get('/:id/atts', function(req, res) {
       cnn.release();
     });
   });
-});
-
-router.post('/:id/atts', function(req, res) {
-  var vld = req.validator;
-  var owner = req.params.id;
-
-  return vld.checkPrsOK(owner)
-  .then(function() {
-    return vld.hasFields(req.body, ['input', 'challengeName']);
-  })
-  .then(function() {
-    return sequelize.Challenge.findOne({where: {name: req.body.challengeName}});
-  })
-  .then(function(chl) {
-    // Score the attempt
-    var input = req.body.input.toLowerCase();
-    var answer = chl.answer.toLowerCase();
-
-    req.body.score = 0;
-    if (chl.type === 'number' || chl.type === 'multchoice') {
-      input = parseInt(input);
-      answer = parseInt(answer);
-      if (!Number.isNaN(input)) {
-        if (Math.abs(input - answer) < 0.01) {
-          req.body.score = 2;
-        }
-      }
-    }
-    else if (chl.type === 'shortanswer') {
-      answer = JSON.parse(answer);
-      var exact =  answer.exact;
-      var inexact = answer.inexact;
-
-      if (exact.indexOf(input) >= 0) {
-        req.body.score = 2;
-      }
-      else if (inexact.indexOf(input) >= 0) {
-        req.body.score = 1;
-      }
-    }
-    res.json({score: req.body.score}).end();
-  })
-  .catch(doErrorResponse(res));
 });
 
 module.exports = router;

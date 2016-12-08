@@ -19,6 +19,7 @@ function(scope, $state, $stateParams, API, confirm, login, toastr) {
    API.crss.challenge.get($stateParams.courseName, challengeName)
    .then(function(response) {
       scope.challenge = response.data;
+      return API.crss.challenge.attempt.get($stateParams.courseName, challengeName);
    })
    .catch(function(err) {
       if (err.tag == "notFound") {
@@ -37,7 +38,7 @@ function(scope, $state, $stateParams, API, confirm, login, toastr) {
 
    scope.createAttempt = function() {
       scope.attempt.input = scope.attempt.input.toString();
-      API.prss.atts.post(scope.loggedUser.id, scope.attempt)
+      API.crss.challenge.attempt.post($stateParams.courseName, $stateParams.challengeName, scope.attempt)
       .then(function(wasCorrect) {
          if (wasCorrect.data.score >= 2) {
             toastr.success("Correct!", "Good job!");

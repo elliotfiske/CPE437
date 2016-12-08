@@ -8,16 +8,23 @@ var Promise = require('bluebird');
 var attemptRouter = require('./Attempt/attempts.js');
 router.use('/:challengeName/attempt', attemptRouter);
 
+
 // Get all weeks, which contain the challenges
 router.get('/', function(req, res) {
   return sequelize.Week.findAll({
     where: {courseSanitizedName: req.params.courseName},
-    include: [
-      {model: sequelize.Challenge}
-    ]
+    include: [{
+      model: sequelize.Challenge,
+      include: [{
+        model: sequelize.Attempt,
+        where: {personId: req.session.id},
+        order: [['createdAt', 'DESC']],
+        required: false // otherwise it filters out any challenges we haven't attempted
+      }]
+    }]
   })
   .then(function(allWeeks) {
-    res.json(allWeeks);
+    return res.json(allWeeks);
   })
   .catch(doErrorResponse(res));
 });
@@ -114,7 +121,6 @@ router.post('/', function(req, res) {
   .catch(doErrorResponse(res));
 });
 
-
 router.get('/:name', function(req, res) {
   var vld = req.validator;
 
@@ -124,7 +130,7 @@ router.get('/:name', function(req, res) {
   }
 
   sequelize.Challenge.findOne({where:
-    {name: req.params.name},
+    {sanitizedName: req.params.name},
     include: [
       {model: sequelize.MultChoiceAnswer, as: "Possibilities"}
     ],
@@ -139,39 +145,6 @@ router.get('/:name', function(req, res) {
     }
   })
   .catch(doErrorResponse(res));
-});
-
-router.get('/:name/atts', function(req, res) {
-  connections.getConnection(res, function(cnn) {
-    function getResult() {
-      var query = 'SELECT id, ? as challengeURI, ownerId, duration, score, startTime, state from Attempt where challengeName = ? ORDER BY startTime DESC';
-      var params = ['chls/' + req.params.name, req.params.name];
-
-      if (req.query.limit) {
-        query += ' LIMIT ?';
-        params.push(parseInt(req.query.limit));
-      }
-
-      cnn.query(query, params, function(err, result) {
-        res.json(result);
-        cnn.release();
-      });
-    }
-
-    if (req.session.isAdmin()) {
-      getResult();
-    }
-    else {
-      cnn.query('SELECT * FROM Attempt WHERE challengeName = ? AND ownerId = ?', [req.params.name, req.session.id], function(err, result) {
-        if (req._validator.check(result.length, Tags.noPermission)) {
-          getResult();
-        }
-        else {
-          cnn.release();
-        }
-      });
-    }
-  });
 });
 
 module.exports = router;

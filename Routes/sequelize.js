@@ -147,6 +147,7 @@ var Challenge = sequelize.define('Challenge', {
   },
   sanitizedName: {
     type: Sequelize.STRING,
+    primaryKey: true
   },
   description: {
     type: Sequelize.TEXT
@@ -190,6 +191,13 @@ var Challenge = sequelize.define('Challenge', {
   instanceMethods: {
     getOpenDate: function() {
       console.log("Test what 'this' is: " + JSON.stringify(this));
+    },
+    getMostRecentAttempt: function(personId) {
+      return this.getAttempts({
+        where: {personId: personId},
+        order: ['createdAt', 'DESC'],
+        limit: 1
+      });
     }
   },
   hooks: {
@@ -283,8 +291,8 @@ Person.belongsToMany(Course, {as: "Classes", through: Enrollment, foreignKey: "p
 
 Challenge.hasMany(MultChoiceAnswer, {as: 'Possibilities'});
 
-Attempt.belongsTo(Challenge);
-Person.hasMany(Attempt);
+Challenge.hasMany(Attempt, {foreignKey: "challengeName"});
+Person.hasMany(Attempt, {foreignKey: "personId"});
 
 Course.hasMany(Week);
 Week.hasMany(Challenge);
