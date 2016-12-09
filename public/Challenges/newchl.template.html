@@ -1,9 +1,9 @@
 
 <h1>New Challenge</h1>
 
-<uib-tabset active="activeJustified" justified="true">
+<uib-tabset active="activeJustified" justified="true" type="pills">
   <uib-tab index="0" heading="Numerical" ng-click="challenge.type = 'number'" id="fix-tab-border">
-    <div class="container-white square-top">
+    <div class="container-white">
       <div class="row">
         <form ng-submit="createNumerical()" class="form-horizontal">
           <div class="form-group">
@@ -34,7 +34,7 @@
     </div>
   </uib-tab>
   <uib-tab index="1" heading="Short Answer" ng-click="challenge.type = 'shortanswer'" id="fix-tab-border">
-    <div class="container-white square-top">
+    <div class="container-white">
       <div class="row">
         <form class="form-horizontal" ng-submit="createShortAnswer()">
 
@@ -53,16 +53,9 @@
           </div>
 
           <div class="form-group">
-            <label class="control-label col-sm-3" for="short-chlinexact">Inexact Answers:</label>
+            <label class="control-label col-sm-3" for="short-chlexact">Answers:</label>
             <div class="col-sm-9">
-              <input type='text' ng-model="challenge.inexact" class="form-control" placeholder="Inexact Answers" id="short-chlinexact"/>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="control-label col-sm-3" for="short-chlexact">Exact Answers:</label>
-            <div class="col-sm-9">
-              <input type='text' ng-model="challenge.exact" class="form-control" placeholder="Exact Answers" id="short-chlexact"/>
+              <input type='text' ng-model="challenge.exact" class="form-control" placeholder="Correct Words" id="short-chlexact"/>
             </div>
           </div>
 
@@ -72,7 +65,7 @@
     </div>
   </uib-tab>
   <uib-tab index="2" heading="Multiple Choice" ng-click="challenge.type = 'multchoice'" id="fix-tab-border">
-    <div class="container-white square-top">
+    <div class="container-white">
       <div class="row">
 
         <form ng-submit="createMultChoice()" class="form-horizontal">

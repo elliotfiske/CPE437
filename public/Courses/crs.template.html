@@ -7,13 +7,22 @@
 
   <div class="row">
     <uib-accordion close-others="false">
-      <uib-accordion-group  ng-repeat="week in weeks" id="test1" class="list-group accordion-list-fix panel panel-success" is-open="status[0].open" is-disabled="status[0].disabled">
+      <uib-accordion-group  ng-repeat="week in weeks" id="test1"
+      class="list-group accordion-list-fix panel panel-success {{week.stateClass}}"
+      is-open="weekStatuses[$index].open" is-disabled="week.stateClass == 'week-disabled'"
+      >
         <uib-accordion-heading>
-          <i class="pull-left glyphicon glyphicon-ok"></i>
+          <i class="pull-left glyphicon"
+          ng-class="{'glyphicon-ok' : week.stateClass == 'week-complete', 'glyphicon-alert' : week.stateClass == 'week-open', 'week-disabled' : week.stateClass == 'week-disabled'}"></i>
           Week {{$index + 1}}
-          <!-- <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i> -->
+          <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': weekStatuses[$index].open, 'glyphicon-chevron-right': !weekStatuses[$index].open}"></i>
         </uib-accordion-heading>
-        <a ng-repeat="challenge in week.Challenges" ng-click="viewChallenge(challenge.sanitizedName)" class="list-group-item">{{challenge.name}}<i class="pull-left glyphicon glyphicon-ok chl-status"></i><span class="badge pull-right">+5</span></a>
+        <a ng-repeat="challenge in week.Challenges" ng-click="viewChallenge(challenge.sanitizedName)" class="list-group-item" ng-class="challenge.stateClass">
+          {{challenge.name}}
+          <i class="pull-left glyphicon chl-status"
+          ng-class="{'glyphicon-ok': challenge.stateClass == 'chl-solved', 'glyphicon-alert' : challenge.stateClass == 'chl-overdue' || challenge.stateClass == 'chl-open'}"></i>
+          <span ng-show="challenge.Attempts[0].pointsEarned > 0" class="badge pull-right">+{{challenge.Attempts[0].pointsEarned}}</span>
+        </a>
       </uib-accordion-group>
     </uib-accordion>
   </div>
@@ -41,6 +50,15 @@
           </form>
         </a>
       </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12">
+      <h2>New Challenge</h2>
+    </div>
+    <div class="col-xs-3 col-xs-offset-3">
+      <button type="button" class="btn btn-large btn-primary pull-right" ng-click="createChallenge()">Create!</button>
     </div>
   </div>
 </div>

@@ -34,4 +34,11 @@
       </div>
 
    </div>
+
+   <div class="row" ng-hide="challenge.Attempts === []">
+      <h1>Previous Attempts</h1>
+      <ul class="list-group">
+         <li class="list-group-item" ng-repeat="attempt in challenge.Attempts">{{attempt.input}}</li>
+      </ul>
+   </div>
 </div>

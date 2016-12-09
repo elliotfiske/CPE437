@@ -57,6 +57,11 @@ function validateChallengeData(vld, req) {
 /** Actually make that challenge, everything's good! **/
 function makeChallenge(course, req, res) {
   req.body.courseName = req.params.courseName;
+
+  var challengeDate = course.Weeks[0].startDate;
+  challengeDate.setDate(challengeDate.getDate()+req.body.dayIndex);
+  req.body.openDate = challengeDate;
+
   var makeChallenge = sequelize.Challenge.create(req.body);
   var promiseList = [makeChallenge];
 
@@ -74,7 +79,7 @@ function makeChallenge(course, req, res) {
     var newChallenge = arr[0];
     var choices = arr.slice(1);
 
-    var addChlToWeek = course.Weeks[0].addChallenges([newChallenge]);
+    var addChlToWeek = course.Weeks[0].addChallengesAndSetDate([newChallenge]);
     var addChoicesToChl = newChallenge.addPossibilities(choices);
 
     return Promise.all([addChlToWeek, addChoicesToChl]);
@@ -132,7 +137,15 @@ router.get('/:name', function(req, res) {
   sequelize.Challenge.findOne({where:
     {sanitizedName: req.params.name},
     include: [
-      {model: sequelize.MultChoiceAnswer, as: "Possibilities"}
+      {
+        model: sequelize.MultChoiceAnswer,
+        as: "Possibilities"
+      },
+      {
+        model: sequelize.Attempt,
+        where: {personId: req.session.id},
+        required: false
+      }
     ],
     attributes: excludeAnswer
   })

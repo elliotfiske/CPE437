@@ -4,9 +4,7 @@ function(scope, $state, $stateParams, API, confirm, login, toastr) {
    var challengeName = $stateParams.challengeName;
 
    scope.challenge = {};
-   scope.attempt = {
-      challengeName: challengeName
-   };
+   scope.attempt = {};
 
    scope.multChoice = {
       chosen: null
@@ -19,7 +17,6 @@ function(scope, $state, $stateParams, API, confirm, login, toastr) {
    API.crss.challenge.get($stateParams.courseName, challengeName)
    .then(function(response) {
       scope.challenge = response.data;
-      return API.crss.challenge.attempt.get($stateParams.courseName, challengeName);
    })
    .catch(function(err) {
       if (err.tag == "notFound") {

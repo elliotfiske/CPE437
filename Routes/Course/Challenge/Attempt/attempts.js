@@ -100,7 +100,7 @@ router.post('/', function(req, res) {
          return sequelize.Attempt.create({
             input: req.body.input,
             personId: prsId,
-            challengeName: chl.name,
+            challengeName: chl.sanitizedName,
             correct: result.correct,
             pointsEarned: result.score
          })

@@ -250,6 +250,10 @@ body {
   color: lightgrey;
 }
 
+.week-disabled>.panel-heading {
+  background-color: #EEE;
+}
+
 /* Clever blank glyphicon from stack overflow */
 .glyphicon-none:before {
     content: "\2122";
@@ -270,17 +274,25 @@ body {
     background-color: #FFDBDB;
 }
 
-#fix-tab-border>a {
+/*#fix-tab-border>a {
   border-color: rgba(0, 0, 0, 0);
   padding: 11px;
-}
+}*/
 
 #fix-tab-border>a:hover {
   background-color: #888;
 }
 
-#fix-tab-border.active>a, #fix-tab-border.active>a {
-  background-color: #EEE;
+#fix-tab-border.active>a {
+  background-color: #337ab7;
+}
+
+#fix-tab-border.active>a, #fix-tab-border>a:hover {
+  color: white;
+}
+
+#fix-tab-border>a {
+  color: #337ab7;
 }
 
 .square-top {

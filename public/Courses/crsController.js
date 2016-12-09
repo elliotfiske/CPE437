@@ -7,6 +7,10 @@ function(scope, $state, $stateParams, API, confirm, login, $location) {
       $state.go('login');
    }
 
+   scope.currDate = new Date();
+
+   scope.weekStatuses = [];
+
    scope.refreshenrs = function() {
       return API.crss.enrs.get(scope.courseName)
       .then(function(response) {
@@ -22,6 +26,42 @@ function(scope, $state, $stateParams, API, confirm, login, $location) {
          scope.weeks = response.data;
          scope.weeks.sort(function(a, b) {
             return a.weekIndexInCourse - b.weekIndexInCourse;
+         });
+
+         // Figure out what icon each week should have (or if it should be disabled)
+         var now = new Date();
+         var chlCloseDate = new Date();
+
+         scope.weeks.forEach(function(week, ndx) {
+            if (new Date(week.startDate) > now) { // week hasn't started yet
+               week.stateClass = 'week-disabled';
+            }
+            else {
+               week.stateClass = "week-complete"
+               week.Challenges.forEach(function(chl) {
+                  var chlOpenDate = new Date(chl.startDate);
+                  chlCloseDate.setDate(chlOpenDate.getDate() + 1);
+
+                  if (chlOpenDate > now) { // challenge isn't available yet
+                     chl.stateClass = "chl-disabled";
+                  }
+                  else if (chl.Attempts[0] && chl.Attempts[0].correct) {
+                     chl.stateClass = "chl-solved";
+                  }
+                  else if (chl.Attempts.length >= 1) {
+                     chl.stateClass = "chl-attempted";
+                  }
+                  else if (chlCloseDate > now) {
+                     chl.stateClass = "chl-overdue";
+                     week.stateClass ="week-open";
+                  }
+                  else {
+                     chl.stateClass = "chl-open";
+                     week.stateClass ="week-open";
+                     scope.weekStatuses[ndx] = {open: true};
+                  }
+               });
+            }
          });
       });
    };
@@ -103,7 +143,7 @@ function(scope, $state, $stateParams, API, confirm, login, $location) {
    };
 
    scope.createChallenge = function() {
-      $state.go('newchallenge', {courseName: scope.courseName, week: 0, day: 0, type: "multchoice" });
+      $state.go('newchallenge', {courseName: $stateParams.courseName, week: 0, day: 0, type: "multchoice" });
    }
 
    scope.viewChallenge = function(challengeName) {

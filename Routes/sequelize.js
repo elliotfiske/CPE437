@@ -134,9 +134,6 @@ var Course = sequelize.define('Course', {
       // .then(function(weeks) {
       //
       // });
-   },
-   getWeeks: function() {
-
    }
   }
 });
@@ -174,11 +171,11 @@ var Challenge = sequelize.define('Challenge', {
   image: {
     type: Sequelize.STRING
   },
+  openDate: {
+    type: Sequelize.DATE
+  },
   answer: {
     type: Sequelize.STRING
-  },
-  openTime: {
-    type: Sequelize.DATE
   },
   courseName: {
     type: Sequelize.STRING,
@@ -189,9 +186,6 @@ var Challenge = sequelize.define('Challenge', {
 }, {
   freezeTableName: true,
   instanceMethods: {
-    getOpenDate: function() {
-      console.log("Test what 'this' is: " + JSON.stringify(this));
-    },
     getMostRecentAttempt: function(personId) {
       return this.getAttempts({
         where: {personId: personId},
@@ -265,6 +259,12 @@ var Week = sequelize.define('Week', {
   freezeTableName: true,
   instanceMethods: {
     // TODO: moving challenges around will happen here :3
+    addChallengesAndSetDate: function(challenges) {
+      challenges.forEach(function(chl) {
+        chl.openDate = "test this out";
+      });
+      return this.addChallenges(challenges);
+    }
   }
 });
 
@@ -296,6 +296,7 @@ Person.hasMany(Attempt, {foreignKey: "personId"});
 
 Course.hasMany(Week);
 Week.hasMany(Challenge);
+Challenge.belongsTo(Week);
 
 sequelize.sync().then(function() {
   return Person.findOrCreate({
