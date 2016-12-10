@@ -5,6 +5,7 @@ var sequelize = require('./sequelize.js');
 var Tags = require('./Validator.js').Tags;
 var doErrorResponse = require('./Validator.js').doErrorResponse;
 var router = Express.Router({caseSensitive: false});
+var sanitize = require("sanitize-filename");
 router.baseURL = '/peer';
 
 router.get('/', function(req, res) {
@@ -31,11 +32,13 @@ router.get('/id/:peerid', function(req, res) {
 router.post('/id/:peerid/name/:name', function(req, res) {
    var vld = req.validator;
 
+   req.params.name = sanitize(req.params.name);
+
    console.log("The body sez: " + JSON.stringify(req.params));
 
    return sequelize.PeerId.create(req.params)
    .then(function(whatever) {
-      res.sendStatus(200);
+      res.json(req.params.name);
    })
    .catch(doErrorResponse(res));
 });

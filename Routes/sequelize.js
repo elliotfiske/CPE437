@@ -25,6 +25,7 @@ var sequelize = new Sequelize(db, username, pass, {
   freezeTableName: true
 });
 
+/**** DELETE ME ON THE MAIN BRANCH, MAYBE, LATER, MAYBE ***/
 var PeerId = sequelize.define('PeerId', {
    peerid: {
       type: Sequelize.STRING
@@ -35,7 +36,20 @@ var PeerId = sequelize.define('PeerId', {
    }
 }, {
    freezeTableName: true
-})
+});
+
+var Room = sequelize.define('Room', {
+   name: {
+      type: Sequelize.STRING,
+      unique: true
+   }
+}, {
+   freezeTableName: true
+});
+
+Room.hasMany(PeerId);
+
+/** OK DON'T DELETE PAST HERE PLZ **/
 
 var Person = sequelize.define('Person', {
   name: {
@@ -310,7 +324,7 @@ Course.hasMany(Week);
 Week.hasMany(Challenge);
 Challenge.belongsTo(Week);
 
-sequelize.sync().then(function() {
+sequelize.sync({force: true}).then(function() {
   return Person.findOrCreate({
     where: {email: 'Admin@11.com'},
     defaults: {name: 'AdminMan', password: "password", role: 2}});
