@@ -7,13 +7,7 @@ var doErrorResponse = require('./Validator.js').doErrorResponse;
 var router = Express.Router({caseSensitive: false});
 router.baseURL = '/peer';
 
-router.get('/hello', function(req, res) {
-   res.json({whats: "up"});
-})
-
 router.get('/', function(req, res) {
-  var vld = req.validator;
-
   sequelize.PeerId.findAll()
   .then(function(peerList) {
     res.json(peerList);
@@ -21,14 +15,45 @@ router.get('/', function(req, res) {
   .catch(doErrorResponse(res));
 });
 
-router.post('/', function(req, res) {
+router.get('/id/:peerid', function(req, res) {
+  sequelize.PeerId.findOne({where: {peerid: req.params.peerid}})
+  .then(function(peer) {
+    if (peer) {
+      res.json(peer["name"]);
+   }
+   else {
+      res.sendStatus(404);
+   }
+  })
+  .catch(doErrorResponse(res));
+});
+
+router.post('/id/:peerid/name/:name', function(req, res) {
    var vld = req.validator;
 
-   return sequelize.PeerId.create({
-      peerid: req.body.peerid,
-      name: req.body.name
-   })
+   console.log("The body sez: " + JSON.stringify(req.params));
+
+   return sequelize.PeerId.create(req.params)
    .then(function(whatever) {
+      res.sendStatus(200);
+   })
+   .catch(doErrorResponse(res));
+});
+
+router.delete('/:peerid', function(req, res) {
+   return sequelize.PeerId.findOne({
+      where:  {peerid: req.params.peerid}
+   })
+   .then(function(toDelete) {
+      if (!toDelete) {
+         res.sendStatus(404);
+         next();
+      }
+      else {
+         return toDelete.destroy();
+      }
+   })
+   .then(function() {
       res.sendStatus(200);
    })
    .catch(doErrorResponse(res));
