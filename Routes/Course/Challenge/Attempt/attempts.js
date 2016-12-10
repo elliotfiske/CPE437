@@ -73,7 +73,10 @@ router.post('/', function(req, res) {
          if (!isEnrolled) {
             return Promise.reject({message: "You're not enrolled for that class."});
          }
-         return chl.getAttempts();
+         return chl.getAttempts({
+            where: {personId: prsId},
+            required: false
+         });
       })
       .then(function(attempts) {
          var alreadyGotItRight = false;

@@ -25,6 +25,18 @@ var sequelize = new Sequelize(db, username, pass, {
   freezeTableName: true
 });
 
+var PeerId = sequelize.define('PeerId', {
+   peerid: {
+      type: Sequelize.STRING
+   },
+   name: {
+      type: Sequelize.STRING,
+      unique: true
+   }
+}, {
+   freezeTableName: true
+})
+
 var Person = sequelize.define('Person', {
   name: {
     type: Sequelize.STRING
@@ -298,7 +310,7 @@ Course.hasMany(Week);
 Week.hasMany(Challenge);
 Challenge.belongsTo(Week);
 
-sequelize.sync().then(function() {
+sequelize.sync({force: true}).then(function() {
   return Person.findOrCreate({
     where: {email: 'Admin@11.com'},
     defaults: {name: 'AdminMan', password: "password", role: 2}});
@@ -311,6 +323,7 @@ sequelize.sync().then(function() {
   });
 
   module.exports = {
+    PeerId: PeerId,
     Course: Course,
     Week: Week,
     Person: Person,

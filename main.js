@@ -43,14 +43,15 @@ app.use(function(req, res, next) {
 
    console.log(req.method, req.path);
 
-   if (req.session || (req.method === 'POST' &&
-    (req.path === '/prss' || req.path === '/ssns')))
+   // if (req.session || (req.method === 'POST' &&
+   //  (req.path === '/prss' || req.path === '/ssns')))
       next();
-   else
-      res.status(401).json([{tag: Validator.Tags.noLogin}]);
+   // else
+   //    res.status(401).json([{tag: Validator.Tags.noLogin}]);
 
 });
 
+app.use('/peer', require('./Routes/peer'));
 app.use('/crss', require('./Routes/Course/courses'));
 app.use('/prss', require('./Routes/Account/users'));
 app.use('/ssns', require('./Routes/Account/sessions'));

@@ -5,6 +5,9 @@ function(scope, $state, $stateParams, API, confirm, login, toastr) {
 
    scope.challenge = {};
    scope.attempt = {};
+   scope.challengeOpen = false;
+   scope.challengeClosed = false;
+   scope.challengeComplete = false;
 
    scope.multChoice = {
       chosen: null
@@ -17,6 +20,15 @@ function(scope, $state, $stateParams, API, confirm, login, toastr) {
    API.crss.challenge.get($stateParams.courseName, challengeName)
    .then(function(response) {
       scope.challenge = response.data;
+      if (scope.challenge.Attempts[0] && scope.challenge.Attempts[0].correct) {
+         scope.challengeComplete = true;
+      }
+      else if (scope.challenge.Attempts.length >= scope.challenge.attsAllowed) {
+         scope.challengeClosed = true;
+      }
+      else {
+         scope.challengeOpen = true;
+      }
    })
    .catch(function(err) {
       if (err.tag == "notFound") {
