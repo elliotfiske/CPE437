@@ -33,6 +33,7 @@ router.post('/id/:peerid/name/:name', function(req, res) {
    var vld = req.validator;
 
    req.params.name = sanitize(req.params.name);
+   req.params.name = req.params.name.substring(0, 69);
 
    console.log("The body sez: " + JSON.stringify(req.params));
 
