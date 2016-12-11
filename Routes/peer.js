@@ -49,7 +49,7 @@ router.delete('/:peerid', function(req, res) {
    })
    .then(function(toDelete) {
       if (!toDelete) {
-         res.sendStatus(404);
+         res.json("they don't exist fam");
          next();
       }
       else {
