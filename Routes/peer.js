@@ -29,7 +29,7 @@ router.get('/id/:peerid', function(req, res) {
   .catch(doErrorResponse(res));
 });
 
-router.post('/id/:peerid/name/:name', function(req, res) {
+router.post('/id/:peerid/name/:name/color/:color', function(req, res) {
    var vld = req.validator;
 
    req.params.name = sanitize(req.params.name);
@@ -37,7 +37,13 @@ router.post('/id/:peerid/name/:name', function(req, res) {
 
    console.log("The body sez: " + JSON.stringify(req.params));
 
-   return sequelize.PeerId.create(req.params)
+   return vld.hasFields(req.params, ['name', 'color', 'peerid'])
+   .then(function() {
+      return vld.check(/^[0-9A-F]{6}$/i.test(req.params.color), Tags.badValue);
+   })
+   .then(function() {
+      return sequelize.PeerId.create(req.params);
+   })
    .then(function(whatever) {
       res.json(req.params.name);
    })

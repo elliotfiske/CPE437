@@ -33,6 +33,9 @@ var PeerId = sequelize.define('PeerId', {
    name: {
       type: Sequelize.STRING,
       unique: true
+   },
+   color: {
+      type: Sequelize.STRING
    }
 }, {
    freezeTableName: true
