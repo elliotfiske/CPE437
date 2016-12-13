@@ -36,6 +36,12 @@ var PeerId = sequelize.define('PeerId', {
    },
    color: {
       type: Sequelize.STRING
+   },
+   lastHeartbeat: {
+      type: Sequelize.DATE
+   },
+   texture: {
+      type: Sequelize.INTEGER
    }
 }, {
    freezeTableName: true

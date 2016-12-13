@@ -9,11 +9,22 @@ var sanitize = require("sanitize-filename");
 router.baseURL = '/peer';
 
 router.get('/', function(req, res) {
-  sequelize.PeerId.findAll()
-  .then(function(peerList) {
-    res.json(peerList);
-  })
-  .catch(doErrorResponse(res));
+
+
+   var t = new Date();
+   t.setSeconds(t.getSeconds() - 30);
+
+   sequelize.PeerId.findAll()
+   .then(function(peerList) {
+      peerList = peerList.filter(function(peer) {
+         if (peer.lastHeartbeat < t) {
+            return false;
+         }
+         return true;
+      });
+      res.json(peerList);
+   })
+   .catch(doErrorResponse(res));
 });
 
 router.get('/id/:peerid', function(req, res) {
@@ -29,11 +40,35 @@ router.get('/id/:peerid', function(req, res) {
   .catch(doErrorResponse(res));
 });
 
+router.get('/heartbeat/:name', function(req, res) {
+   sequelize.PeerId.findOne({where: {name: req.params.name}})
+   .then(function(peer) {
+
+      var t = new Date();
+      t.setSeconds(t.getSeconds() - 30);
+
+      if (peer) {
+         if (peer.lastHeartbeat < t) {
+            res.sendStatus(400);
+         }
+         else {
+            res.sendStatus(200);
+            return peer.updateAttributes({lastHeartbeat: new Date()});
+         }
+      }
+      else {
+         res.sendStatus(404);
+      }
+   })
+   .catch(doErrorResponse(res));
+});
+
 router.post('/id/:peerid/name/:name/color/:color', function(req, res) {
    var vld = req.validator;
 
    req.params.name = sanitize(req.params.name);
    req.params.name = req.params.name.substring(0, 69);
+   req.params.lastHeartbeat = new Date();
 
    console.log("The body sez: " + JSON.stringify(req.params));
 
