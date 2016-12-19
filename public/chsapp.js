@@ -3,7 +3,8 @@ var app = angular.module('mainApp', [
    'ui.router',
    'ui.bootstrap',
    'ngAnimate',
-   'toastr'
+   'toastr',
+   'ngTagsInput'
 ])
 .filter("attState", function(){
    var stateNames = ["Done", "Quit", "Working"];

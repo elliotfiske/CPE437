@@ -43,11 +43,16 @@ app.use(function(req, res, next) {
 
    console.log(req.method, req.path);
 
-   // if (req.session || (req.method === 'POST' &&
-   //  (req.path === '/prss' || req.path === '/ssns')))
+   if (req.path.startsWith("/peer")) {
       next();
-   // else
-   //    res.status(401).json([{tag: Validator.Tags.noLogin}]);
+      return;
+   }
+
+   if (req.session || (req.method === 'POST' &&
+    (req.path === '/prss' || req.path === '/ssns')))
+      next();
+   else
+      res.status(401).json([{tag: Validator.Tags.noLogin}]);
 
 });
 

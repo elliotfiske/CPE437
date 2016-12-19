@@ -57,7 +57,6 @@ var Room = sequelize.define('Room', {
 });
 
 Room.hasMany(PeerId);
-
 /** OK DON'T DELETE PAST HERE PLZ **/
 
 var Person = sequelize.define('Person', {
@@ -154,22 +153,6 @@ var Course = sequelize.define('Course', {
       //
       //  If there is a challenge before today that is missing
     },
-    getChallenges: function(personId) {
-      // return sequelize.Week.findAll({
-      //   where: {courseSanitizedName: req.params.courseName},
-      //   include: [{
-      //     model: sequelize.Challenge, {
-      //       include: [{
-      //         model: sequelize.Attempt,
-      //         where: {PersonId: personId}
-      //       }]
-      //     }
-      //   }]
-      // })
-      // .then(function(weeks) {
-      //
-      // });
-   }
   }
 });
 
@@ -266,6 +249,21 @@ var Attempt = sequelize.define('Attempt', {
   freezeTableName: true
 });
 
+var ChallengeTag = sequelize.define('ChallengeTag', {
+   text: {
+      type: Sequelize.STRING,
+   },
+   CourseName: {
+      type: Sequelize.STRING,
+   }
+}, {
+   freezeTableName: true,
+   indexes: [{
+     unique: true,
+     fields: ['CourseName', 'text']
+   }]
+});
+
 var ShopItem = sequelize.define('ShopItem', {
   name: {
     type: Sequelize.STRING
@@ -325,6 +323,11 @@ Course.belongsToMany(Person, {as: "EnrolledDudes", through: Enrollment, foreignK
 Person.belongsToMany(Course, {as: "Classes", through: Enrollment, foreignKey: "personId"});
 
 Challenge.hasMany(MultChoiceAnswer, {as: 'Possibilities'});
+
+// Question Tags
+Course.hasMany(ChallengeTag, {foreignKey: "CourseName"});
+Challenge.belongsToMany(ChallengeTag, {through: "AssignedTags", as: "Tags"});
+ChallengeTag.belongsToMany(Challenge, {through: "AssignedTags", as: "AssociatedChallenges"});
 
 Challenge.hasMany(Attempt, {foreignKey: "challengeName"});
 Person.hasMany(Attempt, {foreignKey: "personId"});

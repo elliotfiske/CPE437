@@ -1,0 +1,575 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Commitment Tests: Registration and enrollment",
+		"_postman_id": "7c6e9084-52f3-3e2c-d5ba-c306ab6018e7",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1 NUKE EM BOYS ",
+			"description": "",
+			"item": [
+				{
+					"name": "Admin Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var attURL = postman.getResponseHeader(\"Location\").split('/');",
+									"",
+									"postman.setEnvironmentVariable(\"loginCookie\", attURL[attURL.length-1]);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/ssns",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\": \"Admin@11.com\", \"password\": \"password\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Nuke",
+					"request": {
+						"url": "{{url}}/DB",
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2 Add student and courses",
+			"description": "",
+			"item": [
+				{
+					"name": "Admin Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var attURL = postman.getResponseHeader(\"Location\").split('/');",
+									"",
+									"postman.setEnvironmentVariable(\"loginCookie\", attURL[attURL.length-1]);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/ssns",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\": \"Admin@11.com\", \"password\": \"password\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Register Teacher Steinke",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/Prss",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"Steinke@sfhs\",\n    \"name\": \"mr.steinke\",\n    \"password\" : \"csisfunner\",\n    \"role\"     : 1,\n    \"termsAccepted\": true\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Login Steinke",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Code 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"Cookie Got\"] = postman.getResponseCookie(\"CHSAuth\") !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
+									"if (tests[\"Cookie Got\"])",
+									"    postman.setEnvironmentVariable(\"cookieStudentA\", postman.getResponseCookie(\"CHSAuth\").value)"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/Ssns",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"Steinke@sfhs\",\n    \"password\" : \"csisfunner\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Make Course: CPE 101",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/Crss",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "  {\n    \"name\": \"cpe101\"\n  }"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Make Course: CPE 102",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/Crss",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "  {\n    \"name\": \"cpe102\"\n  }"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Make Course: CPE 103",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/Crss",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "  {\n    \"name\": \"cpe103\"\n  }"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Register Student A ",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var attURL = postman.getResponseHeader(\"Location\").split('/');",
+									"",
+									"postman.setEnvironmentVariable(\"PrsA\", attURL[attURL.length-1]);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/Prss",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"UserA@domainA\",\n    \"name\": \"Student McStudentface\",\n    \"password\" : \"passwordA\",\n    \"role\"     : 0\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3 GET courses and enrs",
+			"description": "",
+			"item": [
+				{
+					"name": "Enroll student A",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/Crss/cpe101/Enrs",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"prsId\" : \"{{prsA}}\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Enroll fake student",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 400\"] = responseCode.code === 400;",
+									"",
+									"tests[\"Correct error\"] = responseBody.has(\"notFound\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/Crss/cpe101/Enrs",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"prsId\" : \"bad, fake name that nobody loves\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Enroll fake course",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 400\"] = responseCode.code === 400;",
+									"",
+									"tests[\"Correct error\"] = responseBody.has(\"notFound\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/Crss/dumbcoursenobodywants/Enrs",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"prsId\" : \"{{prsA}}\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "GET courses",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Correct # courses returned\"] = jsonData.length === 3;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/Crss",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"UserA@domainA\",\n    \"name\": \"Student McStudentface\",\n    \"password\" : \"passwordA\",\n    \"role\"     : 0\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "GET enrollments for Student A",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Correct # enrollments returned\"] = jsonData.length === 1;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/prss/{{prsA}}/enrs",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"UserA@domainA\",\n    \"name\": \"Student McStudentface\",\n    \"password\" : \"passwordA\",\n    \"role\"     : 0\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "GET enrollments for CPE 101",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Correct # enrollments returned\"] = jsonData.length === 1;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/crss/cpe101/Enrs",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"UserA@domainA\",\n    \"name\": \"Student McStudentface\",\n    \"password\" : \"passwordA\",\n    \"role\"     : 0\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Login Student A",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Code 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"Cookie Got\"] = postman.getResponseCookie(\"CHSAuth\") !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
+									"if (tests[\"Cookie Got\"])",
+									"    postman.setEnvironmentVariable(\"cookieStudentA\", postman.getResponseCookie(\"CHSAuth\").value)"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/Ssns",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"UserA@domainA\",\n    \"password\" : \"passwordA\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Student can't see enrollments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 400\"] = responseCode.code === 400;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Correct error\"] = jsonData[\"tag\"] === \"noPermission\""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/crss/cpe101/Enrs",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"UserA@domainA\",\n    \"name\": \"Student McStudentface\",\n    \"password\" : \"passwordA\",\n    \"role\"     : 0\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
