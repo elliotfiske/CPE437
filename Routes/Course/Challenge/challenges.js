@@ -5,8 +5,25 @@ var doErrorResponse = require('../../Validator.js').doErrorResponse;
 var sequelize = require('../../sequelize.js');
 var Promise = require('bluebird');
 
+function getChallengeModel(req, res, next) {
+  var vld = req.validator;
+
+  sequelize.Challenge.findOne({where: {
+    CourseName: req.params.courseName,
+    sanitizedName: req.params.challengeName
+  }})
+  .then(function(chl) {
+    return vld.check(chl, Tags.notFound, null, chl, "Couldn't find a challenge named " + req.params.challengeName);
+  })
+  .then(function(chl) {
+    req.challenge = chl;
+    next();
+  })
+  .catch(doErrorResponse(res));
+}
+
 var attemptRouter = require('./Attempt/attempts.js');
-router.use('/:challengeName/attempt', attemptRouter);
+router.use('/:challengeName/attempt', getChallengeModel, attemptRouter);
 
 // Get all weeks, which contain the challenges
 router.get('/', function(req, res) {

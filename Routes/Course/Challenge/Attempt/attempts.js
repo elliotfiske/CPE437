@@ -10,15 +10,15 @@ var async = require('async');
 router.baseURL = '/attempt';
 
 // Check that the user got the right answer
-function checkAnswer(req, chl) {
+function checkAnswer(req) {
    var input = req.body.input.toLowerCase();
-   var answer = chl.answer.toLowerCase();
+   var answer = req.challenge.answer.toLowerCase();
    var result = {
       score: 0,
       correct: false
    };
 
-   if (chl.type == 'number' || chl.type === 'multchoice') {
+   if (req.challenge.type == 'number' || req.challenge.type === 'multchoice') {
       input = parseInt(input);
       answer = parseInt(answer);
 
@@ -30,7 +30,7 @@ function checkAnswer(req, chl) {
          result.correct = true;
       }
    }
-   else if (chl.type === 'shortanswer') {
+   else if (req.challenge.type === 'shortanswer') {
       answer = JSON.parse(answer);
 
       if (answer.indexOf(input) >= 0) {
@@ -51,69 +51,54 @@ router.post('/', function(req, res) {
 
    return vld.hasFields(req.body, ['input'])
    .then(function() {
-      var findChallenge = sequelize.Challenge.findOne({
-         where: {sanitizedName: req.params.challengeName}
-      });
-
-      var findCourse = sequelize.Course.findOne({
-         where: {sanitizedName: req.params.courseName}
-      });
-
-      var findUser = sequelize.Person.findById(prsId);
-
-      return Promise.all([findChallenge, findCourse, findUser]);
+     return sequelize.Person.findById(prsId);
    })
-   .spread(function(chl, course, user) {
-      // return vld.check(chl && course && user, )
-      return course.hasEnrolledDude(user)
-      .then(function(isEnrolled) {
-         if (!isEnrolled) {
-            return Promise.reject({message: "You're not enrolled for that class."});
+   .then(function(user) {
+     return req.course.hasEnrolledDude(user)
+     .then(function(isEnrolled) {
+       return vld.check(isEnrolled, Tags.noPermission, null, null, "You're not enrolled for that class.");
+     })
+     .then(function() {
+       return req.challenge.getAttempts({
+         where: {personId: prsId},
+         required: false
+       });
+     })
+     .then(function(attempts) {
+       var alreadyGotItRight = false;
+       attempts.forEach(function(att) {
+         if (att.correct) {
+           alreadyGotItRight = true;
          }
-         return chl.getAttempts({
-            where: {personId: prsId},
-            required: false
-         });
-      })
-      .then(function(attempts) {
-         var alreadyGotItRight = false;
-         attempts.forEach(function(att) {
-            if (att.correct) {
-               alreadyGotItRight = true;
-            }
-         });
+       });
 
-         return vld.check(!alreadyGotItRight && chl.attsAllowed > attempts.length, Tags.excessatts);
-      })
-      .then(function() {
-         // TODO: verify chl's start date is after today
-         var result = checkAnswer(req, chl);
+       return vld.check(!alreadyGotItRight && req.challenge.attsAllowed > attempts.length, Tags.excessatts);
+     })
+     .then(function() {
+       // TODO: verify chl's start date is after today
+       var result = checkAnswer(req);
 
-         // TODO: check streak here.
-         // How it'll go down:
-         //   check to see if there's a previous challenge the user didn't complete
-         //   on a previous day. If so, reset the streak :
-         //
-         // otherwise, grab the streak field, add 1, and give a bonus based
-         //   on the streak.
+       // TODO: check streak here.
+       // How it'll go down:
+       //   check to see if there's a previous challenge the user didn't complete
+       //   on a previous day. If so, reset the streak :
+       //
+       // otherwise, grab the streak field, add 1, and give a bonus based
+       //   on the streak.
 
-         return sequelize.Attempt.create({
-            input: req.body.input,
-            personId: prsId,
-            challengeName: chl.sanitizedName,
-            correct: result.correct,
-            pointsEarned: result.score
-         })
-         .then(function() {
-            res.json(result);
-         });
-      });
+       return sequelize.Attempt.create({
+         input: req.body.input,
+         personId: prsId,
+         challengeName: req.params.challengeName,
+         correct: result.correct,
+         pointsEarned: result.score
+       })
+       .then(function() {
+         res.json(result);
+       });
+     });
    })
    .catch(doErrorResponse(res));
-});
-
-// WHEN WE RETURN: attempt.get. Return the list of attempts that the user has
-//   previously made, to give them reference for their next attempt OR to
-//   see what the right answer was.
+ });
 
 module.exports = router;
