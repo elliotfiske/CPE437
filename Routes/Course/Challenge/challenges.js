@@ -8,13 +8,12 @@ var Promise = require('bluebird');
 var attemptRouter = require('./Attempt/attempts.js');
 router.use('/:challengeName/attempt', attemptRouter);
 
-
 // Get all weeks, which contain the challenges
 router.get('/', function(req, res) {
-  return sequelize.Week.findAll({
-    where: {courseSanitizedName: req.params.courseName},
+  return req.course.getWeeks({
     include: [{
       model: sequelize.Challenge,
+      attributes: { exclude: ['answer'] },
       include: [{
         model: sequelize.Attempt,
         where: {personId: req.session.id},
@@ -58,10 +57,10 @@ function validateChallengeData(vld, req) {
 }
 
 /** Actually make that challenge, everything's good! **/
-function makeChallenge(course, req, res) {
+function makeChallenge(week, req, res) {
   req.body.courseName = req.params.courseName;
 
-  var challengeDate = course.Weeks[0].startDate;
+  var challengeDate = week.startDate;
   challengeDate.setDate(challengeDate.getDate()+req.body.dayIndex);
   req.body.openDate = challengeDate;
 
@@ -76,16 +75,28 @@ function makeChallenge(course, req, res) {
     }
   }
 
-  return Promise.all(promiseList)
-  .then(function(arr) {
-    console.log(JSON.stringify(arr));
-    var newChallenge = arr[0];
-    var choices = arr.slice(1);
+  var tagPromises = [];
+  req.body.tags.forEach(function(tag) {
+    var tagPromise = sequelize.ChallengeTag.findOrCreate({where: {text: tag, CourseName: req.params.courseName}});
+    tagPromises.push(tagPromise);
+  });
 
-    var addChlToWeek = course.Weeks[0].addChallengesAndSetDate([newChallenge]);
-    var addChoicesToChl = newChallenge.addPossibilities(choices);
+  return Promise.all(tagPromises)
+  .then(function(tagArr) {
+    tagArr = tagArr.map(function(tag) {return tag[0];});
 
-    return Promise.all([addChlToWeek, addChoicesToChl]);
+    return Promise.all(promiseList)
+    .then(function(arr) {
+      console.log(JSON.stringify(arr));
+      var newChallenge = arr[0];
+      var choices = arr.slice(1);
+
+      var addChlToWeek = week.addChallengesAndSetDate([newChallenge]);
+      var addChoicesToChl = newChallenge.addPossibilities(choices);
+      var addTagsToChl = newChallenge.addTags(tagArr);
+
+      return Promise.all([addChlToWeek, addChoicesToChl, addTagsToChl]);
+    });
   })
   .then(function() {
     res.location(router.baseURL + '/' + req.body.name).sendStatus(200).end();
@@ -97,39 +108,29 @@ function makeChallenge(course, req, res) {
 router.post('/', function(req, res) {
   var vld = req.validator;
 
-  validateChallengeData(vld, req)
+  return vld.checkPrsOK(req.course.ownerId)
   .then(function() {
-    return sequelize.Course.findOne({
-      where: {sanitizedName: req.params.courseName},
-      include: [{
-        model: sequelize.Week,
-        where: {weekIndexInCourse: req.body.weekIndex}
-      }]
-    });
+    return validateChallengeData(vld, req)
   })
-  .then(function(course) {
-    console.log("course guy " + JSON.stringify(course));
-    return vld.check(course, Tags.notFound, null, course)
-    .then(function(course) {
-      return vld.check(course.Weeks[0], Tags.badValue, {field: "weekIndex"}, course);
-    })
-    .then(function(course) {
-      return vld.checkPrsOK(course.ownerId, course);
-    })
-    .then(function(course) {
-      return course.Weeks[0].getChallenges({where: {dayIndex: req.body.dayIndex}});
-    })
+  .then(function() {
+    return req.course.getWeeks({where: {weekIndexInCourse: req.body.weekIndex}});
+  })
+  .spread(function(week) {
+    return vld.check(week, Tags.badValue, {field: "weekIndex"}, week);
+  })
+  .then(function(week) {
+    return week.getChallenges({where: {dayIndex: req.body.dayIndex}})
     .then(function(chls) {
-      return vld.check(chls.length === 0, Tags.dupDay, null, course); // verify there's not already a challenge on that day
+      return vld.check(chls.length === 0, Tags.dupDay, null, week); // verify there's not already a challenge on that day
     });
   })
-  .then(function(course) {
-    return makeChallenge(course, req, res);
+  .then(function(week) {
+    return makeChallenge(week, req, res);
   })
   .catch(doErrorResponse(res));
 });
 
-router.get('/:name', function(req, res) {
+router.get('/:challengeName', function(req, res) {
   var vld = req.validator;
 
   var excludeAnswer = { exclude: ['answer'] };
@@ -138,11 +139,18 @@ router.get('/:name', function(req, res) {
   }
 
   sequelize.Challenge.findOne({where:
-    {sanitizedName: req.params.name},
+    {
+      sanitizedName: req.params.challengeName,
+      courseName: req.params.courseName
+    },
     include: [
       {
         model: sequelize.MultChoiceAnswer,
         as: "Possibilities"
+      },
+      {
+        model: sequelize.ChallengeTag,
+        as: "Tags"
       },
       {
         model: sequelize.Attempt,
@@ -153,12 +161,10 @@ router.get('/:name', function(req, res) {
     attributes: excludeAnswer
   })
   .then(function(chl) {
-    if (chl) {
-      res.json(chl);
-    }
-    else {
-      res.sendStatus(404);
-    }
+    return vld.check(chl, Tags.notFound, null, chl, "No challenge found with the name " + req.params.challengeName);
+  })
+  .then(function(chl) {
+    return res.json(chl);
   })
   .catch(doErrorResponse(res));
 });

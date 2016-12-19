@@ -7,17 +7,25 @@ var doErrorResponse = require('../Validator.js').doErrorResponse;
 var router = Express.Router({caseSensitive: false});
 router.baseURL = '/crss';
 
-var challengeRouter = require('./Challenge/challenges.js');
-router.use('/:courseName/challenge', challengeRouter);
+// Every challenge needs the correct course object, so let's find it here
+function getCourseModel(req, res, next) {
+  var vld = req.validator;
 
-function handleError(res) {
-  return function(error) {
-    var code = error.code || 400;
-    delete error.code
+  console.log("MIDDLEWARE TO THE RESCUE!");
 
-    res.status(code).json(error);
-  }
+  sequelize.Course.findOne({where: {sanitizedName: req.params.courseName}})
+  .then(function(course) {
+    return vld.check(course, Tags.notFound, null, course, "Couldn't find a course named " + req.params.courseName);
+  })
+  .then(function(course) {
+    req.course = course;
+    next();
+  })
+  .catch(doErrorResponse(res));
 }
+
+var challengeRouter = require('./Challenge/challenges.js');
+router.use('/:courseName/challenge', getCourseModel, challengeRouter);
 
 router.get('/', function(req, res) {
   var vld = req.validator;
@@ -115,10 +123,7 @@ router.post('/:name/enrs', function(req, res) {
   .then(function() {
     return Promise.all([getPerson, getCourse]);
   })
-  .then(function(arr) {
-    var person = arr[0];
-    var course = arr[1];
-
+  .spread(function(person, course) {
     if (!person || !course) {
       return Promise.reject({tag: Tags.notFound});
     }
@@ -161,7 +166,7 @@ router.get('/:name/enrs', function(req, res) {
   .then(function(course) {
     res.json(course["EnrolledDudes"]);
   })
-  .catch(handleError(res));
+  .catch(doErrorResponse(res));
 });
 
 router.get('/:name/enrs/:enrId', function(req, res) {
@@ -238,10 +243,7 @@ router.get('/:name/chls', function(req, res) {
   var getCourse = sequelize.Course.findOne({ where: {sanitizedName: req.params.name} });
 
   return Promise.all([getPerson, getCourse])
-  .then(function(arr) {
-    var person = arr[0];
-    var course = arr[1];
-
+  .spread(function(person, course) {
     return person.hasClass(course)
     .then(function(isEnrolled) {
       return vld.check(isEnrolled || course.ownerId === prs.id || req.isAdmin(), Tags.noPermission);
@@ -253,7 +255,27 @@ router.get('/:name/chls', function(req, res) {
       res.json(weeks);
     });
   })
-  .catch(handleError(res));
+  .catch(doErrorResponse(res));
+});
+
+// Get the tags you've used before on a class
+router.get('/:crsName/tags', function(req, res) {
+  var vld = req.validator;
+
+  return sequelize.Course.findOne({
+    where: {sanitizedName: req.params.crsName},
+    include: [{ model: sequelize.ChallengeTag}]
+  })
+  .then(function(course) {
+    return vld.check(course, Tags.notFound, null, course, "Couldn't find a course named " + req.params.crsName + ".");
+  })
+  .then(function(course) {
+    return vld.check(course.ownerId === req.session.id, Tags.noPermission, null, course);
+  })
+  .then(function(course) {
+    return res.json(course["ChallengeTags"]);
+  })
+  .catch(doErrorResponse(res));
 });
 
 router.get('/:crsName/itms', function(req, res) {

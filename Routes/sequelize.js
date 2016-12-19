@@ -129,6 +129,17 @@ var Course = sequelize.define('Course', {
     }
   },
   instanceMethods: {
+    // Returns true if you're either the owner or enrolled in this course
+    checkPersonEnrolled: function(personId, res) {
+      if (personId === this.ownerId) {
+        return Promise.resolve(true);
+      }
+
+      return Person.findById(personId)
+      .then(function(person) {
+        return this.hasEnrolledDude(person);
+      });
+    },
     // This returns the current consecutive days the user has answered questions.
     // 0 if they haven't started or missed a day.
     getCurrentStreak: function(personId) {
@@ -336,7 +347,7 @@ Course.hasMany(Week);
 Week.hasMany(Challenge);
 Challenge.belongsTo(Week);
 
-sequelize.sync({force: true}).then(function() {
+sequelize.sync().then(function() {
   return Person.findOrCreate({
     where: {email: 'Admin@11.com'},
     defaults: {name: 'AdminMan', password: "password", role: 2}});
@@ -358,5 +369,6 @@ sequelize.sync({force: true}).then(function() {
     ShopItem: ShopItem,
     Enrollment: Enrollment,
     MultChoiceAnswer: MultChoiceAnswer,
+    ChallengeTag: ChallengeTag,
     do: sequelize
   };

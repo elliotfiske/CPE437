@@ -34,9 +34,9 @@ Validator.prototype.ok = function() {return !this.errors.length;}
 // Check test.  If false, add an error with tag and possibly empty array
 // of qualifying parameters, e.g. name of missing field if tag is
 // Tags.missingField.  Close the response.
-Validator.prototype.check = function(test, tag, params, passThrough) {
+Validator.prototype.check = function(test, tag, params, passThrough, message) {
    if (!test) {
-      return Promise.reject({tag: tag, params: params});
+      return Promise.reject({tag: tag, params: params, humanMessage: message});
    }
 
    return Promise.resolve(passThrough);
@@ -70,7 +70,7 @@ Validator.prototype.hasFields = function(obj, fieldList) {
 
 Validator.doErrorResponse = function(res) {
   return function(error) {
-    console.log("!! ERROR: " + error.message || err.tag);
+    console.log("!! ERROR: " + error.message || error.tag);
     console.log("Stack: " + error.stack);
     if (error.name === "SequelizeUniqueConstraintError") {
       error = {

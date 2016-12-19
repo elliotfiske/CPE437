@@ -63,12 +63,9 @@ router.post('/', function(req, res) {
 
       return Promise.all([findChallenge, findCourse, findUser]);
    })
-   .then(function(arr) {
-      var chl = arr[0];
-      var course = arr[1];
-      var user = arr[2];
-
-      return course.hasEnrolledDudes([user])
+   .spread(function(chl, course, user) {
+      // return vld.check(chl && course && user, )
+      return course.hasEnrolledDude(user)
       .then(function(isEnrolled) {
          if (!isEnrolled) {
             return Promise.reject({message: "You're not enrolled for that class."});
