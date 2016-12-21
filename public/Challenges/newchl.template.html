@@ -1,6 +1,15 @@
 
 <h1>New Challenge</h1>
 
+<form class="form-horizontal">
+  <div class="form-group">
+    <label class="control-label col-sm-2" for="tags-input">Tags:</label>
+    <tags-input id="tags-input" class="col-sm-10" ng-model="challenge.rawTags" replace-spaces-with-dashes="false">
+      <auto-complete source="loadTags($query)" select-first-match="false" debounce-delay="50" min-length="1"></auto-complete>
+    </tags-input>
+  </div>
+</form>
+
 <uib-tabset active="activeJustified" justified="true" type="pills">
   <uib-tab index="0" heading="Numerical" ng-click="challenge.type = 'number'" id="fix-tab-border">
     <div class="container-white">

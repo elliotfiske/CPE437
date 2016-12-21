@@ -32,11 +32,15 @@ function checkAnswer(req) {
    }
    else if (req.challenge.type === 'shortanswer') {
       answer = JSON.parse(answer);
+      input = input.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,""); // strip punctuation
 
-      if (answer.indexOf(input) >= 0) {
-         result.score = 5;
-         result.correct = true;
-      }
+      input.split(" ").forEach(function(word) {
+         console.log("Checking " + word + " against ", answer);
+         if (answer.indexOf(word) >= 0) {
+            result.score = 5;
+            result.correct = true;
+         }
+      });
    }
    else {
       throw new Error("Bad challenge type, somehow!");

@@ -6,6 +6,8 @@
   </div>
 
   <div class="row">
+
+  <div class="row">
     <uib-accordion close-others="false">
       <uib-accordion-group  ng-repeat="week in weeks" id="test1"
       class="list-group accordion-list-fix panel panel-success {{week.stateClass}}"
@@ -25,40 +27,5 @@
         </a>
       </uib-accordion-group>
     </uib-accordion>
-  </div>
-
-  <div class="row">
-    <div class="col-sm-12" ng-show="loggedUser.role >= 1">
-      <h2>Enrollments</h2>
-      <hr />
-
-      <div class="list-group">
-        <a href="#" class="list-group-item disabled">
-          Students
-        </a>
-        <a class="list-group-item" ng-repeat="enr in enrs">
-          <button class="btn btn-small btn-warning pull-right" ng-click="deleteEnrollment(enr.enrId)">Delete</button>
-          {{ enr.email }}
-        </a>
-        <a class="list-group-item">
-          <form>
-            <button type="submit" class="btn btn-small btn-primary pull-right" ng-click="addEnrollment()">Enroll</button>
-            <input type="text" placeholder="Student email" ng-model="email" style="width: 150px" />
-            <h4 class="bg-danger" ng-repeat="error in errors" style="padding: 10px;">
-              {{ error }}
-            </h4>
-          </form>
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-xs-12">
-      <h2>New Challenge</h2>
-    </div>
-    <div class="col-xs-3 col-xs-offset-3">
-      <button type="button" class="btn btn-large btn-primary pull-right" ng-click="createChallenge()">Create!</button>
-    </div>
   </div>
 </div>

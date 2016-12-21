@@ -47,30 +47,32 @@ router.get('/', function(req, res) {
 
 /** Verify that the user passed in good data to the challenge **/
 function validateChallengeData(vld, req) {
-   return vld.checkAdminOrTeacher()
-   .then(function() {
-      return vld.hasFields(req.body, ["name", "description", "type", "answer", "weekIndex", "dayIndex", "tags"]);
-   })
-   .then(function() {
-      return vld.check(Array.isArray(req.body["tags"]), Tags.badValue, {field: "tags"});
-   })
-   .then(function() {
-      if (req.body["type"] === "multchoice") {
-         console.log(req.body);
-         return vld.check(req.body["choices"] &&
-         Array.isArray(req.body["choices"]) &&
-         req.body["choices"].length >= 2, Tags.badValue, {field: "choices"});
-      }
-      else if (req.body["type"] === "number") {
-         return vld.check(!isNaN(parseInt(req.body["answer"])), Tags.badValue, {field: "answer"});
-      }
-      else if (req.body["type"] === "shortanswer") {
-         // short answer just gotta be non-null
-      }
-      else {
-         return Promise.reject({message: 'Invalid type', tags: Tags.badValue});
-      }
-   });
+  return vld.checkAdminOrTeacher()
+  .then(function() {
+    return vld.hasFields(req.body, ["name", "description", "type", "answer", "weekIndex", "dayIndex", "tags"]);
+  })
+  .then(function() {
+    return vld.check(Array.isArray(req.body["tags"]), Tags.badValue, {field: "tags"});
+  })
+  .then(function() {
+    if (req.body["type"] === "multchoice") {
+      return vld.check(req.body["choices"] &&
+      Array.isArray(req.body["choices"]) &&
+      req.body["choices"].length >= 2, Tags.badValue, {field: "choices"});
+    }
+    else if (req.body["type"] === "number") {
+      return vld.check(!isNaN(parseInt(req.body["answer"])), Tags.badValue, {field: "answer"});
+    }
+    else if (req.body["type"] === "shortanswer") {
+      var correctTermList = req.body["answer"];
+      req.body["answer"] = JSON.stringify(req.body["answer"]);
+      return vld.check(Array.isArray(correctTermList)
+      && correctTermList.length >= 1, Tags.badValue, {field: "answer"});
+    }
+    else {
+      return Promise.reject({message: 'Invalid type', tags: Tags.badValue});
+    }
+  });
 }
 
 /** Actually make that challenge, everything's good! **/
@@ -87,8 +89,8 @@ function makeChallenge(week, req, res) {
   if (req.body["type"] === "multchoice") {
     for (var ndx = 0; ndx < req.body["choices"].length; ndx++) {
       var answerText = req.body["choices"][ndx];
-      var answer = sequelize.MultChoiceAnswer.create({index: ndx, text: answerText});
-      promiseList.push(answer);
+      var choice = sequelize.MultChoiceAnswer.create({index: ndx, text: answerText});
+      promiseList.push(choice);
     }
   }
 
@@ -100,7 +102,7 @@ function makeChallenge(week, req, res) {
 
   return Promise.all(tagPromises)
   .then(function(tagArr) {
-    tagArr = tagArr.map(function(tag) {return tag[0];});
+    tagArr = tagArr.map(function(tag) {return tag[0];}); // findOrCreate gives us an array like [ [obj, true], [obj, false] ]
 
     return Promise.all(promiseList)
     .then(function(arr) {

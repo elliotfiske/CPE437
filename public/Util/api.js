@@ -107,6 +107,11 @@ angular.module('mainApp')
                return post('crss/' + courseName + '/enrs', { prsId: prsId });
             }
          },
+         tags: {
+           get: function(courseName) {
+             return get('crss/' + courseName + '/tags');
+           }
+         },
          itms: {
             get: function(courseName, itemId) {
                itemId = itemId || '';

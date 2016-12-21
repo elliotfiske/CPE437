@@ -1,4 +1,4 @@
-app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'api', 'toastr', function(scope, state, login, $rootScope, API, toastr) {
+app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'api', 'toastr', function(scope, $state, login, $rootScope, API, toastr) {
    $rootScope.page = 'home';
 
    if (!login.isLoggedIn()) {
@@ -6,7 +6,7 @@ app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'ap
    }
 
    scope.gotoCourse = function(courseName) {
-      state.go('course', {courseName: courseName});
+      $state.go('course', {courseName: courseName});
    };
 
    scope.enrollCourse = function(courseName) {

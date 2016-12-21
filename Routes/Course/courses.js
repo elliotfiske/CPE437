@@ -32,6 +32,7 @@ router.get('/', function(req, res) {
 
   sequelize.Course.findAll()
   .then(function(courseList) {
+    // TODO: also grab today's challenge
     res.json(courseList);
   })
   .catch(doErrorResponse(res));
@@ -110,6 +111,10 @@ router.put('/:name', function(req, res) {
     });
   })
   .catch(doErrorResponse(res));
+});
+
+router.get('/:courseName', getCourseModel, function(req, res) {
+  res.json(req.course);
 });
 
 router.post('/:name/enrs', function(req, res) {
@@ -210,7 +215,7 @@ router.delete('/:name/enrs/:enrId', function(req, res) {
   var vld = req._validator;
   var prs = req.session;
 
-  if (vld.checkAdminOrTeacher()) {
+  if (vld.checkAdmin()) {
     connections.getConnection(res, function(cnn) {
       function doDelete() {
         cnn.query('DELETE FROM Enrollment WHERE id = ?', [req.params.enrId], function(err, result) {
@@ -270,7 +275,7 @@ router.get('/:crsName/tags', function(req, res) {
     return vld.check(course, Tags.notFound, null, course, "Couldn't find a course named " + req.params.crsName + ".");
   })
   .then(function(course) {
-    return vld.check(course.ownerId === req.session.id, Tags.noPermission, null, course);
+    return vld.checkPrsOK(course.ownerId, course);
   })
   .then(function(course) {
     return res.json(course["ChallengeTags"]);
