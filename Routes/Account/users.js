@@ -153,22 +153,22 @@ router.get('/:id/crss', function(req, res) {
 });
 
 router.get('/:id/enrs', function(req, res) {
-  var vld = req.validator;
+   var vld = req.validator;
 
-  return vld.checkPrsOK(req.params.id)
-  .then(function() {
-    return sequelize.Person.findById(req.params.id);
-  })
-  .then(function(me) {
-    var enrollments = me.getClasses();
-    var ownedClasses = sequelize.Course.findAll({where: {ownerId: req.session.id}});
+   return vld.checkPrsOK(req.params.id)
+   .then(function() {
+      return sequelize.Person.findById(req.params.id);
+   })
+   .then(function(me) {
+      var enrollments = me.getClasses();
+      var ownedClasses = sequelize.Course.findAll({where: {ownerId: req.session.id}});
 
-    return Promise.all([enrollments, ownedClasses]);
-  })
-  .spread(function(enrolled, owned) {
-    res.json({enrolled: enrolled, owned: owned}).end();
-  })
-  .catch(doErrorResponse(res));
+      return Promise.all([enrollments, ownedClasses]);
+   })
+   .spread(function(enrolled, owned) {
+      res.json({enrolled: enrolled, owned: owned}).end();
+   })
+   .catch(doErrorResponse(res));
 });
 
 router.get('/:id/atts', function(req, res) {

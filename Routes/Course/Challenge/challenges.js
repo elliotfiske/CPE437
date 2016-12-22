@@ -6,20 +6,20 @@ var sequelize = require('../../sequelize.js');
 var Promise = require('bluebird');
 
 function getChallengeModel(req, res, next) {
-  var vld = req.validator;
+   var vld = req.validator;
 
-  sequelize.Challenge.findOne({where: {
-    CourseName: req.params.courseName,
-    sanitizedName: req.params.challengeName
-  }})
-  .then(function(chl) {
-    return vld.check(chl, Tags.notFound, null, chl, "Couldn't find a challenge named " + req.params.challengeName);
-  })
-  .then(function(chl) {
-    req.challenge = chl;
-    next();
-  })
-  .catch(doErrorResponse(res));
+   sequelize.Challenge.scope('teacherScope').findOne({where: {
+      CourseName: req.params.courseName,
+      sanitizedName: req.params.challengeName
+   }})
+   .then(function(chl) {
+      return vld.check(chl, Tags.notFound, null, chl, "Couldn't find a challenge named " + req.params.challengeName);
+   })
+   .then(function(chl) {
+      req.challenge = chl;
+      next();
+   })
+   .catch(doErrorResponse(res));
 }
 
 var attemptRouter = require('./Attempt/attempts.js');
@@ -30,7 +30,6 @@ router.get('/', function(req, res) {
   return req.course.getWeeks({
     include: [{
       model: sequelize.Challenge,
-      attributes: { exclude: ['answer'] },
       include: [{
         model: sequelize.Attempt,
         where: {personId: req.session.id},
@@ -152,12 +151,12 @@ router.post('/', function(req, res) {
 router.get('/:challengeName', function(req, res) {
   var vld = req.validator;
 
-  var excludeAnswer = { exclude: ['answer'] };
+  var scope = 'defaultScope';
   if (req.session.isAdminOrTeacher()) {
-    excludeAnswer = {}; // let teachers see the answer
+    scope = 'teacherScope'; // let teachers see the answer
   }
 
-  sequelize.Challenge.findOne({where:
+  sequelize.Challenge.scope(scope).findOne({where:
     {
       sanitizedName: req.params.challengeName,
       courseName: req.params.courseName
@@ -176,8 +175,7 @@ router.get('/:challengeName', function(req, res) {
         where: {personId: req.session.id},
         required: false
       }
-    ],
-    attributes: excludeAnswer
+    ]
   })
   .then(function(chl) {
     return vld.check(chl, Tags.notFound, null, chl, "No challenge found with the name " + req.params.challengeName);

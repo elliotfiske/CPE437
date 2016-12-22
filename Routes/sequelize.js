@@ -214,14 +214,23 @@ var Challenge = sequelize.define('Challenge', {
   }
 }, {
   freezeTableName: true,
+  // By default, hide answer
+  defaultScope: {
+     attributes: { exclude: ['answer'] }
+  },
+  scopes: {
+     teacherScope: {
+        // Include answer this time
+     },
+  },
   instanceMethods: {
-    getMostRecentAttempt: function(personId) {
-      return this.getAttempts({
-        where: {personId: personId},
-        order: ['createdAt', 'DESC'],
-        limit: 1
-      });
-    }
+     getMostRecentAttempt: function(personId) {
+        return this.getAttempts({
+           where: {personId: personId},
+           order: ['createdAt', 'DESC'],
+           limit: 1
+        });
+     }
   },
   hooks: {
     beforeValidate: function(challenge, options) {
