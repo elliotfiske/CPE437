@@ -94,7 +94,6 @@ angular.module('mainApp')
          get: typicalGet('crss'),
          post: typicalPost('crss'),
          put: typicalPut('crss'),
-         delete: typicalDelete('crss'),
          enrs: {
             get: function(courseName, enrId) {
                enrId = enrId || '';

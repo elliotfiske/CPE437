@@ -62,9 +62,9 @@ app.config(['$stateProvider', '$urlRouterProvider',
          templateUrl: 'Student/student.template.html',
          controller: 'studentController'
       })
-      .state('teacher', {
-         url: '/teacher',
-         templateUrl: 'Teacher/teacher.template.html',
-         controller: 'teacherController'
+      .state('admin', {
+         url: '/admin',
+         templateUrl: 'Admin/admin.template.html',
+         controller: 'adminController'
       })
    }]);

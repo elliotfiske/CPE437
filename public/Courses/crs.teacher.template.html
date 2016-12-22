@@ -12,13 +12,13 @@
           Week {{$index + 1}}
           <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': weekStatuses[$index].open, 'glyphicon-chevron-right': !weekStatuses[$index].open}"></i>
         </uib-accordion-heading>
-        <a ng-repeat="challenge in week.sortedChallenges" ng-click="viewChallenge(challenge, $parent.$index, $index)" class="list-group-item" ng-class="challenge.stateClass">
+        <div ng-repeat="challenge in week.sortedChallenges" class="list-group-item" ng-class="challenge.stateClass">
           {{challenge.name}}
           <i class="pull-left glyphicon chl-status"
           ng-class="{'glyphicon-ok': challenge.stateClass == 'chl-created', 'glyphicon-plus' : challenge.stateClass == 'chl-empty'}"></i>
-          <button ng-show="challenge.stateClass === 'chl-created'" type="button" class="pull-right btn btn-sm btn-primary btn-in-row">Test</button>
+          <button ng-show="challenge.stateClass === 'chl-created'" type="button" class="pull-right btn btn-sm btn-primary btn-in-row" ng-click="viewChallenge(challenge, $parent.$index, $index)" >Test</button>
           <button ng-show="challenge.stateClass === 'chl-created'" type="button" class="pull-right btn btn-sm btn-info btn-in-row">Edit</button>
-        </a>
+       </div>
       </uib-accordion-group>
     </uib-accordion>
   </div>

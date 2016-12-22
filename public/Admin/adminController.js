@@ -1,7 +1,7 @@
-app.controller('teacherController',
+app.controller('adminController',
 ['$scope', '$state', 'api', 'confirm', 'login', '$rootScope', 'toastr',
  function(scope, $state, API, confirm, login, $rootScope, toastr) {
-   $rootScope.page = 'teacher';
+   $rootScope.page = 'admin';
 
    scope.courses = [];
 

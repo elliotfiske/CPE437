@@ -41,9 +41,9 @@ router.get('/', function(req, res) {
 router.post('/', function(req, res) {
    var vld = req.validator;
 
-   return vld.checkAdminOrTeacher()
+   return vld.checkAdmin()
    .then(function() {
-      return vld.hasFields(req.body, ["name"]);
+      return vld.hasFields(req.body, ["name", "owner"]);
    })
    .then(function() {
       return sequelize.Course.findById(req.body.name);
@@ -52,11 +52,14 @@ router.post('/', function(req, res) {
       return vld.check(!existingCourse, Tags.dupName, null, null, "There's already a course named " + req.body.name);
    })
    .then(function() {
-      return sequelize.Person.findById(req.session.id)
+      return sequelize.Person.findOne({where: {email: req.body.owner}})
+      .then(function(teacher) {
+         return vld.check(teacher && teacher.role >= 1, Tags.notFound, null, teacher, "No teacher found for email " + req.body.owner);
+      })
       .then(function(teacher) {
          return sequelize.Course.create({
             name: req.body.name,
-            ownerId: req.session.id,
+            ownerId: teacher.id,
          })
          .then(function(newCourse) {
             newCourse.addEnrolledDude(teacher);
@@ -115,7 +118,12 @@ router.put('/:name', function(req, res) {
 });
 
 router.get('/:courseName', getCourseModel, function(req, res) {
-  res.json(req.course);
+   return sequelize.Enrollment.findOne({where: {personId: req.session.id, courseName: req.params.courseName}})
+   .then(function(enr) {
+      req.course.Enrollments = [enr];
+      res.json(req.course);
+   })
+   .catch(doErrorResponse(res));
 });
 
 router.post('/:name/enrs', function(req, res) {
