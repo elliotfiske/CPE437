@@ -160,10 +160,13 @@ router.get('/:id/enrs', function(req, res) {
     return sequelize.Person.findById(req.params.id);
   })
   .then(function(me) {
-    return me.getClasses();
+    var enrollments = me.getClasses();
+    var ownedClasses = sequelize.Course.findAll({where: {ownerId: req.session.id}});
+
+    return Promise.all([enrollments, ownedClasses]);
   })
-  .then(function(classes) {
-    res.json(classes).end();
+  .spread(function(enrolled, owned) {
+    res.json({enrolled: enrolled, owned: owned}).end();
   })
   .catch(doErrorResponse(res));
 });

@@ -39,33 +39,34 @@ router.get('/', function(req, res) {
 });
 
 router.post('/', function(req, res) {
-  var vld = req.validator;
+   var vld = req.validator;
 
-  return vld.checkAdminOrTeacher()
-  .then(function() {
-    return vld.hasFields(req.body, ["name"]);
-  })
-  .then(function() {
-    return connections.getConnectionP()
-  })
-  .then(function(conn) {
-    return conn.query('SELECT * FROM Course where name = ?', req.body.name)
-    .then(function(courseResult) {
-      return vld.check(!courseResult.length, Tags.dupName, {}, courseResult);
-    })
-    .then(function(courseResult) {
-      req.body.ownerId = req.session.id;
-      return sequelize.Course.create(req.body); //conn.query('INSERT INTO Course SET ?', req.body);
-    })
-    .then(function(insertResult) {
+   return vld.checkAdminOrTeacher()
+   .then(function() {
+      return vld.hasFields(req.body, ["name"]);
+   })
+   .then(function() {
+      return sequelize.Course.findById(req.body.name);
+   })
+   .then(function(existingCourse) {
+      return vld.check(!existingCourse, Tags.dupName, null, null, "There's already a course named " + req.body.name);
+   })
+   .then(function() {
+      return sequelize.Person.findById(req.session.id)
+      .then(function(teacher) {
+         return sequelize.Course.create({
+            name: req.body.name,
+            ownerId: req.session.id,
+         })
+         .then(function(newCourse) {
+            newCourse.addEnrolledDude(teacher);
+         });
+      });
+   })
+   .then(function(newCourse) {
       res.location(router.baseURL + '/' + req.body.name).status(200).end();
-      return Promise.resolve();
-    })
-    .finally(function() {
-      conn.release();
-    });
-  })
-  .catch(doErrorResponse(res));
+   })
+   .catch(doErrorResponse(res));
 });
 
 router.put('/:name', function(req, res) {
@@ -154,24 +155,18 @@ router.post('/:name/enrs', function(req, res) {
   .catch(doErrorResponse(res));
 });
 
-router.get('/:name/enrs', function(req, res) {
-  var vld = req.validator;
-  var prs = req.session;
+router.get('/:courseName/enrs', getCourseModel, function(req, res) {
+   var vld = req.validator;
+   var prs = req.session;
 
-  sequelize.Course.findOne({
-    where: {sanitizedName: req.params.name},
-    include: [{ model: sequelize.Person, as: 'EnrolledDudes', attributes: ['name', 'email'] }]
-  })
-  .then(function(course) {
-    return vld.check(course !== null, Tags.notFound, null, course);
-  })
-  .then(function(course) {
-    return vld.checkPrsOK(course.ownerId, course);
-  })
-  .then(function(course) {
-    res.json(course["EnrolledDudes"]);
-  })
-  .catch(doErrorResponse(res));
+   return vld.checkPrsOK(req.course.ownerId)
+   .then(function() {
+      return req.course.getEnrolledDudes();
+   })
+   .then(function(dudes) {
+      res.json(dudes);
+   })
+   .catch(doErrorResponse(res));
 });
 
 router.get('/:name/enrs/:enrId', function(req, res) {

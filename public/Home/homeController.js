@@ -1,12 +1,20 @@
 app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'api', 'toastr', function(scope, $state, login, $rootScope, API, toastr) {
    $rootScope.page = 'home';
 
+   scope.enrolledCourses = [];
+   scope.adminCourses = [];
+
    if (!login.isLoggedIn()) {
       $state.go('login');
    }
 
-   scope.gotoCourse = function(courseName) {
-      $state.go('course', {courseName: courseName});
+   scope.gotoCourse = function(courseName, asAdmin) {
+      if (asAdmin) {
+         $state.go('courseAdmin', {courseName: courseName});
+      }
+      else {
+         $state.go('course', {courseName: courseName});
+      }
    };
 
    scope.enrollCourse = function(courseName) {
@@ -33,7 +41,8 @@ app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'ap
 
    // Get courses and available courses
    API.prss.enrs.get(scope.loggedUser.id).then(function(response) {
-      scope.enrolledCourses = response.data;
+      scope.enrolledCourses = response.data.enrolled;
+      scope.adminCourses = response.data.owned;
       return API.crss.get();
    })
    .then(function(response) {
