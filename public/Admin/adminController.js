@@ -19,11 +19,11 @@ app.controller('adminController',
    scope.refreshcrss();
 
    scope.createCourse = function() {
-      if (!scope.courseName)
+      if (!scope.courseName || !scope.teacherEmail)
          return;
 
       console.log("Making new course named " + scope.courseName);
-      API.crss.post({ name: scope.courseName })
+      API.crss.post({ name: scope.courseName, owner: scope.teacherEmail })
          .then(scope.refreshcrss)
          .catch(function(err) {
             if (err.data.tag === 'dupName') {

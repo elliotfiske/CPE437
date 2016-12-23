@@ -33,7 +33,7 @@
           <div class="form-group">
             <label class="control-label col-sm-2" for="num-chlans">Answer:</label>
             <div class="col-sm-10">
-              <input type='number' ng-model="challenge.answer" class="form-control" placeholder="Enter a number" step="any" id="num-chlans"/>
+              <input type='number' ng-model="challenge.numAnswer" class="form-control" placeholder="Enter a number" step="any" id="num-chlans"/>
             </div>
           </div>
 
@@ -64,7 +64,7 @@
           <div class="form-group">
             <label class="control-label col-sm-3" for="short-chlexact">Answers:</label>
             <div class="col-sm-9">
-              <input type='text' ng-model="challenge.exact" class="form-control" placeholder="Correct Words" id="short-chlexact"/>
+              <tags-input id="tags-input" placeholder="Correct Answers" min-length="1" add-on-enter="true" add-on-space="true" ng-model="challenge.exact" replace-spaces-with-dashes="false"></tags-input>
             </div>
           </div>
 

@@ -40,13 +40,17 @@ function(scope, $state, $stateParams, API, confirm, login, toastr) {
       }
    });
 
+   scope.answerNumerical = function() {
+      scope.attempt.input = scope.attempt.numInput.toString();
+      scope.createAttempt();
+   };
+
    scope.answerMultipleChoice = function() {
       scope.attempt.input = scope.multChoice.chosen;
       scope.createAttempt();
    };
 
    scope.createAttempt = function() {
-      scope.attempt.input = scope.attempt.input.toString();
       API.crss.challenge.attempt.post($stateParams.courseName, $stateParams.challengeName, scope.attempt)
       .then(function(wasCorrect) {
          if (wasCorrect.data.score >= 2) {

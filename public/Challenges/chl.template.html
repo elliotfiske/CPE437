@@ -18,10 +18,10 @@
       </div>
 
       <div ng-show="challenge.type == 'number'">
-         <form ng-submit="createAttempt()">
+         <form ng-submit="answerNumerical()">
             <label for="attempt-input">Your answer:</label>
-            <input type="number" class="form-control" ng-model="attempt.input" step="any"></input><br />
-            <button type="submit" class="btn btn-primary" ng-disabled="attempt.input === null">Submit</button>
+            <input type="number" class="form-control" ng-model="attempt.numInput" step="any"></input><br />
+            <button type="submit" class="btn btn-primary" ng-disabled="attempt.numInput === null">Submit</button>
          </form>
       </div>
 

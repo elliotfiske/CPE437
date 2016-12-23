@@ -154,10 +154,15 @@ scope.viewChallenge = function(challengeName) {
   $state.go('challenge', { courseName: scope.courseName, challengeName: challengeName});
 };
 
+scope.goAdmin = function() {
+   $state.go('courseAdmin', {courseName: scope.courseName});
+}
+
 scope.getCourseData = function() {
   API.crss.get($stateParams.courseName)
   .then(function(course) {
     scope.courseData = course.data;
+    scope.enrollment = course.data.Enrollments[0];
   })
   .catch(function(err) {
     toastr.error("Oh no!", err.message);

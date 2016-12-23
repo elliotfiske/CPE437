@@ -120,11 +120,12 @@ function(scope, $state, $stateParams, API, confirm, login, toastr) {
   };
 
   scope.createNumerical = function() {
+     scope.challenge.answer = scope.challenge.numAnswer;
     scope.doChallengePost();
   };
 
   scope.createShortAnswer = function() {
-    scope.challenge.answer = JSON.stringify({exact: scope.challenge.exact.split(",")});
+    scope.challenge.answer =  scope.challenge.exact;
     scope.doChallengePost();
   };
 }])

@@ -326,17 +326,21 @@ ShopItem.belongsToMany(Person, {through: 'StudentPurchase'});
 Person.belongsToMany(ShopItem, {through: 'StudentPurchase'});
 
 var Enrollment = sequelize.define('Enrollment', {
-  creditsEarned: {
-    type: Sequelize.INTEGER,
-    defaultValue: 0
-  },
-  id: {
-    type: Sequelize.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-  }
+   creditsEarned: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0
+   },
+   streak: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0
+   },
+   id: {
+      type: Sequelize.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
+   }
 }, {
-  freezeTableName: true
+   freezeTableName: true
 });
 
 Course.belongsToMany(Person, {as: "EnrolledDudes", through: Enrollment, foreignKey: "courseName"});
@@ -356,7 +360,7 @@ Course.hasMany(Week);
 Week.hasMany(Challenge);
 Challenge.belongsTo(Week);
 
-sequelize.sync({force: true}).then(function() {
+sequelize.sync().then(function() {
   return Person.findOrCreate({
     where: {email: 'Admin@11.com'},
     defaults: {name: 'AdminMan', password: "password", role: 2}});

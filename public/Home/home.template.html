@@ -7,8 +7,9 @@
 </div>
 
 <div class="container-white">
-   <div class="row" ng-show="loggedUser.role !== 0">
-      <h1>Admin</h1>
+   <div class="row" ng-show="loggedUser.role >= 1">
+      <h1>Classes</h1>
+      <h3 ng-show="adminCourses.length === 0">You're not in charge of any classes! :(</h3>
       <div class="panel panel-success" ng-repeat="course in adminCourses">
          <div class="panel-heading">
             <h2 class="panel-title">{{course.name}}</h2>
@@ -22,8 +23,9 @@
          </div>
       </div>
    </div>
-   <div class="row">
-      <h1>Classes</h1>
+   <div class="row" ng-show="loggedUser.role >= 0">
+      <h1>Enrolled Classes</h1>
+      <h3 ng-show="enrolledCourses.length === 0">You're not enrolled in any classes! :(</h3>
       <div class="panel panel-success" ng-repeat="course in enrolledCourses">
          <div class="panel-heading">
             <h2 class="panel-title">{{course.name}}</h2>

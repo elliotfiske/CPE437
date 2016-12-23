@@ -130,17 +130,14 @@ function(scope, $state, $stateParams, API, confirm, login, $location, toastr) {
     });
   };
 
-  scope.createChallenge = function() {
-    $state.go('newchallenge', {courseName: $stateParams.courseName, week: 0, day: 0});
+  scope.createChallenge = function(challenge, weekIndex, dayIndex) {
+     if (challenge.stateClass === 'chl-empty') {
+        $state.go('newchallenge', {courseName: $stateParams.courseName, week: weekIndex, day: dayIndex})
+     }
   }
 
   scope.viewChallenge = function(challenge, weekIndex, dayIndex) {
-    if (challenge.stateClass === 'chl-empty') {
-      $state.go('newchallenge', {courseName: $stateParams.courseName, week: weekIndex, day: dayIndex})
-    }
-    else {
-      $state.go('challenge', { courseName: scope.courseName, challengeName: challenge.sanitizedName});
-    }
+     $state.go('challenge', { courseName: scope.courseName, challengeName: challenge.sanitizedName});
   }
 
   scope.getCourseData = function() {

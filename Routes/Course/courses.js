@@ -117,11 +117,17 @@ router.put('/:name', function(req, res) {
   .catch(doErrorResponse(res));
 });
 
-router.get('/:courseName', getCourseModel, function(req, res) {
-   return sequelize.Enrollment.findOne({where: {personId: req.session.id, courseName: req.params.courseName}})
-   .then(function(enr) {
-      req.course.Enrollments = [enr];
-      res.json(req.course);
+router.get('/:courseName', function(req, res) {
+   return sequelize.Course.findOne({
+      where: {sanitizedName: req.params.courseName},
+      raw: true
+   })
+   .then(function(course) {
+      return sequelize.Enrollment.findOne({where: {personId: req.session.id, courseName: req.params.courseName}, raw: true})
+      .then(function(enr) {
+         course.Enrollments = [enr];
+         res.json(course);
+      });
    })
    .catch(doErrorResponse(res));
 });
