@@ -34,7 +34,7 @@ var app = angular.module('mainApp', [
          .then(function(response) {
             var user = response.data[0];
             $rootScope.loggedUser = user;
-            smartlook('tag', 'email', user.email);
+            if (window.smartlook) smartlook('tag', 'email', user.email);
             return user;
          })
          .catch($rootScope.logout);
@@ -54,7 +54,7 @@ var app = angular.module('mainApp', [
                return API.Ssns.get(location[location.length - 1]);
             })
             .then(function(response) {
-               smartlook('tag', 'email', email);
+               if (window.smartlook) smartlook('tag', 'email', email);
                return API.prss.get(response.data.prsId);
             })
             .then(function(reponse) {
