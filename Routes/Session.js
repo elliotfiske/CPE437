@@ -3,7 +3,7 @@
 var crypto = require('crypto');
 
 var sessions = {};
-var duration = 7200000; // Two hours in milliseconds
+var duration = 604800 * 1000; // one week in milliseconds
 var cookieName = 'CHSAuth';
 
 exports.router = function(req, res, next) {

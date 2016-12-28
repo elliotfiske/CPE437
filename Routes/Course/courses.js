@@ -24,6 +24,21 @@ function getCourseModel(req, res, next) {
   .catch(doErrorResponse(res));
 }
 
+// This is called any time when we need to display the streak. This will happen
+//  when we look at a course page, or when we complete a challenge. Make sure
+//  you
+var updateStreak = function(req, res, next) {
+   if (!req.course) {
+      console.error("You didn't put the getCourseModel middleware before this middleware!");
+      res.sendStatus(500);
+   }
+
+   return sequelize.Enrollment.findOne({where: {personId: req.session.id, courseName: req.course.sanitizedName}})
+   .then(function(enr) {
+      
+   })
+}
+
 var challengeRouter = require('./Challenge/challenges.js');
 router.use('/:courseName/challenge', getCourseModel, challengeRouter);
 
@@ -292,138 +307,8 @@ router.get('/:crsName/tags', function(req, res) {
   .catch(doErrorResponse(res));
 });
 
-router.get('/:crsName/itms', function(req, res) {
-  var vld = req.validator;
-  var admin = req.session && req.session.isAdmin();
-  var enrolled = false;
-  var owner = false;
-
-  connections.getConnection(res, function(cnn) {
-    cnn.query('Select * from Enrollment where courseName = ?', req.params.crsName,
-    function(err, result) {
-      if (result.length) {
-        for (var i = 0; i < result.length; i++) {
-          if (result[i].prsId === req.session.id)
-          enrolled = true;
-        }
-      }
-      cnn.query('Select * from Course where name = ?', req.params.crsName,
-      function(err, result) {
-        if (result.length) {
-          for (var i = 0; i < result.length; i++) {
-            if (result[i].ownerId == req.session.id)
-            owner = true;
-          }
-        }
-        if (vld.check(enrolled || owner || admin, Tags.noPermission)) {
-          cnn.query('Select name, cost, id from ShopItem where courseName = ?', req.params.crsName,
-          function(err, result) {
-            res.json(result);
-            cnn.release();
-          });
-        }
-        else {
-          cnn.release();
-        }
-      });
-    });
-  });
-});
-
-router.post('/:crsName/itms', function(req, res) {
-  var vld = req._validator;
-
-  if (vld.hasFields(req.body, ["name", "cost"])) {
-    connections.getConnection(res, function(cnn) {
-      cnn.query('Select name from ShopItem where name = ?', req.body.name,
-      function(err, result) {
-        if (vld.check(!result.length, Tags.dupName)) {
-          cnn.query('Insert into ShopItem (name, courseName, cost) value (?, ?, ?)',
-          [req.body.name, req.params.crsName, req.body.cost],
-          function(err, result) {
-            if (err)
-            res.status(400).json(err);
-            else {
-              res.location(router.baseURL + '/' + req.params.crsName + '/itms/' + result.insertId).status(200).end();
-            }
-          });
-        }
-        else {
-          cnn.release();
-        }
-      });
-    });
-  }
-});
-
-router.put('/:crsName/itms/:itmId', function(req, res) {
-  var vld = req._validator;
-  var admin = req.session && req.session.isAdmin();
-  var owner = false;
-  var purchase = false;
-  var name = req.body.name;
-  var cost = req.body.cost;
-  var purchased = req.body.purchased;
-  var error = false;
-
-  connections.getConnection(res, function(cnn) {
-    cnn.query('Select * from Course where name = ?', req.params.crsName,
-    function(err, result) {
-      if (vld.check(result && result.length, Tags.notFound)) {
-        result = result[0];
-        if (result.ownerId === req.session.id)
-        owner = true;
-
-        cnn.query('Select * from ShopItem where id = ?', req.params.itmId,
-        function(err, result) {
-          if (vld.check(result && result.length, Tags.notFound)) {
-            purchase = result[0].purchased;
-
-            if (name && !vld.check(admin || owner, Tags.noPermission))
-            error = true;
-            if (cost && !vld.check(admin || owner, Tags.noPermission))
-            error = true;
-
-            if ((purchased !== undefined) && purchased && !vld.check(!purchase || admin || owner, Tags.noPermission))
-            error = true;
-
-            if (!error) {
-              cnn.query('Update ShopItem set ? where id = ?', [req.body, req.params.itmId],
-              function(err) {
-                if(err)
-                res.status(400).json(err);
-                else {
-                  res.end();
-                }
-                cnn.release();
-              });
-            }
-          }
-          else {
-            cnn.release();
-          }
-        });
-      }
-      else {
-        cnn.release();
-      }
-    });
-  });
-});
-
-router.delete('/:crsName/itms/:itmId', function(req, res) {
-  var vld = req.validator;
-  var admin = req.session && req.session.isAdmin();
-
-  if (vld.check(admin, Tags.noPermission)) {
-    connections.getConnection(res, function(cnn) {
-      cnn.query('Delete from ShopItem where id = ?', req.params.itmId,
-      function(err, result) {
-        res.end();
-        cnn.release();
-      });
-    });
-  }
-});
+router.middleware = {
+   updateStreak: updateStreak
+};
 
 module.exports = router;

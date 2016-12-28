@@ -77,10 +77,20 @@ app.use(function (req, res, next) {
     next();
 });
 
+function checkAdminMiddleware(req, res, next) {
+   if (req.session.isAdmin()) {
+      next();
+   }
+   else {
+      res.status(401).json("Hey! You're not an admin!");
+   }
+}
+
 app.use('/peer', require('./Routes/peer'));
 app.use('/crss', require('./Routes/Course/courses'));
 app.use('/prss', require('./Routes/Account/users'));
 app.use('/ssns', require('./Routes/Account/sessions'));
+app.use('/admin', checkAdminMiddleware, require('./Routes/Admin/admin'));
 
 // Redirect the user to Facebook for authentication.  When complete,
 // Facebook will redirect the user back to the application at
@@ -114,12 +124,7 @@ app.delete('/DB', function(req, res) {
   });
 });
 
-/* Testing Material */
-app.get('/test', function(req, res) {
-   console.log("In test route");
-   res.status(200).end();
-});
-
+// Error output
 app.use(function(err, req, res, next) {
    console.error(err.stack);
    res.status(500).send('error', {error: err});
