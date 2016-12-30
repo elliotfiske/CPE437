@@ -8,7 +8,7 @@ function(scope, $state, $stateParams, API, confirm, login, toastr) {
     courseName: $stateParams.courseName,
     type: "number",
     openTime: new Date(),
-    attsAllowed: 1,
+    attsAllowed: 3,
     weekIndex: $stateParams.week,
     dayIndex: $stateParams.day,
     rawTags: []
@@ -116,6 +116,7 @@ function(scope, $state, $stateParams, API, confirm, login, toastr) {
   scope.createMultChoice = function() {
     scope.challenge.choices = scope.radioAnswers.map(function(answer) {return answer.answerText});
     scope.challenge.answer = scope.correctRadioOption.chosen;
+    scope.challenge.attsAllowed = 1; // Don't want people guessing many times on multiple choice
     scope.doChallengePost();
   };
 

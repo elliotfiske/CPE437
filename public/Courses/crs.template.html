@@ -1,32 +1,39 @@
 <div class="container-white">
-  <div class="row">
-    <h1>{{ courseData.name }}</h1>
-    <h3 ng-show="courseData.ownerId === loggedUser.id">You're the teacher of this class! <a ng-click="goAdmin()">See Teacher Page</a></h3>
-    <div class="col-xs-6"><h1>Current streak: {{enrollment.creditsEarned}}</h1></div>
-    <div class="col-xs-6"><h1>Points: {{enrollment.creditsEarned}}</h1></div>
-  </div>
 
-  <div class="row">
+   <div clas="row" ng-show="we404now">
+      <h1>404!!!</h1>
+      <h3>Oops! There's no course named {{courseName}}.</h3>
+      <h3><a onclick="window.history.back();">Go Back</a></h3>
+   </div>
 
-  <div class="row">
-    <uib-accordion close-others="false">
-      <uib-accordion-group  ng-repeat="week in weeks" id="test1"
-      class="list-group accordion-list-fix panel panel-success {{week.stateClass}}"
-      is-open="weekStatuses[$index].open" is-disabled="week.stateClass == 'week-disabled'"
-      >
-        <uib-accordion-heading>
-          <i class="pull-left glyphicon"
-          ng-class="{'glyphicon-ok' : week.stateClass == 'week-complete', 'glyphicon-alert' : week.stateClass == 'week-open', 'week-disabled' : week.stateClass == 'week-disabled'}"></i>
-          Week {{$index + 1}}
-          <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': weekStatuses[$index].open, 'glyphicon-chevron-right': !weekStatuses[$index].open}"></i>
-        </uib-accordion-heading>
-        <a ng-repeat="challenge in week.Challenges" ng-click="viewChallenge(challenge.sanitizedName)" class="list-group-item" ng-class="challenge.stateClass">
-          {{challenge.name}}
-          <i class="pull-left glyphicon chl-status"
-          ng-class="{'glyphicon-ok': challenge.stateClass == 'chl-solved', 'glyphicon-alert' : challenge.stateClass == 'chl-overdue' || challenge.stateClass == 'chl-open'}"></i>
-          <span ng-show="challenge.Attempts[0].pointsEarned > 0" class="badge pull-right">+{{challenge.Attempts[0].pointsEarned}}</span>
-        </a>
-      </uib-accordion-group>
-    </uib-accordion>
-  </div>
+   <div class="row" ng-hide="we404now">
+      <h1>{{ courseData.name }}</h1>
+      <h3 ng-show="courseData.ownerId === loggedUser.id">You're the teacher of this class! <a ng-click="goAdmin()">See Teacher Page</a></h3>
+      <div class="col-xs-6"><h1>Current streak: {{enrollment.creditsEarned}}</h1></div>
+      <div class="col-xs-6"><h1>Points: {{enrollment.creditsEarned}}</h1></div>
+   </div>
+
+   <div class="row" ng-hide="we404now">
+
+      <div class="row">
+         <uib-accordion close-others="false">
+            <uib-accordion-group  ng-repeat="week in weeks" id="test1"
+            class="list-group accordion-list-fix panel panel-success {{week.stateClass}}"
+            is-open="weekStatuses[$index].open" is-disabled="week.stateClass == 'week-disabled'"
+            >
+            <uib-accordion-heading>
+               <i class="pull-left glyphicon"
+               ng-class="{'glyphicon-ok' : week.stateClass == 'week-complete', 'glyphicon-alert' : week.stateClass == 'week-open', 'week-disabled' : week.stateClass == 'week-disabled'}"></i>
+               Week {{$index + 1}}
+               <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': weekStatuses[$index].open, 'glyphicon-chevron-right': !weekStatuses[$index].open}"></i>
+            </uib-accordion-heading>
+            <a ng-repeat="challenge in week.Challenges" ng-click="viewChallenge(challenge.sanitizedName)" class="list-group-item" ng-class="challenge.stateClass">
+               {{challenge.name}}
+               <i class="pull-left glyphicon chl-status"
+               ng-class="{'glyphicon-ok': challenge.stateClass == 'chl-solved', 'glyphicon-alert' : challenge.stateClass == 'chl-overdue' || challenge.stateClass == 'chl-open'}"></i>
+               <span ng-show="challenge.Attempts[0].pointsEarned > 0" class="badge pull-right">+{{challenge.Attempts[0].pointsEarned}}</span>
+            </a>
+         </uib-accordion-group>
+      </uib-accordion>
+   </div>
 </div>
