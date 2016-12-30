@@ -335,7 +335,8 @@ var Enrollment = sequelize.define('Enrollment', {
       defaultValue: 0
    },
    lastStreakTime: {
-      type: Sequelize.DATE // last time the user made an attempt that counts towards streak
+      type: Sequelize.DATE, // last time the user made an attempt that counts towards streak,
+      defaultValue: new Date(0)
    },
    id: {
       type: Sequelize.INTEGER,

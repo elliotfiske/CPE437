@@ -5,6 +5,7 @@ var sequelize = require('../sequelize.js');
 var Tags = require('../Validator.js').Tags;
 var doErrorResponse = require('../Validator.js').doErrorResponse;
 var router = Express.Router({caseSensitive: false});
+var updateStreak = require('../middleware.js').updateStreak;
 router.baseURL = '/crss';
 
 // Every challenge needs the correct course object, so let's find it here
@@ -27,29 +28,29 @@ function getCourseModel(req, res, next) {
 // This is called any time when we need to display the streak. This will happen
 //  when we look at a course page, or when we complete a challenge. Make sure
 //  you call getCourseModel somewhere before
-var updateStreak = function(req, res, next) {
-   if (!req.course) {
-      console.error("You didn't put the getCourseModel middleware before this middleware!");
-      res.sendStatus(500);
-   }
-
-   return sequelize.Enrollment.findOne({
-      where: {personId: req.session.id, courseName: req.course.sanitizedName}
-   })
-   .then(function(enr) {
-      // When was the last time the user made an attempt?
-      var now  = Date.now();
-      var then = enr.lastStreakTime.getTime();
-      var DAY_MS = 86400000;
-
-      if (now - then > DAY_MS) { // 2 far in the past 4 u
-         return enr.updateAttributes({
-            streak: 0
-         });
-      }
-   })
-   .catch(doErrorResponse(res));
-}
+// var updateStreak = function(req, res, next) {
+//    if (!req.course) {
+//       console.error("You didn't put the getCourseModel middleware before this middleware!");
+//       res.sendStatus(500);
+//    }
+//
+//    return sequelize.Enrollment.findOne({
+//       where: {personId: req.session.id, courseName: req.course.sanitizedName}
+//    })
+//    .then(function(enr) {
+//       // When was the last time the user made an attempt?
+//       var now  = Date.now();
+//       var then = enr.lastStreakTime.getTime();
+//       var DAY_MS = 86400000;
+//
+//       if (now - then > DAY_MS) { // 2 far in the past 4 u
+//          return enr.updateAttributes({
+//             streak: 0
+//          });
+//       }
+//    })
+//    .catch(doErrorResponse(res));
+// }
 
 var challengeRouter = require('./Challenge/challenges.js');
 router.use('/:courseName/challenge', getCourseModel, challengeRouter);
@@ -73,15 +74,10 @@ router.post('/', function(req, res) {
       return vld.hasFields(req.body, ["name", "owner"]);
    })
    .then(function() {
-      return sequelize.Course.findById(req.body.name);
-   })
-   .then(function(existingCourse) {
-      return vld.check(!existingCourse, Tags.dupName, null, null, "There's already a course named " + req.body.name);
-   })
-   .then(function() {
       return sequelize.Person.findOne({where: {email: req.body.owner}})
       .then(function(teacher) {
-         return vld.check(teacher && teacher.role >= 1, Tags.notFound, null, teacher, "No teacher found for email " + req.body.owner);
+         return vld.check(teacher && teacher.role >= 1, Tags.notFound, null, teacher,
+            "No teacher found for email " + req.body.owner);
       })
       .then(function(teacher) {
          return sequelize.Course.create({
@@ -315,9 +311,5 @@ router.get('/:crsName/tags', function(req, res) {
   })
   .catch(doErrorResponse(res));
 });
-
-router.middleware = {
-   updateStreak: updateStreak
-};
 
 module.exports = router;

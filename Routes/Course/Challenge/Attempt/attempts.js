@@ -4,6 +4,7 @@ var Tags = require('../../../Validator.js').Tags;
 var doErrorResponse = require('../../../Validator.js').doErrorResponse;
 var sequelize = require('../../../sequelize.js');
 var Promise = require('bluebird');
+var updateStreak = require('../../../middleware.js').updateStreak;
 
 var router = Express.Router({caseSensitive: false, mergeParams: true});
 var async = require('async');
