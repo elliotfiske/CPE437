@@ -152,6 +152,7 @@ router.get('/:id/crss', function(req, res) {
   }
 });
 
+// TODO: update streak here
 router.get('/:id/enrs', function(req, res) {
    var vld = req.validator;
 

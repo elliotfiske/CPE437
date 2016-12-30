@@ -49,7 +49,7 @@ function checkAnswer(req) {
    return result;
 }
 
-router.post('/', function(req, res) {
+router.post('/', updateStreak, function(req, res) {
    var prsId = req.session.id;
    var vld = req.validator;
 
@@ -98,10 +98,26 @@ router.post('/', function(req, res) {
             pointsEarned: result.score
          })
          .then(function() {
-            return sequelize.Enrollment.findOne({where: {personId: user.id, courseName: req.course.sanitizedName}});
+            return sequelize.Enrollment.findOne({
+               where: {personId: user.id, courseName: req.course.sanitizedName}
+            });
          })
          .then(function(enr) {
-            return enr.increment({creditsEarned: result.score});
+            return enr.increment({creditsEarned: result.score})
+         })
+         .then(function(enr) {
+            // if lastStreakTime is in the PAST, that means we haven't earned a streak
+            //  point today.
+            var increment = 0;
+            if (enr.lastStreakTime < new Date()) {
+               increment ++;
+            }
+            return enr.increment({streak: increment});
+         })
+         .then(function(enr) {
+            var tonightMidnight = new Date();
+            tonightMidnight.setHours(24,0,0,0);
+            return enr.updateAttributes({lastStreakTime: tonightMidnight});
          })
          .then(function() {
             res.json(result);

@@ -1,0 +1,1337 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Commitment Tests: Challenges and Attempts",
+		"_postman_id": "cea4d147-8f5b-b4ad-17c6-8cc97ae8666b",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1 NUKE EM BOYS ",
+			"description": "",
+			"item": [
+				{
+					"name": "Admin Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var attURL = postman.getResponseHeader(\"Location\").split('/');",
+									"",
+									"postman.setEnvironmentVariable(\"loginCookie\", attURL[attURL.length-1]);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/ssns",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\": \"Admin@11.com\", \"password\": \"password\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Nuke",
+					"request": {
+						"url": "{{url}}/DB",
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2 Add student and courses",
+			"description": "",
+			"item": [
+				{
+					"name": "Admin Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var attURL = postman.getResponseHeader(\"Location\").split('/');",
+									"",
+									"postman.setEnvironmentVariable(\"loginCookie\", attURL[attURL.length-1]);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/ssns",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\": \"Admin@11.com\", \"password\": \"password\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Register Teacher Steinke",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/Prss",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"Steinke@sfhs\",\n    \"name\": \"mr.steinke\",\n    \"password\" : \"csisfunner\",\n    \"role\"     : 1,\n    \"termsAccepted\": true\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Make Course: CPE 101",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/Crss",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "  {\n    \"name\": \"cpe 101\",\n    \"owner\": \"Steinke@sfhs\"\n  }"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Login Steinke",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Code 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"Cookie Got\"] = postman.getResponseCookie(\"CHSAuth\") !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
+									"if (tests[\"Cookie Got\"])",
+									"    postman.setEnvironmentVariable(\"cookieStudentA\", postman.getResponseCookie(\"CHSAuth\").value)"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/Ssns",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"Steinke@sfhs\",\n    \"password\" : \"csisfunner\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Register Student A ",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var attURL = postman.getResponseHeader(\"Location\").split('/');",
+									"",
+									"postman.setEnvironmentVariable(\"prsA\", attURL[attURL.length-1]);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/Prss",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"UserA@domainA\",\n    \"name\": \"Student McStudentface\",\n    \"password\" : \"passwordA\",\n    \"role\"     : 0\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Enroll student A",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/Crss/cpe-101/Enrs",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"prsId\" : \"{{prsA}}\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3 Make challenges",
+			"description": "",
+			"item": [
+				{
+					"name": "Admin Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var attURL = postman.getResponseHeader(\"Location\").split('/');",
+									"",
+									"postman.setEnvironmentVariable(\"loginCookie\", attURL[attURL.length-1]);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/ssns",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\": \"Admin@11.com\", \"password\": \"password\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Register Teacher Quinn",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/Prss",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"Quinn@sfhs\",\n    \"name\": \"Quinn guy\",\n    \"password\" : \"englishisfun\",\n    \"role\"     : 1,\n    \"termsAccepted\": true\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Login Student A",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Code 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"Cookie Got\"] = postman.getResponseCookie(\"CHSAuth\") !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
+									"if (tests[\"Cookie Got\"])",
+									"    postman.setEnvironmentVariable(\"cookieStudentA\", postman.getResponseCookie(\"CHSAuth\").value)"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/Ssns",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"UserA@domainA\",\n    \"password\" : \"passwordA\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Students can't make chls",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 400\"] = responseCode.code === 400;",
+									"",
+									"tests[\"Correct error\"] = responseBody.has(\"noPermission\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/crss/cpe-101/challenge",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "  {\n    \"name\": \"Challenge1\",\n    \"description\": \"Challenge numero uno\",\n    \"attsAllowed\": 5,\n    \"type\" : \"shortanswer\",\n    \"answer\" : \"test\",\n    \"courseName\"  : \"cpe101\",\n    \"weekIndex\" : 0,\n    \"dayIndex\" : 0,\n    \"tags\" : [\"test\", \"student\"]\n  }"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Login Quinnn",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Code 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"Cookie Got\"] = postman.getResponseCookie(\"CHSAuth\") !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
+									"if (tests[\"Cookie Got\"])",
+									"    postman.setEnvironmentVariable(\"cookieStudentA\", postman.getResponseCookie(\"CHSAuth\").value)"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/Ssns",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"Quinn@sfhs\",\n    \"password\" : \"englishisfun\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Teachers can't make chls for other courses",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 400\"] = responseCode.code === 400;",
+									"",
+									"tests[\"Correct error\"] = responseBody.has(\"noPermission\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/crss/cpe-101/challenge",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "  {\n    \"name\": \"Challenge1\",\n    \"description\": \"Challenge numero uno\",\n    \"attsAllowed\": 5,\n    \"type\" : \"shortanswer\",\n    \"answer\" : \"test\",\n    \"courseName\"  : \"cpe101\",\n    \"weekIndex\" : 0,\n    \"dayIndex\" : 0,\n    \"tags\" : [\"dumb-tag\", \"haha\"]\n  }"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Login Steinke",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Code 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"Cookie Got\"] = postman.getResponseCookie(\"CHSAuth\") !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
+									"if (tests[\"Cookie Got\"])",
+									"    postman.setEnvironmentVariable(\"cookieStudentA\", postman.getResponseCookie(\"CHSAuth\").value)"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/Ssns",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"Steinke@sfhs\",\n    \"password\" : \"csisfunner\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Make challenge 1 (term)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/crss/cpe-101/challenge",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "  {\n    \"name\": \"Challenge short answer\",\n    \"description\": \"answer 'potato' or 'tomato'\",\n    \"attsAllowed\": 5,\n    \"type\" : \"shortanswer\",\n    \"answer\" : [\"potato\", \"tomato\"],\n    \"weekIndex\" : 0,\n    \"dayIndex\" : 0,\n    \"tags\" : [\"Midterm\", \"Algebra\"]\n  }"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Make challenge 2 (mc)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/crss/cpe-101/challenge",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "  {\n    \"name\": \"Challenge mult choice\",\n    \"description\": \"choose A young man\",\n    \"attsAllowed\": 1,\n    \"type\" : \"multchoice\",\n    \"answer\" : \"0\",\n    \"weekIndex\" : 0,\n    \"dayIndex\" : 1,\n    \"choices\" : [\"A (answer)\", \"B (wrong)\", \"C (TOTALLY wrong)\"],\n    \"tags\" : [\"Post-Midterm\", \"Algebra\"]\n  }"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Make challenge 3 (number)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/crss/cpe-101/challenge",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "  {\n    \"name\": \"Challenge num\",\n    \"description\": \"Challenge numero uno\",\n    \"attsAllowed\": 5,\n    \"type\" : \"number\",\n    \"answer\" : \"11\",\n    \"weekIndex\" : 0,\n    \"dayIndex\" : 2,\n    \"tags\" : [\"Really hard\", \"Midterm\"]\n  }"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Bad mult choice",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 400\"] = responseCode.code === 400;",
+									"",
+									"tests[\"Correct error\"] = responseBody.has(\"badValue\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/crss/cpe-101/challenge",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "  {\n    \"name\": \"Challenge3\",\n    \"description\": \"Challenge numero uno\",\n    \"attsAllowed\": 5,\n    \"type\" : \"multchoice\",\n    \"answer\" : \"test\",\n    \"courseName\"  : \"cpe101\",\n    \"weekIndex\" : 0,\n    \"dayIndex\" : 3,\n    \"tags\" : [\"Really-hard\", \"Midterm\"]\n  }"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Bad number",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 400\"] = responseCode.code === 400;",
+									"",
+									"tests[\"Correct error\"] = responseBody.has(\"badValue\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/crss/cpe-101/challenge",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "  {\n    \"name\": \"Challenge2\",\n    \"description\": \"Challenge numero uno\",\n    \"attsAllowed\": 5,\n    \"type\" : \"number\",\n    \"answer\" : [\"test\", \"this\", \"stuff\"],\n    \"courseName\"  : \"cpe101\",\n    \"weekIndex\" : 0,\n    \"dayIndex\" : 3,\n    \"tags\" : [\"Really hard\", \"Midterm\"]\n  }"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Bad challenge type",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 400\"] = responseCode.code === 400;",
+									"",
+									"tests[\"Correct error\"] = responseBody.has(\"badValue\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/crss/cpe-101/challenge",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "  {\n    \"name\": \"Challenge3\",\n    \"description\": \"Challenge numero uno\",\n    \"attsAllowed\": 5,\n    \"type\" : \"multchoice\",\n    \"answer\" : \"test\",\n    \"courseName\"  : \"cpe101\",\n    \"weekIndex\" : 0,\n    \"dayIndex\" : 3,\n    \"tags\" : [\"Really hard\", \"Midterm\"]\n  }"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Bad attsAllowed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 400\"] = responseCode.code === 400;",
+									"",
+									"tests[\"Correct error\"] = responseBody.has(\"Validation error: AttsAllowed must be greater than 1\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/crss/cpe-101/challenge",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "  {\n    \"name\": \"Challenge3\",\n    \"description\": \"Challenge numero uno\",\n    \"attsAllowed\": -1,\n    \"type\" : \"shortanswer\",\n    \"answer\" : [\"test\"],\n    \"courseName\"  : \"cpe101\",\n    \"weekIndex\" : 0,\n    \"dayIndex\" : 3,\n    \"tags\" : [\"Really hard\", \"Midterm\"]\n  }"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Dupe challenge name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 400\"] = responseCode.code === 400;",
+									"",
+									"tests[\"Correct error\"] = responseBody.has(\"nameTaken\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/crss/cpe-101/challenge",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "  {\n    \"name\": \"Challenge mult choice\",\n    \"description\": \"this is a silly question\",\n    \"attsAllowed\": 4,\n    \"type\" : \"number\",\n    \"answer\" : \"11\",\n    \"weekIndex\" : 0,\n    \"dayIndex\" : 6,\n    \"tags\" : [\"Really hard\", \"Midterm\"]\n  }"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Dupe challenge day",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 400\"] = responseCode.code === 400;",
+									"",
+									"tests[\"Correct error\"] = responseBody.has(\"dupDay\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/crss/cpe-101/challenge",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "  {\n    \"name\": \"Challenge num with unique name\",\n    \"description\": \"Challenge numero uno\",\n    \"attsAllowed\": 5,\n    \"type\" : \"number\",\n    \"answer\" : \"11\",\n    \"weekIndex\" : 0,\n    \"dayIndex\" : 2,\n    \"tags\" : [\"Really hard\", \"Midterm\"]\n  }"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4 Get chls",
+			"description": "",
+			"item": [
+				{
+					"name": "GET tags for CPE 101",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Correct # tags returned\"] = jsonData.length === 4;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/crss/cpe-101/tags",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"UserA@domainA\",\n    \"name\": \"Student McStudentface\",\n    \"password\" : \"passwordA\",\n    \"role\"     : 0\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "GET chls for cpe101",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Correct # weeks returned\"] = jsonData.length === 10;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/crss/cpe-101/challenge",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"UserA@domainA\",\n    \"name\": \"Student McStudentface\",\n    \"password\" : \"passwordA\",\n    \"role\"     : 0\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "GET mult choice chl",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Correct chl returned\"] = jsonData[\"type\"] === \"multchoice\";",
+									"",
+									"tests[\"Can see answer\"] = jsonData.answer !== undefined;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/crss/cpe-101/challenge/challenge-mult-choice",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"UserA@domainA\",\n    \"name\": \"Student McStudentface\",\n    \"password\" : \"passwordA\",\n    \"role\"     : 0\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Login Student A",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Code 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"Cookie Got\"] = postman.getResponseCookie(\"CHSAuth\") !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
+									"if (tests[\"Cookie Got\"])",
+									"    postman.setEnvironmentVariable(\"cookieStudentA\", postman.getResponseCookie(\"CHSAuth\").value)"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/Ssns",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"UserA@domainA\",\n    \"password\" : \"passwordA\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Student can't see answer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Correct chl returned\"] = jsonData[\"type\"] === \"multchoice\";",
+									"",
+									"tests[\"Can't see answer\"] = jsonData.answer === undefined;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/crss/cpe-101/challenge/challenge-mult-choice",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"UserA@domainA\",\n    \"name\": \"Student McStudentface\",\n    \"password\" : \"passwordA\",\n    \"role\"     : 0\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5 Make atts",
+			"description": "",
+			"item": [
+				{
+					"name": "make att no input",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 400\"] = responseCode.code === 400;",
+									"",
+									"",
+									"tests[\"Body matches string\"] = responseBody.has(\"missingField\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/crss/cpe-101/challenge/challenge-mult-choice/attempt",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "make att bad number input",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 400\"] = responseCode.code === 400;",
+									"",
+									"",
+									"tests[\"Body matches string\"] = responseBody.has(\"Please enter a number!\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/crss/cpe-101/challenge/challenge-num/attempt",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"input\": \"pizza\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "make att",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Got right answer\"] = jsonData.correct === true;",
+									"tests[\"Got a score\"] = jsonData.score > 0;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/crss/cpe-101/challenge/challenge-mult-choice/attempt",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"input\": \"0\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "can't re-attempt",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 400\"] = responseCode.code === 400;",
+									"",
+									"",
+									"",
+									"tests[\"Body matches string\"] = responseBody.has(\"excessatts\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/crss/cpe-101/challenge/challenge-mult-choice/attempt",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"input\": \"0\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "make att on short answer - wrong",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Got right answer\"] = jsonData.correct === false;",
+									"tests[\"Got a score\"] = jsonData.score === 0;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/crss/cpe-101/challenge/challenge-short-answer/attempt",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"input\": \"popato chisps\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "make att on short answer - right",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Got right answer\"] = jsonData.correct === true;",
+									"tests[\"Got a score\"] = jsonData.score > 0;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/crss/cpe-101/challenge/challenge-short-answer/attempt",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"input\": \"potato chippies\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "see previous attempt on num challenge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Correct chl returned\"] = jsonData[\"type\"] === \"multchoice\";",
+									"",
+									"tests[\"Can see previous att\"] = jsonData.Attempts && jsonData.Attempts.length === 1;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/crss/cpe-101/challenge/challenge-mult-choice",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"UserA@domainA\",\n    \"name\": \"Student McStudentface\",\n    \"password\" : \"passwordA\",\n    \"role\"     : 0\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Register Student B",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var attURL = postman.getResponseHeader(\"Location\").split('/');",
+									"",
+									"postman.setEnvironmentVariable(\"prsB\", attURL[attURL.length-1]);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/Prss",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"UserB@domainB\",\n    \"name\": \"Student McStudentface B\",\n    \"password\" : \"passwordB\",\n    \"role\"     : 0\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Login Student B",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Code 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"Cookie Got\"] = postman.getResponseCookie(\"CHSAuth\") !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
+									"if (tests[\"Cookie Got\"])",
+									"    postman.setEnvironmentVariable(\"cookieStudentB\", postman.getResponseCookie(\"CHSAuth\").value)"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/Ssns",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"UserB@domainB\",\n    \"password\" : \"passwordB\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Unenrolled can't attempt",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 400\"] = responseCode.code === 400;",
+									"",
+									"",
+									"",
+									"tests[\"Body matches string\"] = responseBody.has(\"You're not enrolled for that class.\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/crss/cpe-101/challenge/challenge-mult-choice/attempt",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"input\": \"0\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

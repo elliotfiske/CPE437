@@ -26,17 +26,29 @@ function getCourseModel(req, res, next) {
 
 // This is called any time when we need to display the streak. This will happen
 //  when we look at a course page, or when we complete a challenge. Make sure
-//  you
+//  you call getCourseModel somewhere before
 var updateStreak = function(req, res, next) {
    if (!req.course) {
       console.error("You didn't put the getCourseModel middleware before this middleware!");
       res.sendStatus(500);
    }
 
-   return sequelize.Enrollment.findOne({where: {personId: req.session.id, courseName: req.course.sanitizedName}})
-   .then(function(enr) {
-      
+   return sequelize.Enrollment.findOne({
+      where: {personId: req.session.id, courseName: req.course.sanitizedName}
    })
+   .then(function(enr) {
+      // When was the last time the user made an attempt?
+      var now  = Date.now();
+      var then = enr.lastStreakTime.getTime();
+      var DAY_MS = 86400000;
+
+      if (now - then > DAY_MS) { // 2 far in the past 4 u
+         return enr.updateAttributes({
+            streak: 0
+         });
+      }
+   })
+   .catch(doErrorResponse(res));
 }
 
 var challengeRouter = require('./Challenge/challenges.js');
@@ -132,17 +144,14 @@ router.put('/:name', function(req, res) {
   .catch(doErrorResponse(res));
 });
 
-router.get('/:courseName', function(req, res) {
-   return sequelize.Course.findOne({
-      where: {sanitizedName: req.params.courseName},
+router.get('/:courseName', getCourseModel, updateStreak, function(req, res) {
+   return sequelize.Enrollment.findOne({
+      where: {personId: req.session.id, courseName: req.course.sanitizedName},
       raw: true
    })
-   .then(function(course) {
-      return sequelize.Enrollment.findOne({where: {personId: req.session.id, courseName: req.params.courseName}, raw: true})
-      .then(function(enr) {
-         course.Enrollments = [enr];
-         res.json(course);
-      });
+   .then(function(enr) {
+      req.course.Enrollments = [enr];
+      res.json(req.course);
    })
    .catch(doErrorResponse(res));
 });
