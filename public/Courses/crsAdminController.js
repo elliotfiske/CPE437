@@ -56,35 +56,6 @@ function(scope, $state, $stateParams, API, confirm, login, $location, toastr) {
 
   scope.refreshchls();
 
-  scope.refreshitms = function() {
-    return API.crss.itms.get(scope.courseName)
-    .then(function(response) {
-      scope.itms = response.data;
-    });
-  };
-
-  scope.makingitm = false;
-  scope.newitm = {};
-
-  scope.createitm = function() {
-    scope.makingitm = false;
-    API.crss.itms.post(scope.courseName, scope.newitm)
-    .then(scope.refreshitms)
-    .catch(function(err) {
-      scope.shopErrors = ["There's already an item named " + scope.newitm.name];
-    });
-  }
-
-  scope.deleteitm = function(itmId) {
-    API.crss.itms.delete(scope.courseName, itmId)
-    .then(scope.refreshitms)
-    .catch(function(err) {
-      scope.shopErrors = ["Error deleting item"];
-    });
-  }
-
-  scope.refreshitms();
-
   scope.isOpen = function(chl) {
     if (scope.loggedUser.role == 0) {
       return chl.openTime <= new Date();

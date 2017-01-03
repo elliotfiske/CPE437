@@ -24,10 +24,6 @@ fs.readFile('./resources/email-template.html', 'utf8', function(err, data) {
    }
 });
 
-// TODO: delete me, whatever. run this recurring every night.
-var date = new Date();
-date.setSeconds(date.getSeconds() + 10);
-
 // key is user id, value is cancellable job object
 var streakReminderJobs = {};
 
@@ -64,12 +60,14 @@ sequelize.Person.findAll({where: {role: 0}})
    everyone.forEach(function(dude) {
 
       var recurrenceRule = new schedule.RecurrenceRule();
-      recurrenceRule.hour = 21;
-      recurrenceRule.minute = 0;
+      recurrenceRule.hour = 22;
+      recurrenceRule.minute = 17;
 
       var j = schedule.scheduleJob(recurrenceRule, function() {
          sequelize.Enrollment.findAll({where: {personId: dude.id}})
-         .then(doStreakWarnings(enrs, dude))
+         .then(function(enrs) {
+            doStreakWarnings(enrs, dude);
+         })
          .catch(doErrorResponse(null));
       });
 

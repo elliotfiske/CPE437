@@ -253,6 +253,10 @@ body {
   background-color: #EEE;
 }
 
+.week-disabled>.panel-heading {
+   color: #8C8C8C;
+}
+
 .btn-in-row {
   margin-top: -5px;
   margin-right: 10px;

@@ -28,37 +28,47 @@ function(scope, $state, $stateParams, API, confirm, login, $location, toastr) {
             week.Challenges = week.Challenges.sort(function(a, b) {
                a.startDate - b.startDate;
             });
-            if (new Date(week.startDate) > now) { // week hasn't started yet
-            week.stateClass = 'week-disabled';
-         }
-         else {
-            week.stateClass = "week-complete"
-            week.Challenges.forEach(function(chl) {
-               var chlOpenDate = new Date(chl.startDate);
-               chlCloseDate.setDate(chlOpenDate.getDate() + 1);
-
-               if (chlOpenDate > now) { // challenge isn't available yet
-               chl.stateClass = "chl-disabled";
-            }
-            else if (chl.Attempts[0] && chl.Attempts[0].correct) {
-               chl.stateClass = "chl-solved";
-            }
-            else if (chl.Attempts.length >= 1) {
-               chl.stateClass = "chl-attempted";
-            }
-            else if (chlCloseDate > now) {
-               chl.stateClass = "chl-overdue";
-               week.stateClass ="week-open";
+            var weekStart = new Date(week.startDate);
+            if (weekStart.getTime() > now.getTime()) {
+               week.stateClass = 'week-disabled';  // week hasn't started yet
+               // week.panelClass = "panel-disabled";
             }
             else {
-               chl.stateClass = "chl-open";
-               week.stateClass ="week-open";
-               scope.weekStatuses[ndx] = {open: true};
-            }
-         });
-      }
+               week.stateClass = "week-complete";
+               week.panelClass = "panel-success";
+               week.Challenges.forEach(function(chl) {
+                  var chlOpenDate = new Date(chl.startDate);
+                  chlCloseDate.setDate(chlOpenDate.getDate() + 1);
+
+                  if (chlOpenDate > now) { // challenge isn't available yet
+                  chl.stateClass = "chl-disabled";
+               }
+               else if (chl.Attempts[0] && chl.Attempts[0].correct) {
+                  chl.stateClass = "chl-solved";
+               }
+               else if (chl.Attempts.length >= 1) {
+                  chl.stateClass = "chl-attempted";
+               }
+               else if (chlCloseDate > now) {
+                  chl.stateClass = "chl-overdue";
+                  week.stateClass ="week-open";
+                  week.panelClass = "panel-warning";
+               }
+               else {
+                  chl.stateClass = "chl-open";
+                  week.stateClass ="week-open";
+                  week.panelClass = "panel-warning";
+                  scope.weekStatuses[ndx] = {open: true};
+               }
+
+               if (week.Challenges.length === 0) {
+                  week.stateClass = 'week-disabled';
+                  week.panelClass = "panel-disabled";
+               }
+            });
+         }
+      });
    });
-});
 };
 
 scope.refreshchls();
