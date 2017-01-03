@@ -189,7 +189,12 @@ router.get('/:challengeName', function(req, res) {
 
 // Return the oldest challenge for this course that hasn't been completed.
 router.get('/activeChallenge', middleware.getActiveChallenge, function(req, res) {
-
+   if (req.activeChallenge) {
+      res.json(req.activeChallenge);
+   }
+   else {
+      res.json(null);
+   }
 });
 
 module.exports = router;

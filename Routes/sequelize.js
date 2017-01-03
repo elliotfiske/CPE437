@@ -77,8 +77,9 @@ var Person = sequelize.define('Person', {
   role: {
      type: Sequelize.INTEGER
   },
-  settings: {
-     type: Sequelize.STRING
+  userSettings: {
+     type: Sequelize.STRING,
+     default: "{}"
   }
 }, {
   freezeTableName: true
@@ -361,7 +362,6 @@ Challenge.belongsToMany(ChallengeTag, {through: "AssignedTags", as: "Tags"});
 ChallengeTag.belongsToMany(Challenge, {through: "AssignedTags", as: "AssociatedChallenges"});
 
 Challenge.hasMany(Attempt, {foreignKey: "challengeName"});
-Attempt.hasMany(Challenge);
 Person.hasMany(Attempt, {foreignKey: "personId"});
 
 Course.hasMany(Week);
@@ -369,27 +369,28 @@ Week.hasMany(Challenge);
 Challenge.belongsTo(Week);
 
 sequelize.sync().then(function() {
-  return Person.findOrCreate({
-    where: {email: 'Admin@11.com'},
-    defaults: {name: 'AdminMan', password: "password", role: 2}});
-  })
-  .then(function(ok) {
-    console.log(JSON.stringify(ok));
-  })
-  .catch(function(err) {
-    console.error("EXTREMELY UNLIKELY ERROR DETECTED " + JSON.stringify(err));
-  });
+   return Person.findOrCreate({
+      where: {email: 'Admin@11.com'},
+      defaults: {name: 'AdminMan', password: "password", role: 2}
+   });
+})
+.then(function(ok) {
+   console.log(JSON.stringify(ok));
+})
+.catch(function(err) {
+   console.error("EXTREMELY UNLIKELY ERROR DETECTED " + JSON.stringify(err.message));
+});
 
-  module.exports = {
-    PeerId: PeerId,
-    Course: Course,
-    Week: Week,
-    Person: Person,
-    Challenge: Challenge,
-    Attempt: Attempt,
-    ShopItem: ShopItem,
-    Enrollment: Enrollment,
-    MultChoiceAnswer: MultChoiceAnswer,
-    ChallengeTag: ChallengeTag,
-    do: sequelize
-  };
+module.exports = {
+   PeerId: PeerId,
+   Course: Course,
+   Week: Week,
+   Person: Person,
+   Challenge: Challenge,
+   Attempt: Attempt,
+   ShopItem: ShopItem,
+   Enrollment: Enrollment,
+   MultChoiceAnswer: MultChoiceAnswer,
+   ChallengeTag: ChallengeTag,
+   do: sequelize
+};

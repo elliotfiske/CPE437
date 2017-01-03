@@ -42,7 +42,7 @@ exports.updateStreak = function(req, res, next) {
 };
 
 // Return the oldest challenge for this course that hasn't been completed.
-exports.getActiveChallenge = function(req, res) {
+exports.getActiveChallenge = function(req, res, next) {
    var vld = req.validator;
 
    if (!req.course) {
@@ -51,36 +51,24 @@ exports.getActiveChallenge = function(req, res) {
       return;
    }
 
-   return sequelize.Attempt.findOne({
+   return sequelize.Challenge.findAll({
       where: {
-         courseName: req.course.sanitizedName,
-         personId: req.session.id
+         courseName: req.course.sanitizedName
       },
+      order: [['openDate', 'ASC']],
       include: [{
-         model: sequelize.Challenge,
-         order: [['openDate', 'ASC']]
-      }]
+         model: sequelize.Attempt
+      }],
+      limit: 5
    })
-   .then(function(att) {
-      if (!att) {
-         return sequelize.Challenge.findOne({
-            where: {
-               courseName: req.course.sanitizedName
-            },
-            order: [['openDate', 'ASC']],
-         });
-      }
-      else {
-         var afterDate =
-         return sequelize.Challenge.findOne({
-            where: {
-               courseName: req.course.sanitizedName
-               openDate: {
-                  $between:
-               }
-            },
-            order: [['openDate', 'ASC']],
-         });
+   .then(function(chls) {
+      for (var ndx = 0; ndx < chl.Attempts.length; ndx++) {
+         if (chl.Attempts.length === 0) {
+            req.activeChallenge = chl;
+            next();
+            break;
+         }
       }
    })
+   .catch(doErrorResponse(res));
 };

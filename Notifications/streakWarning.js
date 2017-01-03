@@ -4,7 +4,7 @@ var fs = require('fs');
 var sequelize = require('../Routes/sequelize');
 var doErrorResponse = require('../Routes/Validator.js').doErrorResponse;
 
-var transporter = nodemailer.createTransport('smtps://elliotfiske%40gmail.com:swipetunnellobsterline@smtp.gmail.com');
+var transporter = nodemailer.createTransport(process.env.GMAIL_SMTP);
 
 // Stores the base email template, with %VARIABLES% like this that we replace
 var EMAIL_TEMPLATE = "";
@@ -14,7 +14,6 @@ var onHeroku = !!process.env.DYNO;
 if (!onHeroku) {
    BASE_URL = "http://localhost:3000/";
 }
-
 
 fs.readFile('./resources/email-template.html', 'utf8', function(err, data) {
    if (err) {
@@ -65,7 +64,7 @@ sequelize.Person.findAll({where: {role: 0}})
    everyone.forEach(function(dude) {
 
       var recurrenceRule = new schedule.RecurrenceRule();
-      recurrenceRule.hour = 22;
+      recurrenceRule.hour = 21;
       recurrenceRule.minute = 0;
 
       var j = schedule.scheduleJob(recurrenceRule, function() {

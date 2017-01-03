@@ -1,0 +1,21 @@
+{
+  "name": "commit",
+  "description": "commit is a cool app wherein you do stuff",
+  "main": "main.js",
+  "authors": [
+    "Elliot Fiske"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/elliotfiske/commitment",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "fullcalendar": "~3.1.0"
+  }
+}
