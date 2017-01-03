@@ -75,7 +75,10 @@ var Person = sequelize.define('Person', {
     type: Sequelize.STRING
   },
   role: {
-    type: Sequelize.INTEGER
+     type: Sequelize.INTEGER
+  },
+  settings: {
+     type: Sequelize.STRING
   }
 }, {
   freezeTableName: true
@@ -358,6 +361,7 @@ Challenge.belongsToMany(ChallengeTag, {through: "AssignedTags", as: "Tags"});
 ChallengeTag.belongsToMany(Challenge, {through: "AssignedTags", as: "AssociatedChallenges"});
 
 Challenge.hasMany(Attempt, {foreignKey: "challengeName"});
+Attempt.hasMany(Challenge);
 Person.hasMany(Attempt, {foreignKey: "personId"});
 
 Course.hasMany(Week);

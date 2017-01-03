@@ -4,6 +4,7 @@ var router = Express.Router({mergeParams: true});
 var doErrorResponse = require('../../Validator.js').doErrorResponse;
 var sequelize = require('../../sequelize.js');
 var Promise = require('bluebird');
+var middleware = require('../../middleware.js');
 
 function getChallengeModel(req, res, next) {
    var vld = req.validator;
@@ -33,7 +34,7 @@ router.get('/', function(req, res) {
       include: [{
         model: sequelize.Attempt,
         where: {personId: req.session.id},
-        order: [['createdAt', 'DESC']],
+        order: [['openDate', 'DESC']],
         required: false // otherwise it filters out any challenges we haven't attempted
       }]
     }]
@@ -184,6 +185,11 @@ router.get('/:challengeName', function(req, res) {
     return res.json(chl);
   })
   .catch(doErrorResponse(res));
+});
+
+// Return the oldest challenge for this course that hasn't been completed.
+router.get('/activeChallenge', middleware.getActiveChallenge, function(req, res) {
+
 });
 
 module.exports = router;

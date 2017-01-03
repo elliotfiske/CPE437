@@ -69,22 +69,24 @@ Validator.prototype.hasFields = function(obj, fieldList) {
 }
 
 Validator.doErrorResponse = function(res) {
-  return function(error) {
-    console.log("!! ERROR: " + error.message || error.tag);
-    console.log("Stack: " + error.stack);
-    if (error.name === "SequelizeUniqueConstraintError") {
-      error = {
-        tag: "nameTaken"
-      };
-    }
+   return function(error) {
+      console.log("!! ERROR: " + error.message || error.tag);
+      console.log("Stack: " + error.stack);
+      if (error.name === "SequelizeUniqueConstraintError") {
+         error = {
+            tag: "nameTaken"
+         };
+      }
 
-    var code = error.code || 400;
-    delete error.code
+      var code = error.code || 400;
+      delete error.code
 
-    error.errMsg = error.message;
+      error.errMsg = error.message;
+      if (res) {
 
-    res.status(code).json(error);
-  }
+         res.status(code).json(error);
+      }
+   }
 }
 
 module.exports = Validator;

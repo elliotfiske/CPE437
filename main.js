@@ -11,6 +11,9 @@ var _Validator = require('./Routes/_Validator.js');
 var cnnPool = require('./Routes/Connections.js');
 var sequelize = require('./Routes/sequelize.js');
 
+var emails = require('./Notifications/streakWarning.js');
+var flashes = require('./Notifications/flashChallenges.js');
+
 var async = require('async');
 
 

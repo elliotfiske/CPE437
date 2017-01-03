@@ -77,19 +77,11 @@ router.post('/', updateStreak, function(req, res) {
             }
          });
 
-         return vld.check(!alreadyGotItRight && req.challenge.attsAllowed > attempts.length, Tags.excessatts);
+         return vld.check(!alreadyGotItRight && req.challenge.attsAllowed > attempts.length, Tags.excessatts, null, attempts);
       })
-      .then(function() {
+      .then(function(attempts) {
          // TODO: verify chl's start date is after today
          var result = checkAnswer(req);
-
-         // TODO: check streak here.
-         // How it'll go down:
-         //   check to see if there's a previous challenge the user didn't complete
-         //   on a previous day. If so, reset the streak :
-         //
-         // otherwise, grab the streak field, add 1, and give a bonus based
-         //   on the streak.
 
          return sequelize.Attempt.create({
             input: req.body.input,
@@ -104,13 +96,13 @@ router.post('/', updateStreak, function(req, res) {
             });
          })
          .then(function(enr) {
-            return enr.increment({creditsEarned: result.score})
+            return enr.increment({creditsEarned: result.score});
          })
          .then(function(enr) {
             // if lastStreakTime is in the PAST, that means we haven't earned a streak
             //  point today.
             var increment = 0;
-            if (enr.lastStreakTime < new Date()) {
+            if (enr.lastStreakTime < new Date() && attempts.length === 0) {
                increment ++;
             }
             return enr.increment({streak: increment});
