@@ -101,16 +101,14 @@ router.post('/', updateStreak, function(req, res) {
          .then(function(enr) {
             // if lastStreakTime is in the PAST, that means we haven't earned a streak
             //  point today.
-            var increment = 0;
             if (enr.lastStreakTime < new Date() && attempts.length === 0) {
-               increment ++;
+               return enr.increment('streak')
+               .then(function(enr) {
+                  var tonightMidnight = new Date();
+                  tonightMidnight.setHours(24,0,0,0);
+                  return enr.updateAttributes({lastStreakTime: tonightMidnight});
+               });
             }
-            return enr.increment({streak: increment});
-         })
-         .then(function(enr) {
-            var tonightMidnight = new Date();
-            tonightMidnight.setHours(24,0,0,0);
-            return enr.updateAttributes({lastStreakTime: tonightMidnight});
          })
          .then(function() {
             res.json(result);

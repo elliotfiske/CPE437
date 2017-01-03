@@ -20,8 +20,7 @@ exports.updateStreak = function(req, res, next) {
       where: {personId: req.session.id, courseName: req.course.sanitizedName}
    })
    .then(function(enr) {
-      return vld.check(enr, Tags.noPermission, null, enr,
-         "You're not enrolled for that class.");
+      return vld.check(enr, Tags.noPermission, null, enr, "You're not enrolled for that class.");
    })
    .then(function(enr) {
       // When was the last time the user made an attempt?
@@ -29,7 +28,8 @@ exports.updateStreak = function(req, res, next) {
       var then = enr.lastStreakTime.getTime();
       var DAY_MS = 86400 * 1000; // 1 day fam
 
-      if (now - then > DAY_MS) { // 2 far in the past 4 u
+      if (now - then > DAY_MS) {
+         // 2 far in the past 4 u
          return enr.updateAttributes({
             streak: 0
          });
@@ -57,18 +57,24 @@ exports.getActiveChallenge = function(req, res, next) {
       },
       order: [['openDate', 'ASC']],
       include: [{
-         model: sequelize.Attempt
+         model: sequelize.Attempt,
+         where: {personId: req.session.id},
+         required: false
       }],
       limit: 5
    })
    .then(function(chls) {
-      for (var ndx = 0; ndx < chl.Attempts.length; ndx++) {
-         if (chl.Attempts.length === 0) {
-            req.activeChallenge = chl;
+      console.log("!!!!CHALLENGES: " + JSON.stringify(chls));
+      for (var ndx = 0; ndx < chls.length; ndx++) {
+         if (chls[ndx].Attempts.length === 0) {
+            console.log("Found active challenge: " + JSON.stringify(chls[ndx]));
+            req.activeChallenge = chls[ndx];
             next();
-            break;
+            return true; // short-circuits the "some"
          }
       }
+      next();
+      return false; // continues the "some"
    })
    .catch(doErrorResponse(res));
 };

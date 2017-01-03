@@ -29,6 +29,21 @@ app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'ap
    };
 
    function onlyShowAvailableCourses() {
+      scope.enrolledCourses.forEach(function(crs) {
+         if (crs.Enrollment.streak === 0) {
+            crs.Enrollment.encouragement = "No streak yet! Get it started today!";
+         }
+         else if (crs.Enrollment.streak === 1) {
+            crs.Enrollment.encouragement = "1 day streak!";
+         }
+         else if (crs.Enrollment.streak < 5) {
+            crs.Enrollment.encouragement = crs.Enrollment.streak + " day streak! Keep it up!";
+         }
+         else {
+            crs.Enrollment.encouragement = "Incredible! " + crs.Enrollment.streak + " day streak! 🔥🔥🔥";
+         }
+      });
+
       scope.availableCourses = scope.availableCourses.filter(function(course) {
          for (var ndx = 0; ndx < scope.enrolledCourses.length; ndx++) {
             if (scope.enrolledCourses[ndx].name == course.name) {

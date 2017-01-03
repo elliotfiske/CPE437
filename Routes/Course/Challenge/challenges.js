@@ -149,6 +149,16 @@ router.post('/', function(req, res) {
   .catch(doErrorResponse(res));
 });
 
+// Return the oldest challenge for this course that hasn't been completed.
+router.get('/activeChallenge', middleware.getActiveChallenge, function(req, res) {
+   if (req.activeChallenge) {
+      res.json(req.activeChallenge);
+   }
+   else {
+      res.json(null);
+   }
+});
+
 router.get('/:challengeName', function(req, res) {
   var vld = req.validator;
 
@@ -185,16 +195,6 @@ router.get('/:challengeName', function(req, res) {
     return res.json(chl);
   })
   .catch(doErrorResponse(res));
-});
-
-// Return the oldest challenge for this course that hasn't been completed.
-router.get('/activeChallenge', middleware.getActiveChallenge, function(req, res) {
-   if (req.activeChallenge) {
-      res.json(req.activeChallenge);
-   }
-   else {
-      res.json(null);
-   }
 });
 
 module.exports = router;
