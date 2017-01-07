@@ -4,7 +4,10 @@ var Tags = require('../Validator.js').Tags;
 var doErrorResponse = require('../Validator.js').doErrorResponse;
 var router = Express.Router({caseSensitive: false});
 var PromiseUtil = require('../PromiseUtil.js');
+var Promise = require('bluebird');
+var email = require('../../Notifications/emailSender.js');
 var sequelize = require('../sequelize.js');
+var middleware = require('../middleware.js');
 
 router.baseURL = '/prss';
 
@@ -32,40 +35,55 @@ router.get('/', function(req, res) {
 });
 
 router.post('/', function(req, res) {
-  var vld = req.validator;  // Shorthands
-  var body = req.body;
-  var admin = req.session && req.session.isAdmin();
+   var vld = req.validator;  // Shorthands
+   var body = req.body;
+   var admin = req.session && req.session.isAdmin();
 
-  if (admin && !body.password)
-  body.password = "*";                       // Blocking password
+   if (admin && !body.password) {
+      body.password = "*";                       // Blocking password
+   }
 
-  return vld.hasFields(body, ["email", "name", "role", "password"])
-  .then(function() {
-    return vld.check(body.role == 0 || admin, Tags.noPermission);
-  })
-  .then(function() {
-    return vld.check(body.role >= 0 && body.role < 3, Tags.badValue, ["role"]);
-  })
-  .then(function() {
-    return connections.getConnectionP();
-  })
-  .then(function(conn) {
-
-    return conn.query('SELECT * FROM Person WHERE email = ?', [body.email])
-    .then(function(collidingEmailPerson) {
-      return vld.check(collidingEmailPerson.length == 0, Tags.dupEmail);
-    })
-    .then(function() {
+   return vld.hasFields(body, ["email", "name", "role", "password"])
+   .then(function() {
+      return vld.check(body.role == 0 || admin, Tags.noPermission);
+   })
+   .then(function() {
+      return vld.check(body.role >= 0 && body.role < 3, Tags.badValue, ["role"]);
+   })
+   .then(function() {
+      return vld.check(body.email.endsWith("@calpoly.edu") || admin, Tags.badValue, ["email"], null, "You must use a Cal Poly email address.");
+   })
+   .then(function() {
+      return sequelize.Person.findOne({where: {email: body.email}});
+   })
+   .then(function(existingPerson) {
+      return vld.check(!existingPerson, Tags.dupEmail, null, null, "There's already a user with that email!");
+   })
+   .then(function() {
       return sequelize.Person.create(req.body);
-    })
-    .then(function(result) {
+   })
+   .then(function(newGuy) {
+      if (req.session.isAdmin()) {
+         return newGuy.update({activationToken: null});
+      }
+      else {
+         return Promise.resolve(newGuy);
+      }
+   })
+   .then(function(result) {
       res.location(router.baseURL + '/' + result.id).end();
-    })
-    .finally(function() {
-      conn.release();
-    })
-  })
-  .catch(doErrorResponse(res));
+
+      console.log("PERSON FAM: " + JSON.stringify(result));
+
+      // Send activation email
+      var subject = "Activate your account on Commit!";
+      var body = "Welcome to Commit! Click on the link below to get started. I hope you enjoy using my app :)";
+      var link = email.BASE_URL + "#/activate/" + result.activationToken;
+      var textPreview = "Welcome to Commit! Click on this link to get started. I hope you enjoy using my app :) " + link;
+
+      email.sendEmail(subject, body, link, "Activate!", textPreview, result);
+   })
+   .catch(doErrorResponse(res));
 });
 
 router.get('/:id', function(req, res) {
@@ -81,6 +99,22 @@ router.get('/:id', function(req, res) {
       });
     });
   }
+});
+
+router.post('/activate/:token', function(req, res) {
+   return sequelize.Person.findOne({where:
+      {activationToken: req.params.token}
+   })
+   .then(function(person) {
+      return vld.check(person, Tags.badLogin, null, person, "Incorrect token...");
+   })
+   .then(function(person) {
+      return person.update({activationToken: null});
+   })
+   .then(function(person) {
+      res.sendStatus(200);
+   })
+   .catch(doErrorResponse(res));
 });
 
 router.put('/:id', function(req, res) {

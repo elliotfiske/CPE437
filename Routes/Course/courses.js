@@ -116,9 +116,17 @@ router.put('/:name', function(req, res) {
 });
 
 router.get('/:courseName', getCourseModel, updateStreak, function(req, res) {
-   return sequelize.Enrollment.findOne({
-      where: {personId: req.session.id, courseName: req.course.sanitizedName},
-      raw: true
+   var vld = req.validator;
+
+   return sequelize.Person.findById(req.session.id)
+   .then(function(prs) {
+      return sequelize.Enrollment.findOne({
+         where: {personEmail: prs.email, courseName: req.course.sanitizedName},
+         raw: true
+      });
+   })
+   .then(function(enr) {
+      return vld.check(enr, Tags.noPermission, null, enr, "You're not enrolled in that class.");
    })
    .then(function(enr) {
       var courseResult = req.course.get({plain: true});

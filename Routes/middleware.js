@@ -1,8 +1,21 @@
 var sequelize = require('./sequelize.js');
 var doErrorResponse = require('./Validator.js').doErrorResponse;
+var ssnUtil = require('./Session.js');
 var Tags = require('./Validator.js').Tags;
 
 var exports = module.exports = {};
+
+exports.getCurrentUser = function(req, res, next) {
+   var vld = req.validator;
+   return sequelize.Person.findById(req.session.id)
+   .then(function(prs) {
+      return vld.check(prs, Tags.notFound, null, prs, "Who are you???");
+   })
+   .then(function(prs) {
+      req.user = prs;
+   })
+   .catch(doErrorResponse(res));
+};
 
 // This is called any time when we need to display the streak. This will happen
 //  when we look at a course page, or when we complete a challenge. Make sure
@@ -16,8 +29,11 @@ exports.updateStreak = function(req, res, next) {
       return;
    }
 
-   return sequelize.Enrollment.findOne({
-      where: {personId: req.session.id, courseName: req.course.sanitizedName}
+   return sequelize.Person.findById(req.session.id)
+   .then(function(prs) {
+      return sequelize.Enrollment.findOne({
+         where: {personEmail: prs.email, courseName: req.course.sanitizedName}
+      });
    })
    .then(function(enr) {
       return vld.check(enr, Tags.noPermission, null, enr, "You're not enrolled for that class.");
@@ -64,10 +80,8 @@ exports.getActiveChallenge = function(req, res, next) {
       limit: 5
    })
    .then(function(chls) {
-      console.log("!!!!CHALLENGES: " + JSON.stringify(chls));
       for (var ndx = 0; ndx < chls.length; ndx++) {
          if (chls[ndx].Attempts.length === 0) {
-            console.log("Found active challenge: " + JSON.stringify(chls[ndx]));
             req.activeChallenge = chls[ndx];
             next();
             return true; // short-circuits the "some"
@@ -75,6 +89,18 @@ exports.getActiveChallenge = function(req, res, next) {
       }
       next();
       return false; // continues the "some"
+   })
+   .catch(doErrorResponse(res));
+};
+
+exports.login = function(req, res) {
+   return sequelize.Person.findOne({where: {email: req.body.email}})
+   .then(function(user) {
+      return vld.check(user && user.password === req.body.password, Tags.badLogin, null, user, "Bad email or password.");
+   })
+   .then(function(user) {
+      var cookie = ssnUtil.makeSession(user, res);
+      res.location(router.baseURL + '/'  + cookie).end();
    })
    .catch(doErrorResponse(res));
 };

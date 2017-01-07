@@ -24,7 +24,7 @@ router.post('/', function(req, res) {
       return vld.check(prs.isAdmin() || prs.id === req.body.prsId || // Are you Admin, enrolling yourself,
       req.course.ownerId === prs.id, Tags.noPermission) // or the teacher of this course?
       .then(function() {
-         return person.hasClass(req.course)
+         return person.hasClass(req.course);
       })
       .then(function(alreadyAdded) {
          return vld.check(!alreadyAdded, Tags.dupName, null, null, "Student is already enrolled for that class.");
@@ -56,14 +56,16 @@ router.get('/', function(req, res) {
    .catch(doErrorResponse(res));
 });
 
-router.delete('/:name/enrs/:enrId', function(req, res) {
+router.delete('/:name/enrs/', function(req, res) {
    var vld = req.validator;
-   var prs = req.session;
 
    return vld.checkAdmin()
    .then(function() {
+      return vld.hasFields(req.body, ['email']);
+   })
+   .then(function() {
       return sequelize.Enrollment.findOne({
-         where: {personId: req.session.id, courseName: req.course.sanitizedName}
+         where: {personEmail: req.body.email, courseName: req.course.sanitizedName}
       });
    })
    .then(function(enr) {

@@ -92,7 +92,7 @@ router.post('/', updateStreak, function(req, res) {
          })
          .then(function() {
             return sequelize.Enrollment.findOne({
-               where: {personId: user.id, courseName: req.course.sanitizedName}
+               where: {personEmail: user.email, courseName: req.course.sanitizedName}
             });
          })
          .then(function(enr) {

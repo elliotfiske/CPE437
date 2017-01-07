@@ -67,4 +67,9 @@ app.config(['$stateProvider', '$urlRouterProvider',
          templateUrl: 'Admin/admin.template.html',
          controller: 'adminController'
       })
+      .state('activation', {
+         url: '/activate?t={token}',
+         templateUrl: 'Login/activate.template.html',
+         controller: 'activateController'
+      })
    }]);

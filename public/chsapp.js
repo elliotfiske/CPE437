@@ -35,7 +35,6 @@ var app = angular.module('mainApp', [
             var user = response.data[0];
             $rootScope.loggedUser = user;
             if (window.smartlook) smartlook('tag', 'email', user.email);
-            return user;
          })
          .catch($rootScope.logout);
    }

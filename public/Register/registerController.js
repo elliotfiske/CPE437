@@ -5,6 +5,10 @@ app.controller('registerController', ['$scope', '$state', '$rootScope', 'api', f
    scope.errors = [];
 
    scope.register = function() {
+      if (!scope.user.email.endsWith("@calpoly.edu")) {
+         scope.user.email += "@calpoly.edu";
+      }
+      
       API.prss.post(scope.user)
       .then(function(response) {
          $state.go('login');

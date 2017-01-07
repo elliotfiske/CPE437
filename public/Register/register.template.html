@@ -3,7 +3,10 @@
       <fieldset class="form-group">
          <label for="email" class="control-label col-sm-4 col-xs-2">Email</label>
          <div class="col-sm-8 col-xs-10">
-            <input id="email" type="email" class="form-control" placeholder="Enter email" ng-model="user.email">
+            <div class="input-group">
+               <input id="email" type="text" class="form-control" placeholder="Cal Poly Email" ng-model="user.email">
+               <span class="input-group-addon">@calpoly.edu</span>
+            </div>
          </div>
       </fieldset>
       <fieldset class="form-group">

@@ -1,5 +1,6 @@
 var Sequelize = require('sequelize');
 var Promise = require('bluebird');
+var crypto = require('crypto');
 
 var sanitize = require("sanitize-filename");
 
@@ -60,29 +61,41 @@ Room.hasMany(PeerId);
 /** OK DON'T DELETE PAST HERE PLZ **/
 
 var Person = sequelize.define('Person', {
-  name: {
-    type: Sequelize.STRING
-  },
-  email: {
-    type: Sequelize.STRING,
-    unique: true
-  },
-  facebookId: {
-    type: Sequelize.STRING,
-    unique: true
-  },
-  password: {
-    type: Sequelize.STRING
-  },
-  role: {
-     type: Sequelize.INTEGER
-  },
-  userSettings: {
-     type: Sequelize.STRING,
-     default: "{}"
-  }
+   name: {
+      type: Sequelize.STRING
+   },
+   email: {
+      type: Sequelize.STRING,
+      unique: true
+   },
+   facebookId: {
+      type: Sequelize.STRING,
+      unique: true
+   },
+   password: {
+      type: Sequelize.STRING
+   },
+   role: {
+      type: Sequelize.INTEGER
+   },
+   userSettings: {
+      type: Sequelize.STRING,
+      default: "{}"
+   },
+   activationToken: {
+      type: Sequelize.STRING
+   }
 }, {
-  freezeTableName: true
+   freezeTableName: true,
+   hooks: {
+      beforeCreate: function(newUser, options) {
+         newUser.activationToken = crypto.randomBytes(16).toString('hex');
+         console.log("Token: " + newUser.activationToken);
+      }
+   },
+   defaultScope: {
+      attributes: { exclude: ['activationToken', 'password'] }
+   },
 });
 
 var Course = sequelize.define('Course', {
@@ -352,7 +365,7 @@ var Enrollment = sequelize.define('Enrollment', {
 });
 
 Course.belongsToMany(Person, {as: "EnrolledDudes", through: Enrollment, foreignKey: "courseName"});
-Person.belongsToMany(Course, {as: "Classes", through: Enrollment, foreignKey: "personId"});
+Person.belongsToMany(Course, {as: "Classes", through: Enrollment, foreignKey: "personEmail"});
 
 Challenge.hasMany(MultChoiceAnswer, {as: 'Possibilities'});
 
