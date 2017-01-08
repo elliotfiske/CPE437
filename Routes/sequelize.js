@@ -354,11 +354,6 @@ var Enrollment = sequelize.define('Enrollment', {
    lastStreakTime: {
       type: Sequelize.DATE, // last time the user made an attempt that counts towards streak,
       defaultValue: new Date(0)
-   },
-   id: {
-      type: Sequelize.INTEGER,
-      primaryKey: true,
-      autoIncrement: true
    }
 }, {
    freezeTableName: true

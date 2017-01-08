@@ -3,3 +3,4 @@ node_modules/
 developmentKeys.json
 .env
 public/bower_components/
+sequelize-config/config.json
