@@ -1,5 +1,5 @@
 app.controller('adminController',
-['$scope', '$state', 'api', 'confirm', 'login', '$rootScope', 'toastr',
+['$scope', '$state', 'api', 'confirm', 'login', '$rootScope', 'toasterror',
  function(scope, $state, API, confirm, login, $rootScope, toastr) {
    $rootScope.page = 'admin';
 
@@ -24,12 +24,15 @@ app.controller('adminController',
 
       console.log("Making new course named " + scope.courseName);
       API.crss.post({ name: scope.courseName, owner: scope.teacherEmail })
-         .then(scope.refreshcrss)
-         .catch(function(err) {
-            if (err.data.tag === 'dupName') {
-               toastr.error("There's already a course named '" + scope.courseName + ".'", 'Uh oh!');
-            }
-         });
+      .then(scope.refreshcrss)
+      .then(function() {
+         toastr.success("Success!");
+      })
+      .catch(toastr.doErrorMessage(function(err) {
+         if (err.dupName) {
+            toastr.error("There's already a course named '" + scope.courseName + ".'", 'Uh oh!');
+         }
+      }));
    };
 
    scope.deleteCourse = function(courseName) {

@@ -22,20 +22,10 @@ app.config(['$stateProvider', '$urlRouterProvider',
          templateUrl: 'Home/home.template.html',
          controller: 'homeController',
       })
-      .state('register', {
-         url: '/register',
-         templateUrl: 'Register/register.template.html',
-         controller: 'registerController',
-      })
       .state('login', {
          url: '/login',
          templateUrl: 'Login/login.template.html',
          controller: 'loginController',
-      })
-      .state('crss', {
-         url: '/prss/{prsId}/crss',
-         templateUrl: 'Courses/crss.template.html',
-         controller: 'crssController'
       })
       .state('course', {
          url: '/course/{courseName}',
@@ -56,11 +46,6 @@ app.config(['$stateProvider', '$urlRouterProvider',
          url: '/course/{courseName}/challenges/{challengeName}',
          templateUrl: 'Challenges/chl.template.html',
          controller: 'chlController'
-      })
-      .state('student', {
-         url: '/student',
-         templateUrl: 'Student/student.template.html',
-         controller: 'studentController'
       })
       .state('admin', {
          url: '/admin',

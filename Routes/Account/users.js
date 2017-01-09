@@ -38,12 +38,16 @@ router.post('/', function(req, res) {
    var vld = req.validator;  // Shorthands
    var body = req.body;
    var admin = req.session && req.session.isAdmin();
+   var className = req.body.className || "a class";
 
-   if (admin && !body.password) {
-      body.password = "*";                       // Blocking password
+   if (!admin) {
+      delete body.password; // we have them make a password at activation time now
    }
 
-   return vld.hasFields(body, ["email", "name", "role", "password"])
+   return vld.checkAdminOrTeacher()
+   .then(function() {
+      return vld.hasFields(body, ["email", "name", "role"]);
+   })
    .then(function() {
       return vld.check(body.role == 0 || admin, Tags.noPermission);
    })
@@ -76,12 +80,14 @@ router.post('/', function(req, res) {
       console.log("PERSON FAM: " + JSON.stringify(result));
 
       // Send activation email
-      var subject = "Activate your account on Commit!";
+      var subject = "You've been added to " + className + " on Commit!";
       var body = "Welcome to Commit! Click on the link below to get started. I hope you enjoy using my app :)";
       var link = email.BASE_URL + "#/activate/" + result.activationToken;
       var textPreview = "Welcome to Commit! Click on this link to get started. I hope you enjoy using my app :) " + link;
 
-      email.sendEmail(subject, body, link, "Activate!", textPreview, result);
+      if (!admin) {
+         email.sendEmail(subject, body, link, "Activate!", textPreview, result);
+      }
    })
    .catch(doErrorResponse(res));
 });
@@ -102,8 +108,12 @@ router.get('/:id', function(req, res) {
 });
 
 router.post('/activate/:token', function(req, res) {
-   return sequelize.Person.findOne({where:
-      {activationToken: req.params.token}
+   var vld = req.validator;  // Shorthands
+   return vld.hasFields(req.body, ["password"])
+   .then(function() {
+      return sequelize.Person.findOne({where:
+         {activationToken: req.params.token}
+      });
    })
    .then(function(person) {
       return vld.check(person, Tags.badLogin, null, person, "Incorrect token...");
@@ -153,19 +163,6 @@ router.put('/:id', function(req, res) {
     });
   })
   .catch(doErrorResponse(res));
-});
-
-router.delete('/:id', function(req, res) {
-  var vld = req._validator;
-
-  if (vld.checkAdmin())
-  connections.getConnection(res, function(cnn) {
-    cnn.query('DELETE from Person where id = ?', [req.params.id], function (err, result) {
-      if (vld.check(result.affectedRows, Tags.notFound))
-      res.end();
-      cnn.release();
-    });
-  });
 });
 
 // If teacher, returns list of courses OWNED by teacher.
