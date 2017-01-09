@@ -1,6 +1,6 @@
 app.controller('crsAdminController',
-['$scope', '$state', '$stateParams', 'api', 'confirm', 'login', '$location', 'toastr',
-function(scope, $state, $stateParams, API, confirm, login, $location, toastr) {
+['$scope', '$state', '$stateParams', 'api', 'confirm', 'login', '$location', 'toasterror', '$q',
+function(scope, $state, $stateParams, API, confirm, login, $location, toastr, $q) {
   scope.courseName = $stateParams.courseName; // TODO: gonna need to make a network call here I think, unfortunately.
 
   if (!login.isLoggedIn()) {
@@ -66,31 +66,35 @@ function(scope, $state, $stateParams, API, confirm, login, $location, toastr) {
   }
 
   scope.addEnrollment = function() {
-    if (!scope.email)
-    return;
+     if (!scope.email) {
+        return;
+     }
 
-    // Get prsId
-    API.prss.find(scope.email)
-    .then(function(response) {
-      var data = response.data;
-      if (data.length === 0) {
-        scope.errors = ['No user found for that email'];
-      }
-      else {
-        return API.crss.enrs.post(scope.courseName, data[0].id)
-        .then(function(data) {
-          return scope.refreshenrs();
-        });
-      }
+     // Create user if none exists
+     API.prss.find(scope.email + "@calpoly.edu")
+     .then(function(response) {
+        var data = response.data;
+        if (data.length === 0) {
+           return API.prss.post({
+             email: scope.email + "@calpoly.edu",
+             role: 0,
+             forcePeasant: true
+          });
+       }
+       else {
+          return $q.resolve(data[0]);
+       }
     })
-    .catch(function(err) {
-      if (err.data[0].tag === 'dupName') {
-        scope.errors = ['User already enrolled'];
-      }
-      else
-      scope.errors = err.data;
-    });
-  };
+    .then(function(toEnroll) {
+      return API.crss.enrs.post(scope.courseName, toEnroll.email || toEnroll.data.email);
+   })
+   .then(function() {
+      return scope.refreshenrs();
+   })
+   .catch(toastr.doErrorMessage(function(err) {
+      toastr.error("Don't worry, I'll look into it.", "Something went wrong!");
+   }));
+};
 
   scope.deleteEnrollment = function(enrId) {
     confirm(function() {

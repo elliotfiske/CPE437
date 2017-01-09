@@ -48,7 +48,7 @@ angular.module('mainApp')
    return {
       prss: {
          activate: function(token) {
-            return post('prss/activate' + token);
+            return post('prss/activate/' + token);
          },
          get: typicalGet('prss'),
          find: function(email) {
@@ -102,11 +102,8 @@ angular.module('mainApp')
                enrId = enrId || '';
                return get('crss/' + courseName + '/enrs/' + enrId + '?full=true');
             },
-            delete: function(courseName, enrId) {
-               return del('crss/' + courseName + '/enrs/' + enrId);
-            },
-            post: function(courseName, prsId) {
-               return post('crss/' + courseName + '/enrs', { prsId: prsId });
+            post: function(courseName, email) {
+               return post('crss/' + courseName + '/enrs', { email: email });
             }
          },
          tags: {

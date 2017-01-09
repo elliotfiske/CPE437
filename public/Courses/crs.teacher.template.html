@@ -39,7 +39,10 @@
         <a class="list-group-item">
           <form>
             <button type="submit" class="btn btn-small btn-primary pull-right" ng-click="addEnrollment()">Enroll</button>
-            <input type="text" placeholder="Student email" ng-model="email" style="width: 150px" />
+            <div class="input-group">
+               <input type="text" placeholder="Student email" ng-model="email" style="width: 150px" />
+               <span class="input-group-addon">@calpoly.edu</span>
+            </div>
             <h4 class="bg-danger" ng-repeat="error in errors" style="padding: 10px;">
               {{ error }}
             </h4>

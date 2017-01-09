@@ -40,13 +40,19 @@ router.post('/', function(req, res) {
    var admin = req.session && req.session.isAdmin();
    var className = req.body.className || "a class";
 
+   if (admin) {
+      if (req.body.forcePeasant) {
+         admin = false;
+      }
+   }
+
    if (!admin) {
       delete body.password; // we have them make a password at activation time now
    }
 
    return vld.checkAdminOrTeacher()
    .then(function() {
-      return vld.hasFields(body, ["email", "name", "role"]);
+      return vld.hasFields(body, ["email", "role"]);
    })
    .then(function() {
       return vld.check(body.role == 0 || admin, Tags.noPermission);
@@ -67,7 +73,7 @@ router.post('/', function(req, res) {
       return sequelize.Person.create(req.body);
    })
    .then(function(newGuy) {
-      if (req.session.isAdmin()) {
+      if (admin) {
          return newGuy.update({activationToken: null});
       }
       else {
@@ -75,14 +81,14 @@ router.post('/', function(req, res) {
       }
    })
    .then(function(result) {
-      res.location(router.baseURL + '/' + result.id).end();
+      res.location(router.baseURL + '/' + result.id).json({email: result.email, id: result.id}).end();
 
       console.log("PERSON FAM: " + JSON.stringify(result));
 
       // Send activation email
       var subject = "You've been added to " + className + " on Commit!";
       var body = "Welcome to Commit! Click on the link below to get started. I hope you enjoy using my app :)";
-      var link = email.BASE_URL + "#/activate/" + result.activationToken;
+      var link = email.BASE_URL + "#/activation/?token=" + result.activationToken;
       var textPreview = "Welcome to Commit! Click on this link to get started. I hope you enjoy using my app :) " + link;
 
       if (!admin) {
@@ -119,7 +125,7 @@ router.post('/activate/:token', function(req, res) {
       return vld.check(person, Tags.badLogin, null, person, "Incorrect token...");
    })
    .then(function(person) {
-      return person.update({activationToken: null});
+      return person.update({activationToken: null, password: req.body.password});
    })
    .then(function(person) {
       res.sendStatus(200);

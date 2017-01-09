@@ -12,12 +12,12 @@ router.post('/', function(req, res) {
    var vld = req.validator;
    var prs = req.session;
 
-   return vld.hasFields(req.body, ['prsId'])
+   return vld.hasFields(req.body, ['email'])
    .then(function() {
-      return sequelize.Person.findById(req.body.prsId);
+      return sequelize.Person.findOne({where: {email: req.body.email}});
    })
    .then(function(person) {
-      return vld.check(person, Tags.notFound, null, person, "Couldn't find a user with ID " + req.body.prsId);
+      return vld.check(person, Tags.notFound, null, person, "Couldn't find a user with email " + req.body.email);
    })
    .then(function(person) {
 

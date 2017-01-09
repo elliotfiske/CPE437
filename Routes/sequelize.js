@@ -382,6 +382,11 @@ sequelize.sync().then(function() {
       defaults: {name: 'AdminMan', password: "password", role: 2}
    });
 })
+.then(function(admin) {
+   return admin[0].update({
+      activationToken: null
+   });
+})
 .then(function(ok) {
    console.log(JSON.stringify(ok));
 })

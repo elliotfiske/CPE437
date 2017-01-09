@@ -53,7 +53,7 @@ app.config(['$stateProvider', '$urlRouterProvider',
          controller: 'adminController'
       })
       .state('activation', {
-         url: '/activate?t={token}',
+         url: '/activation?t={token}',
          templateUrl: 'Login/activate.template.html',
          controller: 'activateController'
       })
