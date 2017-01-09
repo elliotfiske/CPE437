@@ -59,7 +59,7 @@ router.post('/', updateStreak, function(req, res) {
       return sequelize.Person.findById(prsId);
    })
    .then(function(user) {
-      return req.course.hasEnrolledDude(user)
+      return user.hasClass(req.course)
       .then(function(isEnrolled) {
          return vld.check(isEnrolled, Tags.noPermission, null, null, "You're not enrolled for that class.");
       })
@@ -92,7 +92,7 @@ router.post('/', updateStreak, function(req, res) {
          })
          .then(function() {
             return sequelize.Enrollment.findOne({
-               where: {personEmail: user.email, courseName: req.course.sanitizedName}
+               where: {personEmail: user.id, courseName: req.course.sanitizedName}
             });
          })
          .then(function(enr) {

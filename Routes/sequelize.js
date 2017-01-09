@@ -360,7 +360,7 @@ var Enrollment = sequelize.define('Enrollment', {
 });
 
 Course.belongsToMany(Person, {as: "EnrolledDudes", through: Enrollment, foreignKey: "courseName"});
-Person.belongsToMany(Course, {as: "Classes", through: Enrollment, foreignKey: "personEmail"});
+Person.belongsToMany(Course, {as: "Classes", through: Enrollment, foreignKey: "personEmail", targetKey: "email"});
 
 Challenge.hasMany(MultChoiceAnswer, {as: 'Possibilities'});
 

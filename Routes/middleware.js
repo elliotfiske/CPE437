@@ -32,7 +32,7 @@ exports.updateStreak = function(req, res, next) {
    return sequelize.Person.findById(req.session.id)
    .then(function(prs) {
       return sequelize.Enrollment.findOne({
-         where: {personEmail: prs.email, courseName: req.course.sanitizedName}
+         where: {personEmail: prs.id, courseName: req.course.sanitizedName}
       });
    })
    .then(function(enr) {
