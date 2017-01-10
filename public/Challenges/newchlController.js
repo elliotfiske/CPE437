@@ -126,7 +126,9 @@ function(scope, $state, $stateParams, API, confirm, login, toastr) {
   };
 
   scope.createShortAnswer = function() {
-    scope.challenge.answer =  scope.challenge.exact;
-    scope.doChallengePost();
+     scope.challenge.answer =  scope.challenge.exact.map(function(answer) {
+        return answer.text
+     });
+     scope.doChallengePost();
   };
 }])

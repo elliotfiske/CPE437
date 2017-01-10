@@ -88,7 +88,7 @@ router.post('/', function(req, res) {
       // Send activation email
       var subject = "You've been added to " + className + " on Commit!";
       var body = "Welcome to Commit! Click on the link below to get started. I hope you enjoy using my app :)";
-      var link = email.BASE_URL + "#/activation/?token=" + result.activationToken;
+      var link = email.BASE_URL + "#/activation?token=" + result.activationToken;
       var textPreview = "Welcome to Commit! Click on this link to get started. I hope you enjoy using my app :) " + link;
 
       if (!admin) {
@@ -125,7 +125,7 @@ router.post('/activate/:token', function(req, res) {
       return vld.check(person, Tags.badLogin, null, person, "Incorrect token...");
    })
    .then(function(person) {
-      return person.update({activationToken: null, password: req.body.password});
+      return person.update({activationToken: null, password: req.body.password, name: req.body.name});
    })
    .then(function(person) {
       res.sendStatus(200);

@@ -26,7 +26,7 @@ function(scope, $state, $stateParams, API, confirm, login, $location, toastr) {
 
          scope.weeks.forEach(function(week, ndx) {
             week.Challenges = week.Challenges.sort(function(a, b) {
-               a.startDate - b.startDate;
+               return new Date(a.openDate) - new Date(b.openDate);
             });
             var weekStart = new Date(week.startDate);
             if (weekStart.getTime() > now.getTime()) {

@@ -47,8 +47,8 @@ angular.module('mainApp')
 
    return {
       prss: {
-         activate: function(token) {
-            return post('prss/activate/' + token);
+         activate: function(token, body) {
+            return post('prss/activate/' + token, body);
          },
          get: typicalGet('prss'),
          find: function(email) {

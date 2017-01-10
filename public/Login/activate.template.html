@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row" ng-hide="activationError !== null">
    <div class="col-sm-12">
       <h1>Welcome to Commit!</h1>
       <h4>I hope you enjoy using it. If you run into any problems, email me at <a href="mailto:elliotfiske@gmail.com">elliotfiske@gmail.com</a></h4>
@@ -6,7 +6,7 @@
 </div>
 <br />
 <br />
-<div class="row" ng-show="no-error">
+<div class="row" ng-hide="activationError !== null">
    <div class="col-sm-6 col-sm-offset-3">
       <form class="form-horizontal" ng-submit="activate()">
          <fieldset class="form-group">
@@ -22,16 +22,20 @@
             </div>
          </fieldset>
          <fieldset class="form-group" ng-class="confPass !== user.password ? 'has-error' : ''">
-            <label for="password" class="control-label col-sm-4 col-xs-2">Once More</label>
+            <label for="password" class="control-label col-sm-4 col-xs-2">Confirm Password</label>
             <div class="col-sm-8 col-xs-10">
-               <input id="password" type="password" class="form-control" placeholder="Confirm Password" ng-model="confPass">
+               <input id="confirm-password" type="password" class="form-control" placeholder="Once More With Feeling" ng-model="confPass">
             </div>
          </fieldset>
          <div class="form-group">
             <div class="col-sm-8 col-sm-offset-4 col-xs-10 col-xs-offset-2 text-left">
-               <button type="submit" class="btn btn-primary" ng-disabled="!user.password || !user.email">Submit</button>
+               <button type="submit" class="btn btn-primary" ng-disabled="!user.password || user.password !== confPass">Submit</button>
             </div>
          </div>
       </form>
    </div>
+</div>
+
+<div class="row" ng-show="activationError  !== null">
+   <h4>Oh no! It looks like you've got an old activation token. Email me if you have any trouble logging in: <a href="mailto:elliotfiske@gmail.com">elliotfiske@gmail.com</a></h4>
 </div>

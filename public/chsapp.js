@@ -47,10 +47,12 @@ var app = angular.module('mainApp', [
       .catch($rootScope.logout);
    }
 
-   $rootScope.logout = function() {
+   $rootScope.logout = function(goToLogin) {
       $rootScope.loggedUser = null;
       delete localStorage.user;
-      $state.go('login');
+      if (goToLogin) {
+         $state.go('login');
+      }
    };
 
    return {

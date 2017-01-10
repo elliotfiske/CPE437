@@ -6,6 +6,7 @@ app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'ap
 
    if (!login.isLoggedIn()) {
       $state.go('login');
+      return;
    }
 
    scope.gotoCourse = function(courseName, asAdmin) {
