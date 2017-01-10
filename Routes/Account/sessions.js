@@ -3,6 +3,8 @@ var connections = require('../Connections.js');
 var Tags = require('../Validator.js').Tags;
 var ssnUtil = require('../Session.js');
 var router = Express.Router({caseSensitive: false});
+var doErrorResponse = require('../Validator.js').doErrorResponse;
+var sequelize = require('../sequelize.js');
 
 router.baseURL = '/Ssns';
 
@@ -20,17 +22,26 @@ router.get('/', function(req, res) {
 });
 
 router.post('/', function(req, res) {
-   var cookie;
-
-   connections.getConnection(res, function(cnn) {
-      cnn.query('select * from Person where email = ?', [req.body.email], function(err, result) {
-         if (req._validator.check(result.length && result[0].password === req.body.password, Tags.badLogin)) {
-            cookie = ssnUtil.makeSession(result[0], res);
-            res.location(router.baseURL + '/'  + cookie).end();
-         }
-         cnn.release();
-      });
-   });
+   var vld = req.validator;
+   return vld.hasFields(req.body, ["email", "password"])
+   .then(function() {
+      return sequelize.Person.scope(null).findOne({where: {email: req.body.email}});
+   })
+   .then(function(person) {
+      return vld.check(person, Tags.badLogin, null, person, "Incorrect username or password.");
+   })
+   .then(function(person) {
+      return vld.check(!person.activationToken, Tags.badLogin, null, person, "You need to activate your account! Check your email.");
+   })
+   .then(function(person) {
+      console.log("Gothca", person.password, req.body.password);
+      return vld.check(person.password === req.body.password, Tags.badLogin, null, person, "Incorrect username or password.");
+   })
+   .then(function(person) {
+      var cookie = ssnUtil.makeSession(person, res);
+      res.location(router.baseURL + '/' + cookie).end();
+   })
+   .catch(doErrorResponse(res));
 });
 
 router.delete('/:cookie', function(req, res, next) {

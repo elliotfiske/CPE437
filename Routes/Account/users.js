@@ -113,12 +113,12 @@ router.get('/:id', function(req, res) {
   }
 });
 
-router.post('/activate/:token', function(req, res) {
+router.post('/activate', function(req, res) {
    var vld = req.validator;  // Shorthands
-   return vld.hasFields(req.body, ["password"])
+   return vld.hasFields(req.body, ["password", "token"])
    .then(function() {
       return sequelize.Person.findOne({where:
-         {activationToken: req.params.token}
+         {activationToken: req.body.token}
       });
    })
    .then(function(person) {

@@ -236,10 +236,6 @@ body {
   border-top: none;
 }
 
-.accordion-list-fix:last-child {
-  margin-top: 30px !important;
-}
-
 .chl-status {
   margin-right: 10px;
 }

@@ -58,8 +58,8 @@
    </div>
 
    <div class="row" ng-hide="challenge.Attempts.length === 0">
-      <h1 ng-show="challengeComplete">You've already solve this challenge!</h1>
-      <h1 ng-hide="challengeClosed">This challenge is closed!</h1>
+      <h1 ng-show="challengeComplete">You've already solved this challenge!</h1>
+      <h1 ng-show="challengeClosed">This challenge is closed!</h1>
       <h2>Previous Attempts:</h2>
       <ul class="list-group">
          <li class="list-group-item" ng-repeat="attempt in challenge.Attempts">{{attempt.input}}</li>

@@ -52,7 +52,7 @@ app.use(function(req, res, next) {
    }
 
    if (req.session || (req.method === 'POST' &&
-    (req.path === '/prss' || req.path === '/ssns')))
+    (req.path === '/prss' || req.path === '/ssns' || req.path === "/prss/activate")))
       next();
    else
       res.status(401).json([{tag: Validator.Tags.noLogin}]);
@@ -109,22 +109,27 @@ app.get('/auth/facebook/callback',
                                       failureRedirect: '/login'}));
 
 app.delete('/DB', function(req, res) {
-  return req.validator.checkAdmin()
-  .then(function() {
-    return sequelize.do.sync({force: true});
-  })
-  .then(function() {
-    return sequelize.Person.findOrCreate({
-      where: {email: 'Admin@11.com'},
-      defaults: {name: 'AdminMan', password: "password", role: 2}
-    });
-  })
-  .then(function() {
-    res.sendStatus(200);
-  })
-  .catch(function(err) {
-    res.status(500).json({error: "OH NO: " + JSON.stringify(err)}).end();
-  });
+   if (process.env.NODE_ENV === 'production') {
+      console.warn("YOU FOOOOOOOL");
+      return;
+   }
+
+   return req.validator.checkAdmin()
+   .then(function() {
+      return sequelize.do.sync({force: true});
+   })
+   .then(function() {
+      return sequelize.Person.findOrCreate({
+         where: {email: 'Admin@11.com'},
+         defaults: {name: 'AdminMan', password: "password", role: 2}
+      });
+   })
+   .then(function() {
+      res.sendStatus(200);
+   })
+   .catch(function(err) {
+      res.status(500).json({error: "OH NO: " + JSON.stringify(err)}).end();
+   });
 });
 
 // Error output
