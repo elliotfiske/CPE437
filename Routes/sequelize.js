@@ -376,7 +376,7 @@ Course.hasMany(Week);
 Week.hasMany(Challenge);
 Challenge.belongsTo(Week);
 
-sequelize.sync({force: true}).then(function() {
+sequelize.sync().then(function() {
    return Person.findOrCreate({
       where: {email: 'Admin@11.com'},
       defaults: {name: 'AdminMan', password: "password", role: 2}
