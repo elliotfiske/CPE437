@@ -17,7 +17,7 @@ var sequelize = new Sequelize(db, username, pass, {
   dialect: 'mysql',
 
   pool: {
-    max: 10,
+    max: 5,
     min: 0,
     idle: 10000
   },
