@@ -83,19 +83,11 @@ router.post('/', updateStreak, function(req, res) {
          // TODO: verify chl's start date is after today
          var result = checkAnswer(req);
 
-         return sequelize.Attempt.create({
-            input: req.body.input,
-            personId: prsId,
-            challengeName: req.params.challengeName,
-            correct: result.correct,
-            pointsEarned: result.score
-         })
-         .then(function() {
-            return sequelize.Enrollment.findOne({
-               where: {personEmail: user.id, courseName: req.course.sanitizedName}
-            });
+         return sequelize.Enrollment.findOne({
+            where: {personEmail: user.id, courseName: req.course.sanitizedName}
          })
          .then(function(enr) {
+            result.score += enr.streak;
             return enr.increment({creditsEarned: result.score});
          })
          .then(function(enr) {
@@ -109,6 +101,18 @@ router.post('/', updateStreak, function(req, res) {
                   return enr.updateAttributes({lastStreakTime: tonightMidnight});
                });
             }
+            else {
+               return Promise.resolve(enr);
+            }
+         })
+         .then(function(enr) {
+            return sequelize.Attempt.create({
+               input: req.body.input,
+               personId: prsId,
+               challengeName: req.params.challengeName,
+               correct: result.correct,
+               pointsEarned: result.score
+            });
          })
          .then(function() {
             res.json(result);

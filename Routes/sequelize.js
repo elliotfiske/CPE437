@@ -1,6 +1,7 @@
 var Sequelize = require('sequelize');
 var Promise = require('bluebird');
 var crypto = require('crypto');
+var bcrypt = require('bcrypt');
 
 var sanitize = require("sanitize-filename");
 
@@ -90,8 +91,22 @@ var Person = sequelize.define('Person', {
    hooks: {
       beforeCreate: function(newUser, options) {
          newUser.activationToken = crypto.randomBytes(16).toString('hex');
-         console.log("Token: " + newUser.activationToken);
-      }
+         newUser.password = Person.generateHash(newUser.password);
+         console.log("Hey man is this working", newUser.password);
+      },
+   },
+   instanceMethods: {
+      validPassword: function(password) {
+         return bcrypt.compareSync(password, this.password);
+      },
+   },
+   classMethods: {
+      // Given password, returns salted hash (mmm, salted hashes)
+      generateHash: function(password) {
+         var salt = bcrypt.genSaltSync(8);
+         var hash =  bcrypt.hashSync(password, salt);
+         return hash;
+      },
    },
    defaultScope: {
       attributes: { exclude: ['activationToken', 'password'] }
@@ -99,89 +114,68 @@ var Person = sequelize.define('Person', {
 });
 
 var Course = sequelize.define('Course', {
-  name: {
-    type: Sequelize.STRING,
-    unique: true
-  },
-  sanitizedName: {
-    type: Sequelize.STRING,
-    primaryKey: true,
-    unique: {
-      args: [true],
-      msg: "There is already a course named that."
-    }
-  },
-  ownerId: {
-    type: Sequelize.INTEGER
-  }
+   name: {
+      type: Sequelize.STRING,
+      unique: true
+   },
+   sanitizedName: {
+      type: Sequelize.STRING,
+      primaryKey: true,
+      unique: {
+         args: [true],
+         msg: "There is already a course named that."
+      }
+   },
+   ownerId: {
+      type: Sequelize.INTEGER
+   }
 }, {
-  freezeTableName: true,
-  hooks: {
-    afterCreate: function(newCourse, options) {
-      var weekPromises = [];
-      var startDate = new Date(process.env.START_DATE);
+   freezeTableName: true,
+   hooks: {
+      afterCreate: function(newCourse, options) {
+         var weekPromises = [];
+         var startDate = new Date(process.env.START_DATE);
 
-      for (var ndx = 0; ndx < 10; ndx++) {
-        weekPromises.push(
-          Week.create({
-            weekIndexInCourse: ndx,
-            startDate: startDate.getTime(),
-          })
-        );
+         for (var ndx = 0; ndx < 10; ndx++) {
+            weekPromises.push(
+               Week.create({
+                  weekIndexInCourse: ndx,
+                  startDate: startDate.getTime(),
+               })
+            );
 
-        startDate.setDate(startDate.getDate()+7);
+            startDate.setDate(startDate.getDate()+7);
+         }
+
+         Promise.all(weekPromises)
+         .then(function(weeks) {
+            console.log("das weeks"  + JSON.stringify(weeks));
+            newCourse.setWeeks(weeks);
+         })
+         .catch(function(err) {
+            console.error("OH NO OH NO weeks broke ", err);
+         });
+      },
+      beforeValidate: function(course, options) {
+         if (course.name) {
+            course.name = course.name.trim();
+            course.sanitizedName = sanitize(course.name).toLowerCase().replace(/ /g, '-');
+         }
       }
+   },
+   instanceMethods: {
+      // Returns true if you're either the owner or enrolled in this course
+      checkPersonEnrolled: function(personId, res) {
+         if (personId === this.ownerId) {
+            return Promise.resolve(true);
+         }
 
-      Promise.all(weekPromises)
-      .then(function(weeks) {
-        console.log("das weeks"  + JSON.stringify(weeks));
-        newCourse.setWeeks(weeks);
-      })
-    },
-    beforeValidate: function(course, options) {
-      if (course.name) {
-        course.name = course.name.trim();
-        course.sanitizedName = sanitize(course.name).toLowerCase().replace(/ /g, '-');
-      }
-    }
-  },
-  instanceMethods: {
-    // Returns true if you're either the owner or enrolled in this course
-    checkPersonEnrolled: function(personId, res) {
-      if (personId === this.ownerId) {
-        return Promise.resolve(true);
-      }
-
-      return Person.findById(personId)
-      .then(function(person) {
-        return this.hasEnrolledDude(person);
-      });
-    },
-    // This returns the current consecutive days the user has answered questions.
-    // 0 if they haven't started or missed a day.
-    getCurrentStreak: function(personId) {
-      var streak = 0;
-      this.getWeeks()
-      .then(function(weeks) {
-        return weeks.getChallenges({
-          include: [{
-            model: Attempt,
-            where: {PersonId: personId}
-          }]
-        });
-      })
-      .then(function(chls) {
-
-      });
-
-      // game plan:
-      //  CHANGE THIS to "checkMissedStreak"
-      //  when the user logs in or whatever, query for all challenges in the past
-      //  that do not have attempts on them.
-      //
-      //  If there is a challenge before today that is missing
-    },
-  }
+         return Person.findById(personId)
+         .then(function(person) {
+            return this.hasEnrolledDude(person);
+         });
+      },
+   },
 });
 
 var Challenge = sequelize.define('Challenge', {
@@ -376,10 +370,10 @@ Course.hasMany(Week);
 Week.hasMany(Challenge);
 Challenge.belongsTo(Week);
 
-sequelize.sync().then(function() {
-   return Person.findOrCreate({
+sequelize.sync({force: true}).then(function() {
+   return Person.scope(null).findOrCreate({
       where: {email: 'Admin@11.com'},
-      defaults: {name: 'AdminMan', password: "password", role: 2}
+      defaults: {name: 'AdminMan', password: process.env.ADMIN_PASSWORD, role: 2}
    });
 })
 .then(function(admin) {
@@ -391,7 +385,7 @@ sequelize.sync().then(function() {
    console.log(JSON.stringify(ok));
 })
 .catch(function(err) {
-   console.error("EXTREMELY UNLIKELY ERROR DETECTED " + JSON.stringify(err.message));
+   console.error("EXTREMELY UNLIKELY ERROR DETECTED " + JSON.stringify(err.message), err.stack);
 });
 
 module.exports = {

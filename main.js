@@ -119,9 +119,14 @@ app.delete('/DB', function(req, res) {
       return sequelize.do.sync({force: true});
    })
    .then(function() {
-      return sequelize.Person.findOrCreate({
+      return sequelize.Person.scope(null).findOrCreate({
          where: {email: 'Admin@11.com'},
-         defaults: {name: 'AdminMan', password: "password", role: 2}
+         defaults: {name: 'AdminMan', password: process.env.ADMIN_PASSWORD, role: 2}
+      });
+   })
+   .then(function(admin) {
+      return admin[0].update({
+         activationToken: null
       });
    })
    .then(function() {

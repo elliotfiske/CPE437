@@ -12,8 +12,6 @@ router.baseURL = '/crss';
 function getCourseModel(req, res, next) {
   var vld = req.validator;
 
-  console.log("MIDDLEWARE TO THE RESCUE!");
-
   sequelize.Course.findOne({where: {sanitizedName: req.params.courseName}})
   .then(function(course) {
     return vld.check(course, Tags.notFound, null, course, "Couldn't find a course named " + req.params.courseName);

@@ -34,8 +34,7 @@ router.post('/', function(req, res) {
       return vld.check(!person.activationToken, Tags.badLogin, null, person, "You need to activate your account! Check your email.");
    })
    .then(function(person) {
-      console.log("Gothca", person.password, req.body.password);
-      return vld.check(person.password === req.body.password, Tags.badLogin, null, person, "Incorrect username or password.");
+      return vld.check(person.validPassword(req.body.password), Tags.badLogin, null, person, "Incorrect username or password.");
    })
    .then(function(person) {
       var cookie = ssnUtil.makeSession(person, res);
