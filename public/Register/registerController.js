@@ -1,4 +1,4 @@
-app.controller('registerController', ['$scope', '$state', '$rootScope', 'api', function(scope, $state, $rootScope, API) {
+app.controller('registerController', ['$scope', '$state', '$rootScope', 'api', 'toasterror', function(scope, $state, $rootScope, API, toastr) {
    $rootScope.page = 'register';
 
    scope.user = {role: 0};
@@ -14,9 +14,7 @@ app.controller('registerController', ['$scope', '$state', '$rootScope', 'api', f
          toastr.success("Check your email! You should receive a link to activate your account.", "Awesome!")
          $state.go('login');
       })
-      .catch(function(response) {
-         scope.errors = response.data;
-      });
+      .catch(toastr.doErrorMessage(function(err) {}));
    }
 
    scope.goBack = function() {

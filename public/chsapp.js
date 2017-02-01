@@ -22,8 +22,8 @@ var app = angular.module('mainApp', [
    toastr.doErrorMessage = function(callback) {
       return function(err) {
          console.warn("Error! " + err);
-         if (err.humanMessage) {
-            toastr.error(err.humanMessage, 'Oh no!');
+         if (err.data.humanMessage) {
+            toastr.error(err.data.humanMessage, 'Oh no!');
          }
          else {
             callback(err);
