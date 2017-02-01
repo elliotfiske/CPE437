@@ -1,4 +1,4 @@
-app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'api', 'toastr', function(scope, $state, login, $rootScope, API, toastr) {
+app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'api', 'toasterror', function(scope, $state, login, $rootScope, API, toastr) {
    $rootScope.page = 'home';
 
    scope.enrolledCourses = [];
@@ -19,14 +19,12 @@ app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'ap
    };
 
    scope.enrollCourse = function(courseName) {
-      API.crss.enrs.post(courseName, scope.loggedUser.id)
+      API.crss.enrs.post(courseName, scope.loggedUser.email)
          .then(function(response) {
             scope.enrolledCourses = response.data;
             onlyShowAvailableCourses();
          })
-         .catch(function(err) {
-            toastr.error("Uh oh!", err.errMsg);
-         });
+         .catch(toastr.doErrorMessage(function(err) {}));
    };
 
    function onlyShowAvailableCourses() {
@@ -65,7 +63,5 @@ app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'ap
       scope.availableCourses = response.data;
       onlyShowAvailableCourses();
    })
-   .catch(function(err) {
-      toastr.error("Uh oh!", err.errMsg);
-   });;
+   .catch(toastr.doErrorMessage(function(err) {}));;
 }])

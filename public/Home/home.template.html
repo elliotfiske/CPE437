@@ -44,16 +44,16 @@
       </div>
    </div>
 
-   <!-- <div class="row" ng-hide="availableCourses.length === 0">
-   <h2>Available Courses – Winter 2016</h2>
-   <div class="col-sm-12 col-md-6" ng-repeat="course in availableCourses">
-   <div class="panel panel-default">
-   <div class="panel-heading">
-   <button class="btn btn-info pull-right" type="button" ng-click="enrollCourse(course.sanitizedName)">Enroll</button>
-   <h3 class="panel-title">{{ course.name }}</h3>
-   <div class="clearfix"></div>
-</div>
-</div>
-</div>
-</div> -->
+   <div class="container-white row">
+      <h2>Available Courses – Winter 2016</h2>
+      <div class="col-sm-12 col-md-6" ng-repeat="course in availableCourses">
+         <div class="panel panel-default">
+            <div class="panel-heading">
+               <button class="btn btn-info pull-right" type="button" ng-click="enrollCourse(course.sanitizedName)">Enroll</button>
+               <h3 class="panel-title">{{ course.name }}</h3>
+               <div class="clearfix"></div>
+            </div>
+         </div>
+      </div>
+   </div>
 </div>

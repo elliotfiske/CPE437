@@ -21,7 +21,7 @@ router.post('/', function(req, res) {
    })
    .then(function(person) {
 
-      return vld.check(prs.isAdmin() || prs.id === req.body.prsId || // Are you Admin, enrolling yourself,
+      return vld.check(prs.isAdmin() || prs.email === req.body.email || // Are you Admin, enrolling yourself,
       req.course.ownerId === prs.id, Tags.noPermission) // or the teacher of this course?
       .then(function() {
          return person.hasClass(req.course);

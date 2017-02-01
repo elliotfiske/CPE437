@@ -41,6 +41,7 @@ router.post('/', function(req, res) {
    var className = req.body.className || "a class";
 
    if (admin) {
+      console.log("I am admin jah");
       if (req.body.forcePeasant) {
          admin = false;
       }
@@ -52,7 +53,8 @@ router.post('/', function(req, res) {
 
    delete body.activationToken; // Don't even try it
 
-   return vld.checkAdminOrTeacher()
+   // return vld.checkAdminOrTeacher()
+   return vld.check(true)
    .then(function() {
       return vld.hasFields(body, ["email", "role"]);
    })
@@ -116,8 +118,12 @@ router.get('/:id', function(req, res) {
 });
 
 router.post('/activate', function(req, res) {
-   var vld = req.validator;  // Shorthands
-   return vld.hasFields(req.body, ["password", "token"])
+   var vld = req.validator;
+
+   return vld.hasFields(req.body, ["token", "checkedDisclaimer"])
+   .then(function() {
+      return vld.check(req.body.checkedDisclaimer, Tags.noTerms, null, null, "Please accept the disclaimer to continue!");
+   })
    .then(function() {
       return sequelize.Person.findOne({where:
          {activationToken: req.body.token}
@@ -127,7 +133,7 @@ router.post('/activate', function(req, res) {
       return vld.check(person, Tags.badLogin, null, person, "Incorrect token...");
    })
    .then(function(person) {
-      return person.update({activationToken: null, password: req.body.password, name: req.body.name});
+      return person.update({activationToken: null, checkedDisclaimer: true});
    })
    .then(function(person) {
       res.sendStatus(200);

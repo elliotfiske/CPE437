@@ -75,6 +75,7 @@
                   <ul class="nav masthead-nav">
                      <li ng-class="page === 'home' ? 'active' : ''" ng-show="loggedUser"><a href="#">Home</a></li>
                      <li ng-class="page === 'login' ? 'active' : ''" ng-hide="loggedUser"><a href="#login">Log In</a></li>
+                     <li ng-class="page === 'register' ? 'active' : ''" ng-hide="loggedUser"><a href="#register">Register</a></li>
                      <li ng-class="page === 'admin' ? 'active' : ''" ng-show="loggedUser && loggedUser.role === 2"><a href="#admin">Admin</a></li>
                      <li ng-show="loggedUser"><a href="#" ng-click='logout(true)'>Log Out</a></li>
                   </ul>

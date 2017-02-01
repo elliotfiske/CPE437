@@ -2,6 +2,8 @@ node_modules/
 .DS_Store
 developmentKeys.json
 .env
+.env.staging
 public/bower_components/
 sequelize-config/config.json
 dontGitMeMan.spf
+amazonDontGitMe.spf

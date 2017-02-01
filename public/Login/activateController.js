@@ -11,12 +11,13 @@ function(scope, $state, $stateParams, login, $rootScope, toastr, API) {
       // If there's already a user, log 'em out.
       $rootScope.logout(false);
 
-      API.prss.activate({token: $stateParams.token, name: scope.user.name, password: scope.user.password})
+      API.prss.activate({token: $stateParams.token, checkedDisclaimer: scope.checkarino})
       .then(function() {
          $state.go('login');
+         toastr.success("Log in to get started!", "Congratulations! You're activated :)")
       })
       .catch(toastr.doErrorMessage(function(err) {
-         scope.activationError = err;
+         // whatever
       }));
    };
 }])

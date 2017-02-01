@@ -85,6 +85,9 @@ var Person = sequelize.define('Person', {
    },
    activationToken: {
       type: Sequelize.STRING
+   },
+   checkedDisclaimer: {
+      type: Sequelize.BOOLEAN
    }
 }, {
    freezeTableName: true,
@@ -92,7 +95,7 @@ var Person = sequelize.define('Person', {
       beforeCreate: function(newUser, options) {
          newUser.activationToken = crypto.randomBytes(16).toString('hex');
          newUser.password = Person.generateHash(newUser.password);
-         console.log("Hey man is this working", newUser.password);
+         console.log("Hey man is this working", newUser.activationToken);
       },
    },
    instanceMethods: {
@@ -370,7 +373,7 @@ Course.hasMany(Week);
 Week.hasMany(Challenge);
 Challenge.belongsTo(Week);
 
-sequelize.sync({force: true}).then(function() {
+sequelize.sync().then(function() {
    return Person.scope(null).findOrCreate({
       where: {email: 'Admin@11.com'},
       defaults: {name: 'AdminMan', password: process.env.ADMIN_PASSWORD, role: 2}
