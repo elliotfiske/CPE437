@@ -5,7 +5,7 @@ var transporter = nodemailer.createTransport(process.env.GMAIL_SMTP);
 
 // Stores the base email template, with %VARIABLES% like this that we replace
 var EMAIL_TEMPLATE = "";
-var BASE_URL = "https://elliot-commitment.herokuapp.com"; // TODO: If this changes, change this
+var BASE_URL = "https://polycommit.herokuapp.com"; // TODO: If this changes, change this
 
 var onHeroku = !!process.env.DYNO;
 if (!onHeroku) {
