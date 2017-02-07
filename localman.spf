@@ -11,7 +11,7 @@
 		<key>connection</key>
 		<dict>
 			<key>database</key>
-			<string>mysql</string>
+			<string>fart</string>
 			<key>host</key>
 			<string>127.0.0.1</string>
 			<key>name</key>
@@ -42,39 +42,37 @@
 		<key>session</key>
 		<dict>
 			<key>connectionEncoding</key>
-			<string>utf8</string>
-			<key>contentFilter</key>
-			<dict/>
+			<string>latin1</string>
 			<key>contentPageNumber</key>
 			<integer>1</integer>
 			<key>contentSelection</key>
 			<data>
-			YnBsaXN0MDDUAQIDBAUGOjtYJHZlcnNpb25YJG9iamVjdHNZJGFy
-			Y2hpdmVyVCR0b3ASAAGGoK8QDwcIFRYXGBkfICEoLDA0OFUkbnVs
-			bNMJCgsMEBRXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6MNDg+A
-			AoADgASjERITgAWABoAKgA5UdHlwZVRyb3dzVGtleXNfECZTZWxl
-			Y3Rpb25EZXRhaWxUeXBlUHJpbWFyeUtleWVkRGV0YWlsc9MJCgsa
-			HB6hG4AHoR2ACIAJUTQJ0iIjJCVaJGNsYXNzbmFtZVgkY2xhc3Nl
-			c18QE05TTXV0YWJsZURpY3Rpb25hcnmjJCYnXE5TRGljdGlvbmFy
-			eVhOU09iamVjdNIKCykroSqAC4AN0gstLi9ZTlMuc3RyaW5ngAxd
-			aGVscF90b3BpY19pZNIiIzEyXxAPTlNNdXRhYmxlU3RyaW5nozEz
-			J1hOU1N0cmluZ9IiIzU2Xk5TTXV0YWJsZUFycmF5ozU3J1dOU0Fy
-			cmF50iIjJjmiJidfEA9OU0tleWVkQXJjaGl2ZXLRPD1UZGF0YYAB
-			AAgAEQAaACMALQAyADcASQBPAFYAXgBpAHAAdAB2AHgAegB+AIAA
-			ggCEAIYAiwCQAJUAvgDFAMcAyQDLAM0AzwDRANIA1wDiAOsBAQEF
-			ARIBGwEgASIBJAEmASsBNQE3AUUBSgFcAWABaQFuAX0BgQGJAY4B
-			kQGjAaYBqwAAAAAAAAIBAAAAAAAAAD4AAAAAAAAAAAAAAAAAAAGt
+			YnBsaXN0MDDUAQIDBAUGNjdYJHZlcnNpb25YJG9iamVjdHNZJGFy
+			Y2hpdmVyVCR0b3ASAAGGoK0HCBUWFxgZHSQoLDA0VSRudWxs0wkK
+			CwwQFFdOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzow0OD4ACgAOA
+			BKMREhOABYAGgAiADFR0eXBlVHJvd3NUa2V5c18QJlNlbGVjdGlv
+			bkRldGFpbFR5cGVQcmltYXJ5S2V5ZWREZXRhaWxz0wkKCxobHKCg
+			gAfSHh8gIVokY2xhc3NuYW1lWCRjbGFzc2VzXxATTlNNdXRhYmxl
+			RGljdGlvbmFyeaMgIiNcTlNEaWN0aW9uYXJ5WE5TT2JqZWN00goL
+			JSehJoAJgAvSCykqK1lOUy5zdHJpbmeAClZjZXJ0aWTSHh8tLl8Q
+			D05TTXV0YWJsZVN0cmluZ6MtLyNYTlNTdHJpbmfSHh8xMl5OU011
+			dGFibGVBcnJheaMxMyNXTlNBcnJhedIeHyI1oiIjXxAPTlNLZXll
+			ZEFyY2hpdmVy0Tg5VGRhdGGAAQAIABEAGgAjAC0AMgA3AEUASwBS
+			AFoAZQBsAHAAcgB0AHYAegB8AH4AgACCAIcAjACRALoAwQDCAMMA
+			xQDKANUA3gD0APgBBQEOARMBFQEXARkBHgEoASoBMQE2AUgBTAFV
+			AVoBaQFtAXUBegF9AY8BkgGXAAAAAAAAAgEAAAAAAAAAOgAAAAAA
+			AAAAAAAAAAAAAZk=
 			</data>
 			<key>contentSortColIsAsc</key>
 			<true/>
 			<key>contentViewport</key>
-			<string>{{248, 0}, {599, 716}}</string>
+			<string>{{0, 0}, {1240, 716}}</string>
 			<key>isToolbarVisible</key>
 			<true/>
 			<key>table</key>
-			<string>help_topic</string>
+			<string>valid_certs</string>
 			<key>view</key>
-			<string>SP_VIEW_CONTENT</string>
+			<string>SP_VIEW_CUSTOMQUERY</string>
 			<key>windowVerticalDividerPosition</key>
 			<real>200</real>
 		</dict>
@@ -87,9 +85,26 @@
 	<array/>
 	<key>queryHistory</key>
 	<array>
-		<string>SELECT * FROM `CHSdsdfb`.Challenge</string>
-		<string>SELECT * FROM `CHSdb`.Challenge</string>
-		<string>SELECT * FROM Challenge</string>
+		<string>select * from valid_certs WHERE `X509v3 extensions:X509v3 Subject Alternative Name` LIKE '%.edu%' limit 10</string>
+		<string>select * from valid_certs WHERE `X509v3 extensions:X509v3 Subject Alternative Name` LIKE '%calpoly%' limit 10</string>
+		<string>select * from valid_certs WHERE `X509v3 extensions:X509v3 Subject Alternative Name` LIKE '%poly%' limit 10</string>
+		<string>select * from valid_certs WHERE `X509v3 extensions:X509v3 Subject Alternative Name` LIKE '%facebook%' limit 10</string>
+		<string>select * from valid_certs WHERE `X509v3 extensions:X509v3 Subject Alternative Name` LIKE '%facebook%' limit 1</string>
+		<string>select id, `X509v3 extensions:X509v3 Subject Alternative Name` from valid_certs WHERE  id = 8  LIMIT 10</string>
+		<string>select id, 'X509v3 extensions:X509v3 Subject Alternative Name' from valid_certs WHERE  id = 8  LIMIT 10</string>
+		<string>select id, 'X509v3 extensions:X509v3 Subject Alternative Name' WHERE  id = 8  LIMIT 10</string>
+		<string>select * from valid_certs limit 1</string>
+		<string>select * from valid_certs WHERE limit 1</string>
+		<string>select id, 'X509v3 extensions:X509v3 Subject Alternative Name' from valid_certs WHERE  id &gt; 10  LIMIT 10</string>
+		<string>select id, 'X509v3 extensions:X509v3 Subject Alternative Name' from valid_certs LIMIT 10</string>
+		<string>select 'X509v3 extensions:X509v3 Subject Alternative Name' from valid_certs LIMIT 10</string>
+		<string>select * from valid_certs WHERE 'X509v3 extensions:X509v3 Subject Alternative Name' LIKE '%t%' limit 1</string>
+		<string>select * from valid_certs WHERE 'X509v3 extensions:X509v3 Subject Alternative Name' LIKE '%DNS%' limit 1</string>
+		<string>select * from valid_certs WHERE 'X509v3 extensions:X509v3 Subject Alternative Name' LIKE '%dns%' limit 1</string>
+		<string>select * from valid_certs WHERE 'X509v3 extensions:X509v3 Subject Alternative Name' LIKE '%face%' limit 1</string>
+		<string>select * from valid_certs WHERE 'X509v3 extensions:X509v3 Subject Alternative Name' LIKE '%facebook%' limit 1</string>
+		<string>select * from valid_certs WHERE 'X509v3 extensions:X509v3 Subject Alternative Name' LIKE 't' limit 1</string>
+		<string>select * from valid_certs WHERE 'X509v3 extensions:X509v3 Subject Alternative Name' LIKE '%s' limit 1</string>
 	</array>
 	<key>rdbms_type</key>
 	<string>mysql</string>

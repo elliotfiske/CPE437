@@ -77,7 +77,7 @@ router.post('/', updateStreak, function(req, res) {
             }
          });
 
-         return vld.check(!alreadyGotItRight && req.challenge.attsAllowed > attempts.length, Tags.excessatts, null, attempts);
+         return vld.check(!alreadyGotItRight && req.challenge.attsAllowed > attempts.length, Tags.excessatts, null, attempts, "You already got this answer correct.");
       })
       .then(function(attempts) {
          // TODO: verify chl's start date is after today
