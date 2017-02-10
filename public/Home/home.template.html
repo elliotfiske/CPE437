@@ -33,7 +33,7 @@
          <div class="panel-body list-group">
             <div class="row list-group-item">
                <div class="col-xs-6"><b>Points: </b>{{course.Enrollment.creditsEarned}}</div>
-               <div class="col-xs-6"><span class="pull-right"><b>Streak: </b>{{course.Enrollment.encouragement}}</span></div>
+               <div class="col-xs-6"><span class="pull-right"><b>Streak: </b>{{encouragements[$index]}}</span></div>
             </div>
             <div class="row list-group-item">
                <div class="btn btn-primary pull-right" ng-click="gotoCourse(course.sanitizedName, false)">

@@ -3,6 +3,7 @@ node_modules/
 developmentKeys.json
 .env
 .env.staging
+.env.dev
 public/bower_components/
 sequelize-config/config.json
 dontGitMeMan.spf

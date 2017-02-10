@@ -40,7 +40,7 @@ app.config(['$stateProvider', '$urlRouterProvider',
       .state('courseAdmin', {
          url: '/course-admin/{courseName}',
          templateUrl: 'Courses/crs.teacher.template.html',
-         controller: 'crsAdminController'
+         controller: 'crsTeacherController'
       })
       .state('newchallenge', {
          url: '/course-admin/{courseName}/newchallenge?w={week}&d={day}',

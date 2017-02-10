@@ -53,6 +53,7 @@ var app = angular.module('mainApp', [
       if (goToLogin) {
          $state.go('login');
       }
+      globalCache = {};
    };
 
    return {
@@ -79,3 +80,31 @@ var app = angular.module('mainApp', [
       }
    };
 }]);
+
+Storage.prototype.setObject = function(key, value) {
+    this.setItem(key, JSON.stringify(value));
+}
+
+Storage.prototype.getObject = function(key) {
+    return JSON.parse(this.getItem(key));
+}
+
+globalCache = localStorage.getObject("cache");
+
+function getFromCache(key) {
+   if (!globalCache) {
+      return null;
+   }
+
+   return globalCache[key];
+}
+
+function saveToCache(key, value) {
+   if (!globalCache) {
+      globalCache = {};
+   }
+
+   globalCache[key] = value;
+
+   localStorage.setObject("cache", globalCache);
+}

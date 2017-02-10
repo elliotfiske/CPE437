@@ -1,8 +1,10 @@
 app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'api', 'toasterror', function(scope, $state, login, $rootScope, API, toastr) {
    $rootScope.page = 'home';
 
-   scope.enrolledCourses = [];
+   scope.enrolledCourses = getFromCache("enrolled_courses") || [];
+   scope.availableCourses = getFromCache("available_courses") || [];
    scope.adminCourses = [];
+   scope.encouragements = [];
 
    if (!login.isLoggedIn()) {
       $state.go('login');
@@ -28,18 +30,18 @@ app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'ap
    };
 
    function onlyShowAvailableCourses() {
-      scope.enrolledCourses.forEach(function(crs) {
+      scope.enrolledCourses.forEach(function(crs, ndx) {
          if (crs.Enrollment.streak === 0) {
-            crs.Enrollment.encouragement = "No streak yet! Get it started today!";
+            scope.encouragements[ndx] = "No streak yet! Get it started today!";
          }
          else if (crs.Enrollment.streak === 1) {
-            crs.Enrollment.encouragement = "1 day streak!";
+            scope.encouragements[ndx] = "1 day streak!";
          }
          else if (crs.Enrollment.streak < 5) {
-            crs.Enrollment.encouragement = crs.Enrollment.streak + " day streak! Keep it up!";
+            scope.encouragements[ndx] = crs.Enrollment.streak + " day streak! Keep it up!";
          }
          else {
-            crs.Enrollment.encouragement = "Incredible! " + crs.Enrollment.streak + " day streak! 🔥🔥🔥";
+            scope.encouragements[ndx] = "Incredible! " + crs.Enrollment.streak + " day streak! 🔥🔥🔥";
          }
       });
 
@@ -53,14 +55,18 @@ app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'ap
       });
    }
 
+   onlyShowAvailableCourses();
+
    // Get courses and available courses
    API.prss.enrs.get(scope.loggedUser.id).then(function(response) {
       scope.enrolledCourses = response.data.enrolled;
       scope.adminCourses = response.data.owned;
+      saveToCache("enrolled_courses", scope.enrolledCourses);
       return API.crss.get();
    })
    .then(function(response) {
       scope.availableCourses = response.data;
+      saveToCache("available_courses", scope.enrolledCourses);
       onlyShowAvailableCourses();
    })
    .catch(toastr.doErrorMessage(function(err) {}));;

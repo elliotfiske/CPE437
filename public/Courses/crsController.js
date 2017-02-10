@@ -1,14 +1,15 @@
 app.controller('crsController',
 ['$scope', '$state', '$stateParams', 'api', 'confirm', 'login', '$location', 'toastr',
 function(scope, $state, $stateParams, API, confirm, login, $location, toastr) {
-   scope.courseName = $stateParams.courseName; // TODO: gonna need to make a network call here I think, unfortunately.
+   scope.courseName = $stateParams.courseName;
 
    if (!login.isLoggedIn()) {
       $state.go('login');
    }
 
    scope.currDate = new Date();
-   scope.courseData = {};
+   scope.courseData = getFromCache("coursedata_" + scope.courseName)|| {};
+   scope.weeks = getFromCache("courseweeks_" + scope.courseName)|| [];
 
    scope.weekStatuses = [];
 
@@ -67,6 +68,8 @@ function(scope, $state, $stateParams, API, confirm, login, $location, toastr) {
                }
             });
          }
+
+         saveToCache("courseweeks_" + scope.courseName, scope.weeks);
       });
    });
 };
@@ -135,6 +138,7 @@ scope.getCourseData = function() {
    .then(function(course) {
       scope.courseData = course.data;
       scope.enrollment = course.data.Enrollments[0];
+      saveToCache("coursedata_" + scope.courseName, scope.courseData);
    })
    .catch(function(err) {
       if (err.data.tag === "notFound") {

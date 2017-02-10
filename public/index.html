@@ -53,7 +53,7 @@
 <script src="Challenges/chlController.js"></script>
 <script src="Challenges/newchlController.js"></script>
 <script src="Courses/crsController.js"></script>
-<script src="Courses/crsAdminController.js"></script>
+<script src="Courses/crsTeacherController.js"></script>
 <script src="Admin/adminController.js"></script>
 <script src="Student/studentController.js"></script>
 <script src="Util/notifyDlg.js"></script>
@@ -77,6 +77,7 @@
                      <li ng-class="page === 'login' ? 'active' : ''" ng-hide="loggedUser"><a href="#login">Log In</a></li>
                      <li ng-class="page === 'register' ? 'active' : ''" ng-hide="loggedUser"><a href="#register">Register</a></li>
                      <li ng-class="page === 'admin' ? 'active' : ''" ng-show="loggedUser && loggedUser.role === 2"><a href="#admin">Admin</a></li>
+                     <!-- <li ng-repeat="course in " -->
                      <li ng-show="loggedUser"><a href="#" ng-click='logout(true)'>Log Out</a></li>
                   </ul>
                </nav>
@@ -87,7 +88,7 @@
 
          <div class="mastfoot col-sm-12" style="z-index: 10">
             <div class="inner">
-               <p>This site was made with &lt;3 by Elliot Fiske. Please send questions, complaints, ideas, and memes to <a href="http://static1.fjcdn.com/comments/Thanks+mr+skeltal+_633906ba8531ccb8e3eac50034758c940.jpg" target="_blank">elliotfiske@gmail.com</a></p>
+               <p>This site was made with &lt;3 by Elliot Fiske. Please send questions, complaints, ideas, and memes to <a href="mailto:elliotfiske@gmail.com" target="_blank">elliotfiske@gmail.com</a></p>
             </div>
          </div>
       </div>

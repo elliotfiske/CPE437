@@ -1,4 +1,4 @@
-app.controller('crsAdminController',
+app.controller('crsTeacherController',
 ['$scope', '$state', '$stateParams', 'api', 'confirm', 'login', '$location', 'toasterror', '$q',
 function(scope, $state, $stateParams, API, confirm, login, $location, toastr, $q) {
   scope.courseName = $stateParams.courseName; // TODO: gonna need to make a network call here I think, unfortunately.

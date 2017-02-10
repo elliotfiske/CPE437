@@ -17916,7 +17916,7 @@ function $$SanitizeUriProvider() {
    *
    * @param {RegExp=} regexp New regexp to whitelist urls with.
    * @returns {RegExp|ng.$compileProvider} Current RegExp if called without value or self for
-   *    chaining otherwise.
+   *    chaining otherwise.   
    */
   this.imgSrcSanitizationWhitelist = function(regexp) {
     if (isDefined(regexp)) {
