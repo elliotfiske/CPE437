@@ -2,9 +2,9 @@
    <div class="row">
       <h1>{{ challenge.name }}</h1>
 
-      <p>{{ challenge.description }}</p>
+      <img src="/imgs/nye.png" width="300" height="300" style="display:block;"></img>
 
-      <img src="/imgs/nye.png" width="300" height="300" style="display: block"></img>
+      <p>{{ challenge.description }}</p>
 
       <hr />
 
@@ -51,6 +51,7 @@
       <h1>{{ challenge.name }}</h1>
 
       <p>{{ challenge.description }}</p>
+      <img src="{{challenge.image}}" width="300" style="display:block;" class="centered-guy"></img>
       <hr />
 
       <div ng-show="challenge.type == 'multchoice'">
