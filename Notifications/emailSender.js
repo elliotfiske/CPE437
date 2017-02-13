@@ -9,7 +9,7 @@ var BASE_URL = "https://polycommit.herokuapp.com"; // TODO: If this changes, cha
 
 var onHeroku = !!process.env.DYNO;
 if (!onHeroku) {
-   BASE_URL = "http://localhost:3000/";
+   BASE_URL = "http://localhost:3000";
 }
 
 fs.readFile('./resources/email-template.html', 'utf8', function(err, data) {

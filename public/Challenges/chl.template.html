@@ -1,10 +1,9 @@
 <div class="container-white" ng-show="challengeOpen">
    <div class="row">
       <h1>{{ challenge.name }}</h1>
-
-      <img src="/imgs/nye.png" width="300" height="300" style="display:block;"></img>
-
       <p>{{ challenge.description }}</p>
+
+      <img src="{{challenge.image}}" width="300" style="display:block;" class="centered-guy"></img>
 
       <hr />
 
@@ -41,7 +40,7 @@
    <div class="row" ng-hide="challenge.Attempts.length === 0">
       <h1>Previous Attempts</h1>
       <ul class="list-group">
-         <li class="list-group-item" ng-repeat="attempt in challenge.Attempts">{{attempt.input}}</li>
+         <li class="list-group-item" ng-repeat="attempt in challenge.Attempts" ng-class="{'list-group-item-success' : attempt.correct}">{{attempt.input}}</li>
       </ul>
    </div>
 </div>
