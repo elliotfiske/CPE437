@@ -10,7 +10,14 @@ app.controller('loginController',
          $state.go('home');
       })
       .catch(function(err) {
-         toastr.info("The activation email takes a minute or two to show up. Thank you for your patience!", "You need to activate your account!");
+         if (err.data.tag == "notActivated") {
+            toastr.info("The activation email takes a minute or two to show up. Thank you for your patience!", "You need to activate your account!");
+         }
+         else {
+            if (err.data.humanMessage) {
+               toastr.error(err.data.humanMessage, 'Oh no!');
+            }
+         }
       });
    }
 
