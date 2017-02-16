@@ -11,6 +11,7 @@ var Validator = function(req, res) {
 // List of errors, and their corresponding resource string tags
 Validator.Tags = {
    noLogin: "noLogin",              // No active session/login
+   notActivated: "notActivated",    // hasn't clicked activation email
    noPermission: "noPermission",    // Login lacks permission.
    missingField: "missingField",    // Field missing from request. Params[0] is field name
    badValue: "badValue",            // Field has bad value.  Params[0] gives field name

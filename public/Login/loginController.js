@@ -9,9 +9,9 @@ app.controller('loginController',
       .then(function() {
          $state.go('home');
       })
-      .catch(toastr.doErrorMessage(function(err) {
-         // whatever
-      }));
+      .catch(function(err) {
+         toastr.info("The activation email takes a minute or two to show up. Thank you for your patience!", "You need to activate your account!");
+      });
    }
 
    scope.goBack = function() {

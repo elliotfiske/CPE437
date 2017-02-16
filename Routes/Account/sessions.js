@@ -33,7 +33,7 @@ router.post('/', function(req, res) {
       return vld.check(person, Tags.badLogin, null, person, "No user found with that email.");
    })
    .then(function(person) {
-      return vld.check(!person.activationToken, Tags.badLogin, null, person, "You need to activate your account! Check your email.");
+      return vld.check(!person.activationToken, Tags.notActivated, null, person, "You need to activate your account! It might take a minute or two for the email to show up. Thank you for your patience!");
    })
    .then(function(person) {
       return vld.check(person.validPassword(req.body.password), Tags.badLogin, null, person, "Incorrect username or password.");
