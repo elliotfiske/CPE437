@@ -26,7 +26,7 @@ function checkAnswer(req) {
       if (Number.isNaN(input)) {
          throw new Error("Please enter a number!");
       }
-      else {
+      else if(input == answer) {
          result.score = 5;
          result.correct = true;
       }
