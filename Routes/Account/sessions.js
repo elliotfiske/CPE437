@@ -9,16 +9,18 @@ var sequelize = require('../sequelize.js');
 router.baseURL = '/Ssns';
 
 router.get('/', function(req, res) {
-   var body = [], ssn;
-
-   if (req._validator.checkAdmin()) {
+   var vld = req.validator;
+   return vld.checkAdmin()
+   .then(function() {
+      var body = [];
       for (cookie in ssnUtil.sessions) {
          ssn = ssnUtil.sessions[cookie];
          console.log("Session: " + cookie + ' -> ' + ssn);
          body.push({cookie: cookie, prsId: ssn.id, loginTime: ssn.loginTime});
       };
       res.status(200).json(body);
-   }
+   })
+   .catch(doErrorResponse(res));
 });
 
 router.post('/', function(req, res) {
@@ -28,7 +30,7 @@ router.post('/', function(req, res) {
       return sequelize.Person.scope(null).findOne({where: {email: req.body.email}});
    })
    .then(function(person) {
-      return vld.check(person, Tags.badLogin, null, person, "Incorrect username or password.");
+      return vld.check(person, Tags.badLogin, null, person, "No user found with that email.");
    })
    .then(function(person) {
       return vld.check(!person.activationToken, Tags.badLogin, null, person, "You need to activate your account! Check your email.");

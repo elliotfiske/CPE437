@@ -90,7 +90,7 @@ router.post('/', function(req, res) {
       console.log("PERSON FAM: " + JSON.stringify(result));
 
       // Send activation email
-      var subject = "You've been added to " + className + " on Commit!";
+      var subject = "Activate your account on Commit!";
       var body = "Welcome to Commit! Click on the link below to get started. I hope you enjoy using my app :)";
       var link = email.BASE_URL + "#/activation?token=" + result.activationToken;
       var textPreview = "Welcome to Commit! Click on this link to get started. I hope you enjoy using my app :) " + link;
@@ -110,7 +110,7 @@ router.get('/:id', function(req, res) {
       cnn.query('select id, email, name, createdAt, role from Person where id = ?', [req.params.id], function(err, prsArr) {
         if (vld.check(prsArr.length, Tags.notFound)) {
           res.json(prsArr);
-        }
+       }
         cnn.release();
       });
     });

@@ -11,7 +11,7 @@
 		<key>connection</key>
 		<dict>
 			<key>database</key>
-			<string>fart</string>
+			<string>observatory_api</string>
 			<key>host</key>
 			<string>127.0.0.1</string>
 			<key>name</key>
@@ -42,7 +42,7 @@
 		<key>session</key>
 		<dict>
 			<key>connectionEncoding</key>
-			<string>latin1</string>
+			<string>utf8</string>
 			<key>contentFilter</key>
 			<dict>
 				<key>filterComparison</key>
@@ -52,44 +52,42 @@
 				<key>filterField</key>
 				<string>RSA_Modulus_Bits</string>
 				<key>filterValue</key>
-				<string>512</string>
+				<string>2048</string>
 				<key>firstBetweenField</key>
 				<string></string>
 				<key>menuLabel</key>
-				<string>`RSA_Modulus_Bits` = '512'</string>
+				<string>`RSA_Modulus_Bits` = '2048'</string>
 				<key>secondBetweenField</key>
 				<string></string>
 			</dict>
 			<key>contentPageNumber</key>
-			<integer>3</integer>
+			<integer>6</integer>
 			<key>contentSelection</key>
 			<data>
-			YnBsaXN0MDDUAQIDBAUGNjdYJHZlcnNpb25YJG9iamVjdHNZJGFy
-			Y2hpdmVyVCR0b3ASAAGGoK0HCBUWFxgZHSQoLDA0VSRudWxs0wkK
-			CwwQFFdOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzow0OD4ACgAOA
-			BKMREhOABYAGgAiADFR0eXBlVHJvd3NUa2V5c18QJlNlbGVjdGlv
-			bkRldGFpbFR5cGVQcmltYXJ5S2V5ZWREZXRhaWxz0wkKCxobHKCg
-			gAfSHh8gIVokY2xhc3NuYW1lWCRjbGFzc2VzXxATTlNNdXRhYmxl
-			RGljdGlvbmFyeaMgIiNcTlNEaWN0aW9uYXJ5WE5TT2JqZWN00goL
-			JSehJoAJgAvSCykqK1lOUy5zdHJpbmeAClZjZXJ0aWTSHh8tLl8Q
-			D05TTXV0YWJsZVN0cmluZ6MtLyNYTlNTdHJpbmfSHh8xMl5OU011
-			dGFibGVBcnJheaMxMyNXTlNBcnJhedIeHyI1oiIjXxAPTlNLZXll
-			ZEFyY2hpdmVy0Tg5VGRhdGGAAQAIABEAGgAjAC0AMgA3AEUASwBS
-			AFoAZQBsAHAAcgB0AHYAegB8AH4AgACCAIcAjACRALoAwQDCAMMA
-			xQDKANUA3gD0APgBBQEOARMBFQEXARkBHgEoASoBMQE2AUgBTAFV
-			AVoBaQFtAXUBegF9AY8BkgGXAAAAAAAAAgEAAAAAAAAAOgAAAAAA
-			AAAAAAAAAAAAAZk=
+			YnBsaXN0MDDUAQIDBAUGOjtYJHZlcnNpb25YJG9iamVjdHNZJGFy
+			Y2hpdmVyVCR0b3ASAAGGoK8QDwcIFRYXGBkfICEoLDA0OFUkbnVs
+			bNMJCgsMEBRXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6MNDg+A
+			AoADgASjERITgAWABoAKgA5UdHlwZVRyb3dzVGtleXNfECZTZWxl
+			Y3Rpb25EZXRhaWxUeXBlUHJpbWFyeUtleWVkRGV0YWlsc9MJCgsa
+			HB6hG4AHoR2ACIAJVDU1MzQJ0iIjJCVaJGNsYXNzbmFtZVgkY2xh
+			c3Nlc18QE05TTXV0YWJsZURpY3Rpb25hcnmjJCYnXE5TRGljdGlv
+			bmFyeVhOU09iamVjdNIKCykroSqAC4AN0gstLi9ZTlMuc3RyaW5n
+			gAxSaWTSIiMxMl8QD05TTXV0YWJsZVN0cmluZ6MxMydYTlNTdHJp
+			bmfSIiM1Nl5OU011dGFibGVBcnJheaM1NydXTlNBcnJhedIiIyY5
+			oiYnXxAPTlNLZXllZEFyY2hpdmVy0Tw9VGRhdGGAAQAIABEAGgAj
+			AC0AMgA3AEkATwBWAF4AaQBwAHQAdgB4AHoAfgCAAIIAhACGAIsA
+			kACVAL4AxQDHAMkAywDNAM8A1ADVANoA5QDuAQQBCAEVAR4BIwEl
+			AScBKQEuATgBOgE9AUIBVAFYAWEBZgF1AXkBgQGGAYkBmwGeAaMA
+			AAAAAAACAQAAAAAAAAA+AAAAAAAAAAAAAAAAAAABpQ==
 			</data>
-			<key>contentSortCol</key>
-			<string>RSA_Modulus_Bits</string>
 			<key>contentSortColIsAsc</key>
 			<true/>
 			<key>contentViewport</key>
-			<string>{{0, 0}, {1240, 716}}</string>
+			<string>{{1537, 0}, {1240, 665}}</string>
 			<key>isToolbarVisible</key>
 			<true/>
 			<key>table</key>
-			<string>all_certs</string>
+			<string>certs</string>
 			<key>view</key>
 			<string>SP_VIEW_CUSTOMQUERY</string>
 			<key>windowVerticalDividerPosition</key>
@@ -104,6 +102,11 @@
 	<array/>
 	<key>queryHistory</key>
 	<array>
+		<string>SELECT MAX(id), MAX(Subject), MAX(RSA_Modulus_Bits), MAX(path), `RSA Public Key:Modulus` FROM certs WHERE RSA_Modulus_Bits &lt; 4096 GROUP BY `RSA Public Key:Modulus`</string>
+		<string>SELECT MAX(id), MAX(Subject), MAX(RSA_Modulus_Bits), MAX(path), `RSA Public Key:Modulus` FROM certs GROUP BY `RSA Public Key:Modulus` WHERE RSA_Modulus_Bits &lt; 4096</string>
+		<string>SELECT MAX(id), MAX(Subject), MAX(RSA_Modulus_Bits), MAX(path), `RSA Public Key:Modulus` FROM certs GROUP BY `RSA Public Key:Modulus`</string>
+		<string>SELECT id, DISTINCT `RSA Public Key:Modulus` FROM certs</string>
+		<string>SELECT DISTINCT `RSA Public Key:Modulus` FROM certs</string>
 		<string>SELECT certid FROM all_certs WHERE RSA_Modulus_Bits = 512 ORDER BY certid</string>
 		<string>SELECT certid FROM all_certs WHERE RSA_Modulus_Bits = 512 ORDER BY id</string>
 		<string>SELECT id FROM all_certs WHERE RSA_Modulus_Bits = 512 ORDER BY id</string>
@@ -119,11 +122,6 @@
 		<string>select * from valid_certs WHERE `X509v3 extensions:X509v3 Subject Alternative Name` LIKE '%facebook%' limit 10</string>
 		<string>select * from valid_certs WHERE `X509v3 extensions:X509v3 Subject Alternative Name` LIKE '%facebook%' limit 1</string>
 		<string>select id, `X509v3 extensions:X509v3 Subject Alternative Name` from valid_certs WHERE  id = 8  LIMIT 10</string>
-		<string>select id, 'X509v3 extensions:X509v3 Subject Alternative Name' from valid_certs WHERE  id = 8  LIMIT 10</string>
-		<string>select id, 'X509v3 extensions:X509v3 Subject Alternative Name' WHERE  id = 8  LIMIT 10</string>
-		<string>select * from valid_certs limit 1</string>
-		<string>select * from valid_certs WHERE limit 1</string>
-		<string>select id, 'X509v3 extensions:X509v3 Subject Alternative Name' from valid_certs WHERE  id &gt; 10  LIMIT 10</string>
 	</array>
 	<key>rdbms_type</key>
 	<string>mysql</string>

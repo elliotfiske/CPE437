@@ -1,5 +1,5 @@
 app.controller('chlController',
-['$scope', '$state', '$stateParams', 'api', 'confirm', 'login', 'toastr',
+['$scope', '$state', '$stateParams', 'api', 'confirm', 'login', 'toasterror',
 function(scope, $state, $stateParams, API, confirm, login, toastr) {
    var challengeName = $stateParams.challengeName;
 
@@ -30,15 +30,9 @@ function(scope, $state, $stateParams, API, confirm, login, toastr) {
          scope.challengeOpen = true;
       }
    })
-   .catch(function(err) {
-      if (err.tag == "notFound") {
-         toastr.error("Uh oh!", "Couldn't find a challenge called '"
-         + challengeName + "'");
-      }
-      else {
-         toastr.error("Uh oh!", err.errMsg);
-      }
-   });
+   .catch(toastr.doErrorMessage(function(err) {
+      // whatever
+   }));
 
    scope.answerNumerical = function() {
       scope.attempt.input = scope.attempt.numInput.toString();
@@ -52,12 +46,9 @@ function(scope, $state, $stateParams, API, confirm, login, toastr) {
 
    scope.createAttempt = function() {
       API.crss.challenge.attempt.post($stateParams.courseName, $stateParams.challengeName, scope.attempt)
-      .then(function(wasCorrect) {
-         if (wasCorrect.data.score >= 2) {
+      .then(function(attemptInfo) {
+         if (attemptInfo.data.correct) {
             toastr.success("Correct!", "Good job!");
-         }
-         else if (wasCorrect.data.score == 1) {
-            toastr.warning("That answer wasn't quite right. Consider rephrasing it!");
          }
          else {
             toastr.error("Sorry! That's incorrect.");

@@ -1,5 +1,5 @@
 app.controller('loginController',
- ['$scope', '$state', 'login', '$rootScope', function(scope, $state, login, $rootScope) {
+ ['$scope', '$state', 'login', '$rootScope', 'toasterror', function(scope, $state, login, $rootScope, toastr) {
    $rootScope.page = 'login';
 
    scope.user = {};
@@ -9,9 +9,9 @@ app.controller('loginController',
       .then(function() {
          $state.go('home');
       })
-      .catch(function(err) {
-         scope.error = 'Login failed';
-      });
+      .catch(toastr.doErrorMessage(function(err) {
+         // whatever
+      }));
    }
 
    scope.goBack = function() {
