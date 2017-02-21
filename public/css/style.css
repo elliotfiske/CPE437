@@ -245,6 +245,8 @@ body {
   margin-right: 10px;
 }
 
+
+
 .accordion-list-fix .disabled {
   background-color: white;
   color: lightgrey;
@@ -265,6 +267,12 @@ body {
 
 .chl-empty {
    cursor: pointer;
+}
+
+.chl-disabled {
+    background-color: #ddd;
+    color: #8A8A8A !important;
+    cursor: default;
 }
 
 /* Clever blank glyphicon from stack overflow */

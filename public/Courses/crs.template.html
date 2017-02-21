@@ -26,7 +26,7 @@
                Week {{$index + 1}}
                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': weekStatuses[$index].open, 'glyphicon-chevron-right': !weekStatuses[$index].open}"></i>
             </uib-accordion-heading>
-            <a ng-repeat="challenge in week.Challenges" ng-click="viewChallenge(challenge.sanitizedName)" class="list-group-item" ng-class="challenge.stateClass">
+            <a ng-repeat="challenge in week.Challenges" ng-click="viewChallenge(challenge.sanitizedName, challenge.stateClass)" class="list-group-item" ng-class="challenge.stateClass">
                {{challenge.name}}
                <i class="pull-left glyphicon chl-status"
                ng-class="{'glyphicon-ok': challenge.stateClass == 'chl-solved', 'glyphicon-alert' : challenge.stateClass == 'chl-overdue' || challenge.stateClass == 'chl-open'}"></i>

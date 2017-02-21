@@ -125,8 +125,10 @@ scope.createChallenge = function() {
    $state.go('newchallenge', {courseName: $stateParams.courseName, week: 0, day: 0, type: "multchoice" });
 };
 
-scope.viewChallenge = function(challengeName) {
-   $state.go('challenge', { courseName: scope.courseName, challengeName: challengeName});
+scope.viewChallenge = function(challengeName, stateClass) {
+   if (stateClass !== 'chl-disabled') {
+      $state.go('challenge', { courseName: scope.courseName, challengeName: challengeName});
+   }
 };
 
 scope.goAdmin = function() {
