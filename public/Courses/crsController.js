@@ -38,7 +38,7 @@ function(scope, $state, $stateParams, API, confirm, login, $location, toastr) {
                week.stateClass = "week-complete";
                week.panelClass = "panel-success";
                week.Challenges.forEach(function(chl) {
-                  var chlOpenDate = new Date(chl.startDate);
+                  var chlOpenDate = new Date(chl.openDate);
                   chlCloseDate.setDate(chlOpenDate.getDate() + 1);
 
                   if (chlOpenDate > now) { // challenge isn't available yet
