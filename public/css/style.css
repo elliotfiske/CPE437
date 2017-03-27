@@ -295,6 +295,11 @@ body {
     background-color: #FFDBDB;
 }
 
+.btn-calpoly {
+   background-color: #005A45;
+   color: white;
+}
+
 /*#fix-tab-border>a {
   border-color: rgba(0, 0, 0, 0);
   padding: 11px;

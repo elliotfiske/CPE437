@@ -1,33 +1,7 @@
-app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'api', 'toasterror', function(scope, $state, login, $rootScope, API, toastr) {
+app.controller('homeController', ['$scope', '$state', '$rootScope', 'api', 'toasterror', function(scope, $state, $rootScope, API, toastr) {
    $rootScope.page = 'home';
 
-   scope.enrolledCourses = getFromCache("enrolled_courses") || [];
-   scope.availableCourses = getFromCache("available_courses") || [];
-   scope.adminCourses = [];
-   scope.encouragements = [];
-
-   if (!login.isLoggedIn()) {
-      $state.go('login');
-      return;
-   }
-
-   scope.gotoCourse = function(courseName, asAdmin) {
-      if (asAdmin) {
-         $state.go('courseAdmin', {courseName: courseName});
-      }
-      else {
-         $state.go('course', {courseName: courseName});
-      }
-   };
-
-   scope.enrollCourse = function(courseName) {
-      API.crss.enrs.post(courseName, scope.loggedUser.email)
-         .then(function(response) {
-            scope.enrolledCourses = response.data;
-            onlyShowAvailableCourses();
-         })
-         .catch(toastr.doErrorMessage(function(err) {}));
-   };
+   // If there's the "ticket" GET parameter, ask my ~users page if the ticket is legit
 
    function onlyShowAvailableCourses() {
       scope.enrolledCourses.forEach(function(crs, ndx) {
@@ -58,16 +32,10 @@ app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'ap
    onlyShowAvailableCourses();
 
    // Get courses and available courses
-   API.prss.enrs.get(scope.loggedUser.id).then(function(response) {
+   API.logEntry.get().then(function(response) {
       scope.enrolledCourses = response.data.enrolled;
       scope.adminCourses = response.data.owned;
       saveToCache("enrolled_courses", scope.enrolledCourses);
-      return API.crss.get();
-   })
-   .then(function(response) {
-      scope.availableCourses = response.data;
-      saveToCache("available_courses", scope.enrolledCourses);
-      onlyShowAvailableCourses();
    })
    .catch(toastr.doErrorMessage(function(err) {}));;
 }])

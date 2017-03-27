@@ -11,7 +11,7 @@
 		<key>connection</key>
 		<dict>
 			<key>database</key>
-			<string>observatory_api</string>
+			<string>slither</string>
 			<key>host</key>
 			<string>127.0.0.1</string>
 			<key>name</key>
@@ -44,24 +44,9 @@
 			<key>connectionEncoding</key>
 			<string>utf8</string>
 			<key>contentFilter</key>
-			<dict>
-				<key>filterComparison</key>
-				<string>=</string>
-				<key>filterComparisonTag</key>
-				<integer>0</integer>
-				<key>filterField</key>
-				<string>RSA_Modulus_Bits</string>
-				<key>filterValue</key>
-				<string>2048</string>
-				<key>firstBetweenField</key>
-				<string></string>
-				<key>menuLabel</key>
-				<string>`RSA_Modulus_Bits` = '2048'</string>
-				<key>secondBetweenField</key>
-				<string></string>
-			</dict>
+			<dict/>
 			<key>contentPageNumber</key>
-			<integer>6</integer>
+			<integer>1</integer>
 			<key>contentSelection</key>
 			<data>
 			YnBsaXN0MDDUAQIDBAUGOjtYJHZlcnNpb25YJG9iamVjdHNZJGFy
@@ -69,27 +54,27 @@
 			bNMJCgsMEBRXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6MNDg+A
 			AoADgASjERITgAWABoAKgA5UdHlwZVRyb3dzVGtleXNfECZTZWxl
 			Y3Rpb25EZXRhaWxUeXBlUHJpbWFyeUtleWVkRGV0YWlsc9MJCgsa
-			HB6hG4AHoR2ACIAJVDU1MzQJ0iIjJCVaJGNsYXNzbmFtZVgkY2xh
-			c3Nlc18QE05TTXV0YWJsZURpY3Rpb25hcnmjJCYnXE5TRGljdGlv
-			bmFyeVhOU09iamVjdNIKCykroSqAC4AN0gstLi9ZTlMuc3RyaW5n
-			gAxSaWTSIiMxMl8QD05TTXV0YWJsZVN0cmluZ6MxMydYTlNTdHJp
-			bmfSIiM1Nl5OU011dGFibGVBcnJheaM1NydXTlNBcnJhedIiIyY5
-			oiYnXxAPTlNLZXllZEFyY2hpdmVy0Tw9VGRhdGGAAQAIABEAGgAj
-			AC0AMgA3AEkATwBWAF4AaQBwAHQAdgB4AHoAfgCAAIIAhACGAIsA
-			kACVAL4AxQDHAMkAywDNAM8A1ADVANoA5QDuAQQBCAEVAR4BIwEl
-			AScBKQEuATgBOgE9AUIBVAFYAWEBZgF1AXkBgQGGAYkBmwGeAaMA
-			AAAAAAACAQAAAAAAAAA+AAAAAAAAAAAAAAAAAAABpQ==
+			HB6hG4AHoR2ACIAJUTUJ0iIjJCVaJGNsYXNzbmFtZVgkY2xhc3Nl
+			c18QE05TTXV0YWJsZURpY3Rpb25hcnmjJCYnXE5TRGljdGlvbmFy
+			eVhOU09iamVjdNIKCykroSqAC4AN0gstLi9ZTlMuc3RyaW5ngAxS
+			aWTSIiMxMl8QD05TTXV0YWJsZVN0cmluZ6MxMydYTlNTdHJpbmfS
+			IiM1Nl5OU011dGFibGVBcnJheaM1NydXTlNBcnJhedIiIyY5oiYn
+			XxAPTlNLZXllZEFyY2hpdmVy0Tw9VGRhdGGAAQAIABEAGgAjAC0A
+			MgA3AEkATwBWAF4AaQBwAHQAdgB4AHoAfgCAAIIAhACGAIsAkACV
+			AL4AxQDHAMkAywDNAM8A0QDSANcA4gDrAQEBBQESARsBIAEiASQB
+			JgErATUBNwE6AT8BUQFVAV4BYwFyAXYBfgGDAYYBmAGbAaAAAAAA
+			AAACAQAAAAAAAAA+AAAAAAAAAAAAAAAAAAABog==
 			</data>
 			<key>contentSortColIsAsc</key>
 			<true/>
 			<key>contentViewport</key>
-			<string>{{1537, 0}, {1240, 665}}</string>
+			<string>{{1, 0}, {1239, 715}}</string>
 			<key>isToolbarVisible</key>
 			<true/>
 			<key>table</key>
-			<string>certs</string>
+			<string>LogEntry</string>
 			<key>view</key>
-			<string>SP_VIEW_CUSTOMQUERY</string>
+			<string>SP_VIEW_CONTENT</string>
 			<key>windowVerticalDividerPosition</key>
 			<real>200</real>
 		</dict>
@@ -102,6 +87,12 @@
 	<array/>
 	<key>queryHistory</key>
 	<array>
+		<string>SELECT * FROM LogEntry WHERE score &gt; 0 AND generation = 0 ORDER BY -LOG(RAND()) / score LIMIT 1</string>
+		<string>SELECT * FROM LogEntry WHERE score &gt; 0 ORDER BY -LOG(RAND()) / score LIMIT 1</string>
+		<string>SELECT * FROM LogEntry WHERE score &gt; 0 ORDER BY -LOG(RAND()) / score</string>
+		<string>SELECT * FROM LogEntry WHERE score &gt; -100 ORDER BY -LOG(RAND()) / score</string>
+		<string>drop table LogEntry</string>
+		<string>DELETE FROM LogEntry WHERE 1 = 1</string>
 		<string>SELECT MAX(id), MAX(Subject), MAX(RSA_Modulus_Bits), MAX(path), `RSA Public Key:Modulus` FROM certs WHERE RSA_Modulus_Bits &lt; 4096 GROUP BY `RSA Public Key:Modulus`</string>
 		<string>SELECT MAX(id), MAX(Subject), MAX(RSA_Modulus_Bits), MAX(path), `RSA Public Key:Modulus` FROM certs GROUP BY `RSA Public Key:Modulus` WHERE RSA_Modulus_Bits &lt; 4096</string>
 		<string>SELECT MAX(id), MAX(Subject), MAX(RSA_Modulus_Bits), MAX(path), `RSA Public Key:Modulus` FROM certs GROUP BY `RSA Public Key:Modulus`</string>
@@ -116,12 +107,6 @@
 		<string>select * from `valid_certs`</string>
 		<string>ALTER TABLE `Attempt` ADD test DATETIME</string>
 		<string>ALTER TABLE `seen` ADD test DATETIME</string>
-		<string>select * from valid_certs WHERE `X509v3 extensions:X509v3 Subject Alternative Name` LIKE '%.edu%' limit 10</string>
-		<string>select * from valid_certs WHERE `X509v3 extensions:X509v3 Subject Alternative Name` LIKE '%calpoly%' limit 10</string>
-		<string>select * from valid_certs WHERE `X509v3 extensions:X509v3 Subject Alternative Name` LIKE '%poly%' limit 10</string>
-		<string>select * from valid_certs WHERE `X509v3 extensions:X509v3 Subject Alternative Name` LIKE '%facebook%' limit 10</string>
-		<string>select * from valid_certs WHERE `X509v3 extensions:X509v3 Subject Alternative Name` LIKE '%facebook%' limit 1</string>
-		<string>select id, `X509v3 extensions:X509v3 Subject Alternative Name` from valid_certs WHERE  id = 8  LIMIT 10</string>
 	</array>
 	<key>rdbms_type</key>
 	<string>mysql</string>
