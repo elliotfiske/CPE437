@@ -77,7 +77,7 @@ app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'ap
       // Make call to our backend to validate ticket.
 
       API.validate.post($state.params.ticket).then(function(response) {
-         console.log("Logged in as ", response.username);
+         console.log("Logged in as ", response.data.username);
       })
       .catch(toastr.doErrorMessage(function(err) {}));
    }

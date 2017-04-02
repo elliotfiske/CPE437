@@ -31,10 +31,23 @@ router.post('/validateticket', function(req, res) {
    request(options).then(function (response) {
       console.log("Body: ", JSON.stringify(response));
       splitResponse = response.body.split("\n");
-      return vld.check(splitResponse[0] === "yes", Tags.noPermission, null, splitResponse, "There's something wrong with Cal Poly's servers! I'll check it out..");
+      return vld.check(splitResponse[0] === "yes", Tags.noPermission, null, splitResponse[1], "There's something wrong with Cal Poly's servers! I'll check it out..");
    })
-   .then(function(splitResponse) {
-      res.json({username: splitResponse[1]});
+   .then(function(email) {
+      // OK, now we have to make a session for the user and junk
+      return sequelize.Person.findOne({where: {email: email}});
+   })
+   .then(function(person) {
+      if (!person) {
+         return sequelize.Person.create({email: email, role: 0});
+      }
+      else {
+         return Promise.resolve(person);
+      }
+   })
+   .then(function(person) {
+      var cookie = ssnUtil.makeSession(person, res);
+      res.location(router.baseURL + '/' + cookie).end();
    })
    .catch(doErrorResponse(res));
 });
