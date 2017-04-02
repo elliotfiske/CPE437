@@ -49,9 +49,11 @@ app.use (function (req, res, next) {
       return;
    }
 
-   if (req.secure) {
+   if (req.connection.encrypted) {
+      console.log("Move along sir");
       next();
    } else {
+      console.log("GOTHCA AI ASDJFI AO");
       res.redirect('https://' + req.headers.host + req.url);
    }
 });
