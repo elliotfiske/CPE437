@@ -42,6 +42,7 @@ app.use(Session.router);
 
 // Redirect to HTTPS always
 app.use (function (req, res, next) {
+   console.log("Whadduuppp");
    var onHeroku = !!process.env.DYNO;
    if (!onHeroku) {
       // Forget it, we're on localhost
