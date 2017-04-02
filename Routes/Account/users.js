@@ -1,5 +1,6 @@
 var Express = require('express');
 var connections = require('../Connections.js');
+var ssnUtil = require('../Session.js');
 var Tags = require('../Validator.js').Tags;
 var doErrorResponse = require('../Validator.js').doErrorResponse;
 var router = Express.Router({caseSensitive: false});
