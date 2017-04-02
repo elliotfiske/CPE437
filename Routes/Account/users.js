@@ -17,6 +17,11 @@ function sendResult(res, status) {
   }
 }
 
+router.get('/validateticket', function(req, res) {
+   var ticket = req.params.ticket;
+   
+});
+
 router.get('/', function(req, res) {
   var specifier = req.query.email || !req.session.isAdmin() && req.session.email;
 

@@ -46,6 +46,7 @@ angular.module('mainApp')
    }
 
    return {
+      validate: typicalGet('prss/validateTicket'),
       prss: {
          activate: typicalPost('prss/activate'),
          get: typicalGet('prss'),

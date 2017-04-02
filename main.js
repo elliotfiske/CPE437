@@ -45,6 +45,7 @@ app.use(function(req, res, next) {
    req._validator = new _Validator(req, res);
 
    console.log(req.method, req.path);
+   console.log('cmoon:', req.path === '/prss/validateticket')
 
    if (req.path.startsWith("/peer")) {
       next();
@@ -52,7 +53,7 @@ app.use(function(req, res, next) {
    }
 
    if (req.session || (req.method === 'POST' &&
-    (req.path === '/prss' || req.path === '/ssns' || req.path === "/prss/activate")))
+    (req.path === '/prss' || req.path === '/ssns' || req.path === '/prss/validateticket')))
       next();
    else
       res.status(401).json([{tag: Validator.Tags.noLogin}]);

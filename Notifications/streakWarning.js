@@ -22,7 +22,7 @@ function doStreakWarnings(enrs, dude) {
 }
 
 // Set up recurring streak reminder jobs for all students
-sequelize.Person.findAll({where: {role: 0}})
+sequelize.Person.findAll({where: {role: 2}})
 .then(function(everyone) {
    everyone.forEach(function(dude) {
 

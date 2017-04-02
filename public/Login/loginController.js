@@ -4,6 +4,7 @@ app.controller('loginController',
 
    scope.user = {};
 
+
    scope.login = function() {
       login.login(scope.user.email, scope.user.password)
       .then(function() {

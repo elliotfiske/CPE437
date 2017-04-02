@@ -18,7 +18,7 @@ app.config(['$stateProvider', '$urlRouterProvider',
 
       $stateProvider
       .state('home',  {
-         url: '/',
+         url: '/?t={ticket}',
          templateUrl: 'Home/home.template.html',
          controller: 'homeController',
       })
