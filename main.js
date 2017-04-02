@@ -19,6 +19,24 @@ var async = require('async');
 
 var app = express();
 
+// Redirect to HTTPS always
+app.use (function (req, res, next) {
+   var onHeroku = !!process.env.DYNO;
+   if (!onHeroku) {
+      // Forget it, we're on localhost
+      next();
+      return;
+   }
+
+   if (req.protocol.toLowerCase() === 'https') {
+      console.log("Move along sir");
+      next();
+   } else {
+      console.log("GOTHCA AI ASDJFI AO", req.protocol.toLowerCase());
+      res.redirect('https://' + req.headers.host + req.url);
+   }
+});
+
 // Static paths to be served like index.html and all client side js
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -36,32 +54,6 @@ app.use(cookieParser());
 
 // Set up Session on req if available
 app.use(Session.router);
-
-// Redirect to HTTPS always
-// app.use (function (req, res, next) {
-//    var onHeroku = !!process.env.DYNO;
-//    if (!onHeroku) {
-//       // Forget it, we're on localhost
-//       next();
-//       return;
-//    }
-//
-//    if (req.protocol.toLowerCase() === 'https') {
-//       console.log("Move along sir");
-//       next();
-//    } else {
-//       console.log("GOTHCA AI ASDJFI AO", req.protocol.toLowerCase());
-//       res.redirect('https://' + req.headers.host + req.url);
-//    }
-// });
-
-
-// ??
-var http = express.createServer();
-http.get('*', function(req, res) {
-   res.redirect('https://' + req.headers.host + req.url);
-});
-http.listen(8080);
 
 app.use(function(req, res, next) {
    req.validator = new Validator(req, res);
