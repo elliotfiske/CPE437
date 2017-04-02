@@ -27,16 +27,18 @@ router.post('/validateticket', function(req, res) {
       uri: 'https://users.csc.calpoly.edu/~efiske/login.php?validateticket=' + ticket,
       resolveWithFullResponse: true    //  <---  <---  <---  <---
    };
+   console.log("We here");
+   res.json("What's going on..?")
 
-   request(options).then(function (response) {
-      console.log("Body: ", JSON.stringify(response));
-      splitResponse = response.body.split("\n");
-      return vld.check(splitResponse[0] === "yes", Tags.noPermission, null, splitResponse, "There's something wrong with Cal Poly's servers! I'm checking it out..");
-   })
-   .then(function(splitResponse) {
-      res.json({username: splitResponse[1]});
-   })
-   .catch(doErrorResponse(res));
+   // request(options).then(function (response) {
+   //    console.log("Body: ", JSON.stringify(response));
+   //    splitResponse = response.body.split("\n");
+   //    return vld.check(splitResponse[0] === "yes", Tags.noPermission, null, splitResponse, "There's something wrong with Cal Poly's servers! I'll check it out..");
+   // })
+   // .then(function(splitResponse) {
+   //    res.json({username: splitResponse[1]});
+   // })
+   // .catch(doErrorResponse(res));
 });
 
 router.get('/', function(req, res) {
