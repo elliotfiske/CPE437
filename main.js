@@ -23,22 +23,22 @@ var app = express();
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Redirect to HTTPS always
-app.use (function (req, res, next) {
-   var onHeroku = !!process.env.DYNO;
-   if (!onHeroku) {
-      // Forget it, we're on localhost
-      next();
-      return;
-   }
-
-   if (req.protocol.toLowerCase() === 'https') {
-      console.log("Move along sir");
-      next();
-   } else {
-      console.log("GOTHCA AI ASDJFI AO", req.protocol.toLowerCase());
-      res.redirect('https://' + req.headers.host + req.url);
-   }
-});
+// app.use (function (req, res, next) {
+//    var onHeroku = !!process.env.DYNO;
+//    if (!onHeroku) {
+//       // Forget it, we're on localhost
+//       next();
+//       return;
+//    }
+//
+//    if (req.protocol.toLowerCase() === 'https') {
+//       console.log("Move along sir");
+//       next();
+//    } else {
+//       console.log("GOTHCA AI ASDJFI AO", req.protocol.toLowerCase());
+//       res.redirect('https://' + req.headers.host + req.url);
+//    }
+// });
 
 // consider all paths as lowercase yo
 app.use(function(req, res, next) {
