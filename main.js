@@ -38,22 +38,30 @@ app.use(cookieParser());
 app.use(Session.router);
 
 // Redirect to HTTPS always
-app.use (function (req, res, next) {
-   var onHeroku = !!process.env.DYNO;
-   if (!onHeroku) {
-      // Forget it, we're on localhost
-      next();
-      return;
-   }
+// app.use (function (req, res, next) {
+//    var onHeroku = !!process.env.DYNO;
+//    if (!onHeroku) {
+//       // Forget it, we're on localhost
+//       next();
+//       return;
+//    }
+//
+//    if (req.protocol.toLowerCase() === 'https') {
+//       console.log("Move along sir");
+//       next();
+//    } else {
+//       console.log("GOTHCA AI ASDJFI AO", req.protocol.toLowerCase());
+//       res.redirect('https://' + req.headers.host + req.url);
+//    }
+// });
 
-   if (req.protocol.toLowerCase() === 'https') {
-      console.log("Move along sir");
-      next();
-   } else {
-      console.log("GOTHCA AI ASDJFI AO", req.protocol.toLowerCase());
-      res.redirect('https://' + req.headers.host + req.url);
-   }
+
+// ??
+var http = express.createServer();
+http.get('*', function(req, res) {
+   res.redirect('https://' + req.headers.host + req.url);
 });
+http.listen(8080);
 
 app.use(function(req, res, next) {
    req.validator = new Validator(req, res);
@@ -69,7 +77,6 @@ app.use(function(req, res, next) {
       next();
    else
       res.status(401).json([{tag: Validator.Tags.noLogin}]);
-
 });
 
 
