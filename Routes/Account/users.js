@@ -48,7 +48,7 @@ router.post('/validateticket', function(req, res) {
    })
    .then(function(person) {
       var cookie = ssnUtil.makeSession(person, res);
-      res.location(router.baseURL + '/' + cookie).end();
+      res.location(router.baseURL + '/' + cookie).json({email: person.email}).end();
    })
    .catch(doErrorResponse(res));
 });

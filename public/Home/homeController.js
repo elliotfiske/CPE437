@@ -77,7 +77,21 @@ app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'ap
       // Make call to our backend to validate ticket.
 
       API.validate.post($state.params.ticket).then(function(response) {
-         console.log("Logged in as ", response.data.username);
+         if (window.smartlook) {
+            smartlook('tag', 'email', response.data.email);
+         }
+
+         var location = response.headers().location.split('/');
+         return API.Ssns.get(location[location.length - 1]);
+      })
+      .then(function(response) {
+         return API.prss.get(response.data.prsId);
+      })
+      .then(function(reponse) {
+         var user = reponse.data[0];
+         localStorage.user = JSON.stringify(user);
+         $rootScope.loggedUser = user;
+         return user;
       })
       .catch(toastr.doErrorMessage(function(err) {}));
    }
