@@ -34,9 +34,6 @@ app.use(bodyParser.json());
 // Attach cookies to req as req.cookies.<cookieName>
 app.use(cookieParser());
 
-app.use(passport.initialize());
-app.use(passport.session());
-
 // Set up Session on req if available
 app.use(Session.router);
 
@@ -49,7 +46,7 @@ app.use (function (req, res, next) {
       return;
    }
 
-   if (req.connection.encrypted) {
+   if (req.protocol.toLowerCase() === 'https') {
       console.log("Move along sir");
       next();
    } else {
