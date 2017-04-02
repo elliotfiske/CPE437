@@ -42,7 +42,6 @@ app.use(Session.router);
 
 // Redirect to HTTPS always
 app.use (function (req, res, next) {
-   console.log("Whadduuppp");
    var onHeroku = !!process.env.DYNO;
    if (!onHeroku) {
       // Forget it, we're on localhost
@@ -50,11 +49,9 @@ app.use (function (req, res, next) {
       return;
    }
 
-   var schema = (req.headers['x-forwarded-proto'] || '').toLowerCase();
    if (req.secure) {
       next();
    } else {
-      console.log("GOTCHA HAHAHAHAH");
       res.redirect('https://' + req.headers.host + req.url);
    }
 });
@@ -62,9 +59,6 @@ app.use (function (req, res, next) {
 app.use(function(req, res, next) {
    req.validator = new Validator(req, res);
    req._validator = new _Validator(req, res);
-
-   console.log(req.method, req.path);
-   console.log('cmoon:', req.path === '/prss/validateticket')
 
    if (req.path.startsWith("/peer")) {
       next();
