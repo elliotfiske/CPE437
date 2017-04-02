@@ -19,6 +19,9 @@ var async = require('async');
 
 var app = express();
 
+// Static paths to be served like index.html and all client side js
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Redirect to HTTPS always
 app.use (function (req, res, next) {
    var onHeroku = !!process.env.DYNO;
@@ -36,9 +39,6 @@ app.use (function (req, res, next) {
       res.redirect('https://' + req.headers.host + req.url);
    }
 });
-
-// Static paths to be served like index.html and all client side js
-app.use(express.static(path.join(__dirname, 'public')));
 
 // consider all paths as lowercase yo
 app.use(function(req, res, next) {
