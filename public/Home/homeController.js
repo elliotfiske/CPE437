@@ -68,12 +68,14 @@ app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'ap
       .catch(toastr.doErrorMessage(function(err) {}));
    }
 
-   API.validation.get()
-
    if ($state.params.ticket) {
       console.log("Ticket time! Logging you in with", $state.params.ticket);
-      // Make call to users.csc to validate ticket.
+      // Make call to our backend to validate ticket.
 
+      API.validation.post($state.params.ticket).then(function(response) {
+         console.log("Logged in as ", response.username);
+      })
+      .catch(toastr.doErrorMessage(function(err) {}));
    }
    else {
       console.log("No ticket? no problem!");

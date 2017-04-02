@@ -46,7 +46,11 @@ angular.module('mainApp')
    }
 
    return {
-      validate: typicalGet('prss/validateTicket'),
+      validate: {
+         post: function(ticketToValidate) {
+            return post('prss/validateTicket', {ticket: ticketToValidate});
+         }
+      },
       prss: {
          activate: typicalPost('prss/activate'),
          get: typicalGet('prss'),
