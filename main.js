@@ -50,7 +50,7 @@ app.use (function (req, res, next) {
       console.log("Move along sir");
       next();
    } else {
-      console.log("GOTHCA AI ASDJFI AO");
+      console.log("GOTHCA AI ASDJFI AO", req.protocol.toLowerCase());
       res.redirect('https://' + req.headers.host + req.url);
    }
 });
