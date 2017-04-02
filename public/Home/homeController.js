@@ -1,4 +1,6 @@
-app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'api', 'toasterror', function(scope, $state, login, $rootScope, API, toastr) {
+app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'api', 'toasterror', '$location', function(scope, $state, login, $rootScope, API, toastr, $location) {
+
+
    $rootScope.page = 'home';
 
    scope.enrolledCourses = getFromCache("enrolled_courses") || [];
