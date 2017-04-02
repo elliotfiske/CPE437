@@ -51,7 +51,7 @@ app.use (function (req, res, next) {
    }
 
    var schema = (req.headers['x-forwarded-proto'] || '').toLowerCase();
-   if (schema === 'https') {
+   if (req.secure) {
       next();
    } else {
       console.log("GOTCHA HAHAHAHAH");
