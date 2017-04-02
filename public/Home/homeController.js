@@ -1,5 +1,5 @@
 app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'api', 'toasterror', '$location', '$window', function(scope, $state, login, $rootScope, API, toastr, $location, $window) {
-   if ($loction.protocol() !== 'https') {
+   if ($location.protocol() !== 'https' && $location.host() !== 'localhost') {
       $window.location.href = $location.absUrl().replace('http', 'https');
    }
 
