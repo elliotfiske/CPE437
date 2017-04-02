@@ -19,7 +19,7 @@ function sendResult(res, status) {
 }
 
 router.post('/validateticket', function(req, res) {
-   var ticket = req.params.ticket;
+   var ticket = req.body.ticket;
    var vld = req.validator;
 
    var options = {

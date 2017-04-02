@@ -8,8 +8,6 @@ var Tags = require('../Routes/Validator.js').Tags;
 var FacebookStrategy = require('passport-facebook').Strategy;
 // var GoogleStrategy = require('passport-google').Strategy;
 
-console.log("lol " + process.env.TEST);
-
 var onHeroku = !!process.env.DYNO;
 if (!onHeroku) {
   var config = require('./developmentKeys');

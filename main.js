@@ -40,6 +40,24 @@ app.use(passport.session());
 // Set up Session on req if available
 app.use(Session.router);
 
+// Redirect to HTTPS always
+app.use (function (req, res, next) {
+   var onHeroku = !!process.env.DYNO;
+   if (!onHeroku) {
+      // Forget it, we're on localhost
+      next();
+      return;
+   }
+
+   var schema = (req.headers['x-forwarded-proto'] || '').toLowerCase();
+   if (schema === 'https') {
+      next();
+   } else {
+      console.log("GOTCHA HAHAHAHAH");
+      res.redirect('https://' + req.headers.host + req.url);
+   }
+});
+
 app.use(function(req, res, next) {
    req.validator = new Validator(req, res);
    req._validator = new _Validator(req, res);
