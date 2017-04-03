@@ -28,7 +28,7 @@ sequelize.Person.findAll({where: {role: 2}})
 
       var recurrenceRule = new schedule.RecurrenceRule();
       recurrenceRule.hour = 22;
-      recurrenceRule.minute = 17;
+      recurrenceRule.minute = 0;
 
       var j = schedule.scheduleJob(recurrenceRule, function() {
          sequelize.Enrollment.findAll({where: {personEmail: dude.email}})

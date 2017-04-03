@@ -81,14 +81,14 @@ var Person = sequelize.define('Person', {
    },
    userSettings: {
       type: Sequelize.STRING,
-      default: "{}"
+      defaultValue: "{}"
    },
    activationToken: {
       type: Sequelize.STRING
    },
    checkedDisclaimer: {
       type: Sequelize.BOOLEAN,
-      default: false
+      defaultValue: false
    }
 }, {
    freezeTableName: true,
@@ -135,8 +135,8 @@ var Course = sequelize.define('Course', {
       type: Sequelize.INTEGER
    },
    hidden: {
-      type: Sequelize.BOOLEAN,
-      default: false
+      type: Sequelize.INTEGER,
+      defaultValue: 0
    }
 }, {
    freezeTableName: true,

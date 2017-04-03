@@ -58,7 +58,7 @@ router.post('/', updateStreak, function(req, res) {
    .then(function() {
       return sequelize.Person.findById(prsId);
    })
-   .then(funtion(user) {
+   .then(function(user) {
       return vld.check(!req.body.input.test || req.session.isTeacherOrAdmin(), Tags.noPermission, null, user, "You can't turn on test mode, you're not a teacher!");
    })
    .then(function(user) {

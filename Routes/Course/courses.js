@@ -34,7 +34,6 @@ router.get('/', function(req, res) {
 
   sequelize.Course.findAll({where: {hidden: 0}})
   .then(function(courseList) {
-    // TODO: also grab today's challenge
     res.json(courseList);
   })
   .catch(doErrorResponse(res));
@@ -124,7 +123,7 @@ router.get('/:courseName', getCourseModel, updateStreak, function(req, res) {
       });
    })
    .then(function(enr) {
-      return vld.check(enr, Tags.noPermission, null, enr, "You're not enrolled in that class.");
+      return vld.check(enr || req.session.isAdmin(), Tags.noPermission, null, enr, "You're not enrolled in that class. Sorry!");
    })
    .then(function(enr) {
       var courseResult = req.course.get({plain: true});
@@ -146,7 +145,7 @@ router.get('/:name/chls', function(req, res) {
   .spread(function(person, course) {
     return person.hasClass(course)
     .then(function(isEnrolled) {
-      return vld.check(isEnrolled || course.ownerId === prs.id || req.isAdmin(), Tags.noPermission);
+      return vld.check(isEnrolled || course.ownerId === prs.id || req.session.isAdmin(), Tags.noPermission);
     })
     .then(function() {
       return course.getWeeks({include: [{model: sequelize.Challenge}]});
