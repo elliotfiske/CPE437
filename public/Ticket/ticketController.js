@@ -20,7 +20,7 @@ app.controller('ticketController',
       var user = reponse.data[0];
       localStorage.user = JSON.stringify(user);
       $rootScope.loggedUser = user;
-      return user;
+      $state.go('home');
    })
    .catch(toastr.doErrorMessage(function(err) {}));
 }])
