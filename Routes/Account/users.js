@@ -36,15 +36,14 @@ router.post('/validateticket', function(req, res) {
    })
    .then(function(email) {
       // OK, now we have to make a session for the user and junk
-      return sequelize.Person.findOne({where: {email: email}});
-   })
-   .then(function(person) {
-      if (!person) {
-         return sequelize.Person.create({email: email, role: 0});
-      }
-      else {
-         return Promise.resolve(person);
-      }
+      return sequelize.Person.findOne({where: {email: email}}).then(function(person) {
+         if (!person) {
+            return sequelize.Person.create({email: email, role: 0});
+         }
+         else {
+            return Promise.resolve(person);
+         }
+      });
    })
    .then(function(person) {
       var cookie = ssnUtil.makeSession(person, res);
