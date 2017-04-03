@@ -1,5 +1,5 @@
 app.controller('ticketController',
- ['$scope', '$state', '$stateParams', 'login', '$rootScope', 'toasterror', function(scope, $state, $stateParams, login, $rootScope, toastr) {
+ ['$scope', '$state', '$stateParams', 'login', '$rootScope', 'API', 'toasterror', function(scope, $state, $stateParams, login, $rootScope, API, toastr) {
    $rootScope.page = 'ticket';
 
    console.log("Ticket time! Logging you in with", $stateParams.ticket);
