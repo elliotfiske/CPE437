@@ -33,6 +33,10 @@ router.post('/', function(req, res) {
       return vld.check(person, Tags.badLogin, null, person, "No user found with that email.");
    })
    .then(function(person) {
+      // password === null --> registered thru cal poly
+      return vld.check(!!person.password, Tags.badValue, null, person, "Please use the Cal Poly login instead!");
+   })
+   .then(function(person) {
       return vld.check(person.validPassword(req.body.password), Tags.badLogin, null, person, "Incorrect password. Send me an email if you forgot it!");
    })
    .then(function(person) {

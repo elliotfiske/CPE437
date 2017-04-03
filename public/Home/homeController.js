@@ -1,5 +1,11 @@
 app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'api', 'toasterror', '$location', '$window', function(scope, $state, login, $rootScope, API, toastr, $location, $window) {
-   if ($location.protocol() !== 'https' && $location.host() !== 'localhost') {
+
+   // Redirect to my localhost login script if we're on localhost
+   scope.local = "";
+   if ($location.host() === 'localhost' || $location.host() === '127.0.0.1' ) {
+      scope.local = "";
+   }
+   else if ($location.protocol() !== 'https') {
       $window.location.href = $location.absUrl().replace('http', 'https');
    }
 

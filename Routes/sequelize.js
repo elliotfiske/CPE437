@@ -131,6 +131,10 @@ var Course = sequelize.define('Course', {
    },
    ownerId: {
       type: Sequelize.INTEGER
+   },
+   hidden: {
+      type: Sequelize.BOOLEAN,
+      default: false
    }
 }, {
    freezeTableName: true,

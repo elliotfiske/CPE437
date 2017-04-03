@@ -4,7 +4,7 @@
       <a href="#login" class="btn btn-lg btn-primary">Log In</a>
       <a href="#register" class="btn btn-lg btn-default">Register</a>
    </p> -->
-   <a href="https://users.csc.calpoly.edu/~efiske/login.php" class="btn btn-calpoly btn-lg" role="button">Login with Cal Poly</a>
+   <a ng-href="https://users.csc.calpoly.edu/~efiske/login{{local}}.php" class="btn btn-calpoly btn-lg" role="button">Login with Cal Poly</a>
 </div>
 
 <div class="container-white">
@@ -45,8 +45,8 @@
       </div>
    </div>
 
-   <div class="container-white row">
-      <h2>Available Courses – Winter 2016</h2>
+   <div class="container-white row" ng-show="!!loggedUser">
+      <h2>Available Courses – Spring 2017</h2>
       <div class="col-sm-12 col-md-6" ng-repeat="course in availableCourses">
          <div class="panel panel-default">
             <div class="panel-heading">
