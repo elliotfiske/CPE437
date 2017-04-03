@@ -87,15 +87,17 @@ var Person = sequelize.define('Person', {
       type: Sequelize.STRING
    },
    checkedDisclaimer: {
-      type: Sequelize.BOOLEAN
+      type: Sequelize.BOOLEAN,
+      default: false
    }
 }, {
    freezeTableName: true,
    hooks: {
       beforeCreate: function(newUser, options) {
          newUser.activationToken = crypto.randomBytes(16).toString('hex');
-         newUser.password = Person.generateHash(newUser.password);
-         console.log("Hey man is this working", newUser.activationToken);
+         if (newUser.password) {
+            newUser.password = Person.generateHash(newUser.password);
+         }
       },
    },
    instanceMethods: {
