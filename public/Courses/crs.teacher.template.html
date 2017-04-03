@@ -5,7 +5,7 @@
 
   <div class="row">
     <uib-accordion close-others="false">
-      <uib-accordion-group  ng-repeat="week in weeks" id="test1"
+      <uib-accordion-group  ng-repeat="week in weeks"
       class="list-group accordion-list-fix panel panel-success {{week.stateClass}}"
       is-open="weekStatuses[$index].open" is-disabled="week.stateClass == 'week-disabled'">
         <uib-accordion-heading>

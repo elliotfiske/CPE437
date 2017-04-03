@@ -53,7 +53,7 @@ app.config(['$stateProvider', '$urlRouterProvider',
          controller: 'newchlController'
       })
       .state('challenge', {
-         url: '/course/{courseName}/challenges/{challengeName}',
+         url: '/course/{courseName}/challenges/{challengeName}?t={test}',
          templateUrl: 'Challenges/chl.template.html',
          controller: 'chlController'
       })

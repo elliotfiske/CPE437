@@ -144,7 +144,7 @@ angular.module('mainApp')
                get: function(courseName, challengeName) {
                   return get('crss/' + courseName + '/challenge/' + challengeName + '/attempt');
                },
-               post: function(courseName, challengeName, attemptBody) {
+               post: function(courseName, challengeName, attemptBody ) {
                   return post('crss/' + courseName + '/challenge/' + challengeName + '/attempt', attemptBody);
                }
             }

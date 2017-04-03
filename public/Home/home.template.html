@@ -27,18 +27,21 @@
    <div class="row" ng-show="loggedUser.role >= 0">
       <h1>Enrolled Classes</h1>
       <h3 ng-show="enrolledCourses.length === 0">You're not enrolled in any classes! :(</h3>
-      <div class="panel panel-success" ng-repeat="course in enrolledCourses">
-         <div class="panel-heading">
-            <h2 class="panel-title">{{course.name}}</h2>
-         </div>
-         <div class="panel-body list-group">
-            <div class="row list-group-item">
-               <div class="col-xs-6"><b>Points: </b>{{course.Enrollment.creditsEarned}}</div>
-               <div class="col-xs-6"><span class="pull-right"><b>Streak: </b>{{encouragements[$index]}}</span></div>
+
+      <div class="col-xs-12 col-sm-6">
+         <div class="panel panel-info" ng-repeat="course in enrolledCourses">
+            <div class="panel-heading">
+               <h2 class="panel-title">{{course.name}}</h2>
             </div>
-            <div class="row list-group-item">
-               <div class="btn btn-primary pull-right" ng-click="gotoCourse(course.sanitizedName, false)">
-                  {{ loggedUser.role > 0 ? 'View Course as Student' : 'See all challenges'}}
+            <div class="panel-body list-group">
+               <div class="row list-group-item">
+                  <div class="col-xs-6"><b>Points: </b>{{course.Enrollment.creditsEarned}}</div>
+                  <div class="col-xs-6"><span class="pull-right"><b>Streak: </b>{{encouragements[$index]}}</span></div>
+               </div>
+               <div class="row list-group-item">
+                  <div class="btn btn-primary pull-right" ng-click="gotoCourse(course.sanitizedName, false)">
+                     {{ loggedUser.role > 0 ? 'View Course as Student' : 'See all challenges'}}
+                  </div>
                </div>
             </div>
          </div>
@@ -47,7 +50,7 @@
 
    <div class="container-white row" ng-show="!!loggedUser">
       <h2>Available Courses – Spring 2017</h2>
-      <div class="col-sm-12 col-md-6" ng-repeat="course in availableCourses">
+      <div class="col-xs-12 col-sm-6" ng-repeat="course in availableCourses">
          <div class="panel panel-default">
             <div class="panel-heading">
                <button class="btn btn-info pull-right" type="button" ng-click="enrollCourse(course.sanitizedName)">Enroll</button>

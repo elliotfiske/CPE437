@@ -112,7 +112,7 @@ function(scope, $state, $stateParams, API, confirm, login, $location, toastr, $q
   }
 
   scope.viewChallenge = function(challenge, weekIndex, dayIndex) {
-     $state.go('challenge', { courseName: scope.courseName, challengeName: challenge.sanitizedName});
+     $state.go('challenge', { courseName: scope.courseName, challengeName: challenge.sanitizedName, test: true});
   }
 
   scope.getCourseData = function() {

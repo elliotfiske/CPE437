@@ -58,6 +58,12 @@ router.post('/', updateStreak, function(req, res) {
    .then(function() {
       return sequelize.Person.findById(prsId);
    })
+   .then(funtion(user) {
+      return vld.check(!req.body.input.test || req.session.isTeacherOrAdmin(), Tags.noPermission, null, user, "You can't turn on test mode, you're not a teacher!");
+   })
+   .then(function(user) {
+      return vld.check(user.checkedDisclaimer, Tags.noTerms, null, user, "You haven't accepted the terms and conditions!");
+   })
    .then(function(user) {
       return user.hasClass(req.course)
       .then(function(isEnrolled) {
@@ -111,7 +117,8 @@ router.post('/', updateStreak, function(req, res) {
                personId: prsId,
                challengeName: req.params.challengeName,
                correct: result.correct,
-               pointsEarned: result.score
+               pointsEarned: result.score,
+               attsLeft: attempts.length - req.challenge.attsAllowed
             });
          })
          .then(function() {

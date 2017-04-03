@@ -45,15 +45,16 @@ function(scope, $state, $stateParams, API, confirm, login, toastr) {
    };
 
    scope.createAttempt = function() {
+      scope.attempt.test = $stateParams.test;
       API.crss.challenge.attempt.post($stateParams.courseName, $stateParams.challengeName, scope.attempt)
       .then(function(attemptInfo) {
          if (attemptInfo.data.correct) {
             toastr.success("Correct!", "Good job!");
+            $state.go('course', {courseName: $stateParams.courseName});
          }
          else {
-            toastr.error("Sorry! That's incorrect.");
+            toastr.error("Sorry! That's incorrect. You have ");
          }
-         $state.go('course', {courseName: $stateParams.courseName});
       })
       .catch(function(err) {
          toastr.error("Uh oh!", "Error: " + err.message);
