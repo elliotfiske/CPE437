@@ -144,7 +144,7 @@ router.get('/:id', function(req, res) {
 
   if (vld.checkPrsOK(req.params.id)) {
     connections.getConnection(res, function(cnn) {
-      cnn.query('select id, email, name, createdAt, role from Person where id = ?', [req.params.id], function(err, prsArr) {
+      cnn.query('select id, email, name, createdAt, role, checkedDisclaimer from Person where id = ?', [req.params.id], function(err, prsArr) {
         if (vld.check(prsArr.length, Tags.notFound)) {
           res.json(prsArr);
        }
