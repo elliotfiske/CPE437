@@ -64,6 +64,10 @@ app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'ap
 
    // Get courses and available courses
    if (scope.loggedUser) {
+      if (!scope.loggedUser.checkedDisclaimer) {
+         $state.go('activation');
+         return;
+      }
       API.prss.enrs.get(scope.loggedUser.id).then(function(response) {
          scope.enrolledCourses = response.data.enrolled;
          scope.adminCourses = response.data.owned;

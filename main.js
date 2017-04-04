@@ -2,7 +2,6 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var passport = require('./Database/passport');
-var sequelize = require('./Routes/sequelize');
 
 var bodyParser = require('body-parser');
 var Session = require('./Routes/Session.js');
@@ -10,6 +9,7 @@ var Validator = require('./Routes/Validator.js');
 var _Validator = require('./Routes/_Validator.js');
 var cnnPool = require('./Routes/Connections.js');
 var sequelize = require('./Routes/sequelize.js');
+var doErrorResponse = require('./Routes/Validator.js').doErrorResponse;
 
 var emails = require('./Notifications/streakWarning.js');
 var flashes = require('./Notifications/flashChallenges.js');
@@ -129,6 +129,35 @@ app.delete('/DB', function(req, res) {
    .catch(function(err) {
       res.status(500).json({error: "OH NO: " + JSON.stringify(err)}).end();
    });
+});
+
+app.post('/savesesh', function(req, res) {
+   return req.validator.checkAdmin()
+   .then(function() {
+      var sesh = JSON.stringify(Session.sessions);
+      return sequelize.SessionSaver.findOrCreate({where: {id: 1}})
+      .then(function(savior) {
+         return savior[0].update({session: sesh});
+      });
+   })
+   .then(function(savior) {
+      return res.json(savior.session);
+   })
+   .catch(doErrorResponse(res));
+});
+
+app.post('/restoresesh', function(req, res) {
+   return req.validator.checkAdmin()
+   .then(function() {
+      return sequelize.SessionSaver.findById(1);
+   })
+   .then(function(savior) {
+      Session.sessions = JSON.parse(savior.session);
+   })
+   .then(function() {
+      res.json("Restored " + Object.keys(Session.sessions).length + " sessions. Yay!");
+   })
+   .catch(doErrorResponse(res));
 });
 
 // Error output

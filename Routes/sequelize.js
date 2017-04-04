@@ -2,6 +2,7 @@ var Sequelize = require('sequelize');
 var Promise = require('bluebird');
 var crypto = require('crypto');
 var bcrypt = require('bcrypt');
+var Session = require('./Session.js');
 
 var sanitize = require("sanitize-filename");
 
@@ -341,6 +342,13 @@ var Week = sequelize.define('Week', {
   }
 });
 
+var SessionSaver = sequelize.define('SessionSaver', {
+   session: {
+      type: Sequelize.TEXT('medium'),
+      defaultValue: ""
+   }
+});
+
 /* ASSOCIATIONS! */
 ShopItem.belongsToMany(Person, {through: 'StudentPurchase'});
 Person.belongsToMany(ShopItem, {through: 'StudentPurchase'});
@@ -381,8 +389,8 @@ Challenge.belongsTo(Week);
 
 sequelize.sync().then(function() {
    return Person.scope(null).findOrCreate({
-      where: {email: 'Admin@11.com', checkedDisclaimer: 1},
-      defaults: {name: 'AdminMan', password: process.env.ADMIN_PASSWORD, role: 2}
+      where: {email: 'Admin@11.com'},
+      defaults: {name: 'AdminMan', password: process.env.ADMIN_PASSWORD, role: 2, checkedDisclaimer: 1}
    });
 })
 .then(function(admin) {
@@ -390,8 +398,15 @@ sequelize.sync().then(function() {
       activationToken: null
    });
 })
-.then(function(ok) {
-   console.log(JSON.stringify(ok));
+.then(function() {
+   return SessionSaver.findById(1);
+})
+.then(function(savior) {
+   if (!savior) {
+      return;
+   }
+   Session.restoreSessions(JSON.parse(savior.session));
+   console.log("Restored", Object.keys(Session.sessions).length, "sessions. Yay!");
 })
 .catch(function(err) {
    console.error("EXTREMELY UNLIKELY ERROR DETECTED " + JSON.stringify(err.message), err.stack);
@@ -408,5 +423,6 @@ module.exports = {
    Enrollment: Enrollment,
    MultChoiceAnswer: MultChoiceAnswer,
    ChallengeTag: ChallengeTag,
+   SessionSaver: SessionSaver,
    do: sequelize
 };

@@ -162,15 +162,17 @@ router.post('/activate', function(req, res) {
       return vld.check(req.body.checkedDisclaimer, Tags.noTerms, null, null, "Please accept the disclaimer to continue!");
    })
    .then(function() {
-      return sequelize.Person.findOne({where:
-         {activationToken: req.body.token}
-      });
+      // return sequelize.Person.findOne({where:
+      //    {activationToken: req.body.token}
+      // });
+      return sequelize.Person.findById(req.session.id);
    })
    .then(function(person) {
+      // return vld.check(person, Tags.badLogin, null, person, "Incorrect token...");
       return vld.check(person, Tags.badLogin, null, person, "Incorrect token...");
    })
    .then(function(person) {
-      return person.update({activationToken: null, checkedDisclaimer: true});
+      return person.update({activationToken: null, checkedDisclaimer: 1});
    })
    .then(function(person) {
       res.sendStatus(200);

@@ -1,67 +1,30 @@
-<div class="row" ng-hide="activationError !== null">
+<div class="row">
    <div class="col-sm-12">
       <h1>Welcome to Commit!</h1>
       <h4>I hope you enjoy using it. If you run into any problems, email me at <a href="mailto:elliotfiske@gmail.com">elliotfiske@gmail.com</a>.</h4>
       <br>
       <h2>INFORMED CONSENT TO PARTICIPATE IN A RESEARCH PROJECT, <b>"Commit"</b>:</h2>
-      A research project on education software is being conducted by student Elliot Fiske and Dr. Foaad Khosmood in the Department of Computer Science and Software Engineering at Cal Poly, San Luis Obispo. The purpose of this study is to study the effectiveness of immersive educational software.
-      <br>
-      <br>
-      You are being asked to take part in this study by signing up for your indicated class on http://polycommit.herokuapp.com/ and answering a simple course-related question each day.  Your participation will take approximately 2-5 minutes per day, at whatever time is most convenient for you. The total time cost to you will depend on the number of days you choose to participate in the project. If you agree to participate, you also agree to allow your professor to compare your answers with your course performance and provide the researchers with the comparisons; your name will not be given to the researchers.  Please be aware that you are not required to participate in this research and you may discontinue your participation at any time without penalty or loss of benefits.
-      <br>
-      <br>
-      There are no risks anticipated with participating with the study. Your Cal Poly email address will be used strictly for logging in and notifications. Your confidentiality will be protected by storing the emails on a secure server. Stored email addresses will be destroyed upon completion of the research. After the course, your score on certain test questions for the course will be compared against your web activities by your professor. Anonymized data provided by the professor will be used by researchers to draw conclusions about the effectiveness of the learning methods.
-      <br>
-      <br>
-      Potential benefits associated with the study include being entered into a drawing for small rewards such as a $20 Amazon gift card. In addition, participation in the study gives you access to a study tool pre-loaded with questions that will help you study for a specific class, as well as a points-based incentive to study at regular intervals. Potential benefits include developing new instructional approaches using educational software.
-      <br>
-      <br>
-      All participants in the study can earn entries into a random drawing for a $20 Amazon gift card. There will be 3 such prizes available, and around 100 students are expected to participate. To earn an entry, students must complete a 1-week streak within the app. Anybody may email elliotfiske@gmail.com to receive a free entry, once per week. Participation in the study is not required to enter the raffle. Upon conclusion of the study at the end of the quarter, a random number generator will be used to select 3 random entries to receive a $20 Amazon gift card. There is expected to be roughly a 1 in 30 chance of winning.
-      <br>
-      <br>
-      If you have questions regarding this study or would like to be informed of the results when the study is completed, please feel free to contact Elliot Fiske (elliotfiske@gmail.com) or Foaad Khosmood (foaad@calpoly.edu).  If you have concerns regarding the manner in which the study is conducted, you may contact Dr. Michael Black, Chair of the Cal Poly Institutional Review Board, at (805) 756-2894, mblack@calpoly.edu, or Dr. Dean Wendt, Dean of Research, at (805) 756-1508, dwendt@calpoly.edu.
-      <br>
-      <br>
-      If you agree to voluntarily participate in this research project as described, please indicate your agreement by checking below.  Please save one copy of this form for your reference, and thank you for your participation in this research.
-      <label class="pull-right"><input type="checkbox" id="cbox1" ng-model="checkarino">&nbsp;I have read the above disclaimer</label>
-      <br>
-      <button type="submit" class="btn btn-primary pull-right" ng-disabled="!checkarino" ng-click="activate()">Get Started!</button>
-   </div>
-</div>
-<br />
-<br />
-<div class="row" ng-hide="activationError !== null">
-   <div class="col-sm-6 col-sm-offset-3">
-      <form class="form-horizontal" ng-submit="activate()" ng-hide="true"> <!-- hidden unless we pre-enroll somebody -->
-         <fieldset class="form-group">
-            <label for="first" class="control-label col-sm-4 col-xs-2">Your Name</label>
-            <div class="col-sm-8 col-xs-10">
-               <input id="name" type="text" class="form-control" placeholder="Make a Name For Yourself" ng-model="user.name">
-            </div>
-         </fieldset>
-         <fieldset class="form-group">
-            <label for="password" class="control-label col-sm-4 col-xs-2">Password</label>
-            <div class="col-sm-8 col-xs-10">
-               <input id="password" type="password" class="form-control" placeholder="Password" ng-model="user.password">
-            </div>
-         </fieldset>
-         <fieldset class="form-group" ng-class="confPass !== user.password ? 'has-error' : ''">
-            <label for="password" class="control-label col-sm-4 col-xs-2">Confirm Password</label>
-            <div class="col-sm-8 col-xs-10">
-               <input id="confirm-password" type="password" class="form-control" placeholder="Once More With Feeling" ng-model="confPass">
-            </div>
-         </fieldset>
-         <div class="form-group">
-            <div class="col-sm-8 col-sm-offset-4 col-xs-10 col-xs-offset-2 text-left">
-               <button type="submit" class="btn btn-primary" ng-disabled="!user.password || user.password !== confPass">Submit</button>
-            </div>
+      <textarea rows="10" style="width: 100%;" readonly>
+A research project on education software is being conducted by student Elliot Fiske and Dr. Foaad Khosmood in the Department of Computer Science and Software Engineering at Cal Poly, San Luis Obispo. The purpose of this study is to study the effectiveness of immersive educational software.
+
+You are being asked to take part in this study by signing up for your indicated class on http://polycommit.herokuapp.com/ and answering a simple course-related question each day.  Your participation will take approximately 2-5 minutes per day, at whatever time is most convenient for you. The total time cost to you will depend on the number of days you choose to participate in the project. If you agree to participate, you also agree to allow your professor to compare your answers with your course performance and provide the researchers with the comparisons; your name will not be given to the researchers.  Please be aware that you are not required to participate in this research and you may discontinue your participation at any time without penalty or loss of benefits.
+
+There are no risks anticipated with participating with the study. Your Cal Poly email address will be used strictly for logging in and notifications. Your confidentiality will be protected by storing the emails on a secure server. Stored email addresses will be destroyed upon completion of the research. After the course, your score on certain test questions for the course will be compared against your web activities by your professor. Anonymized data provided by the professor will be used by researchers to draw conclusions about the effectiveness of the learning methods.
+
+Potential benefits associated with the study include being entered into a drawing for small rewards such as a $20 Amazon gift card. In addition, participation in the study gives you access to a study tool pre-loaded with questions that will help you study for a specific class, as well as a points-based incentive to study at regular intervals. Potential benefits include developing new instructional approaches using educational software.
+
+All participants in the study can earn entries into a random drawing for a $20 Amazon gift card. There will be 3 such prizes available, and around 100 students are expected to participate. To earn an entry, students must complete a 1-week streak within the app. Anybody may email elliotfiske@gmail.com to receive a free entry, once per week. Participation in the study is not required to enter the raffle. Upon conclusion of the study at the end of the quarter, a random number generator will be used to select 3 random entries to receive a $20 Amazon gift card. There is expected to be roughly a 1 in 30 chance of winning.
+
+If you have questions regarding this study or would like to be informed of the results when the study is completed, please feel free to contact Elliot Fiske (elliotfiske@gmail.com) or Foaad Khosmood (foaad@calpoly.edu).  If you have concerns regarding the manner in which the study is conducted, you may contact Dr. Michael Black, Chair of the Cal Poly Institutional Review Board, at (805) 756-2894, mblack@calpoly.edu, or Dr. Dean Wendt, Dean of Research, at (805) 756-1508, dwendt@calpoly.edu.</textarea>
+      <div style="text-align: left;">If you agree to voluntarily participate in this research project as described, please indicate your agreement by checking below.  Please save one copy of this form for your reference, and thank you for your participation in this research.</div>
+      <div class="row">
+         <div class="col-xs-6" style="text-align:left;">
+            <label><input type="checkbox" id="cbox1" ng-model="checkarino">&nbsp;I have read the above disclaimer</label>
          </div>
-      </form>
-
-
+         <div class="col-xs-6">
+            <button type="submit" class="btn btn-primary pull-right" ng-disabled="!checkarino" ng-click="activate()">Get Started!</button>
+         </div>
+      </div>
+      <br>
    </div>
-</div>
-
-<div class="row" ng-show="activationError  !== null">
-   <h4>Oh no! It looks like you've got an old activation token. Email me if you have any trouble logging in: <a href="mailto:elliotfiske@gmail.com">elliotfiske@gmail.com</a></h4>
 </div>
