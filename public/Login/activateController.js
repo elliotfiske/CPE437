@@ -8,6 +8,7 @@ function(scope, $state, $stateParams, login, $rootScope, toastr, API) {
    scope.activate = function() {
       API.prss.activate({token: "calpoly", checkedDisclaimer: scope.checkarino})
       .then(function() {
+         $rootScope.loggedUser.checkedDisclaimer = 1;
          $state.go('home');
          toastr.success("Have fun!", "Thank you!")
       })
