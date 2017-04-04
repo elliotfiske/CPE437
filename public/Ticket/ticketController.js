@@ -2,6 +2,8 @@ app.controller('ticketController',
  ['$scope', '$state', '$stateParams', 'login', '$rootScope', 'api', 'toasterror', function(scope, $state, $stateParams, login, $rootScope, API, toastr) {
    $rootScope.page = 'ticket';
 
+   window.alert("HEY HEY HEY!");
+
    console.log("Ticket time! Logging you in with", $stateParams.ticket);
    // Make call to our backend to validate ticket.
 
