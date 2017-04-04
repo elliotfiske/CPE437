@@ -33,9 +33,7 @@ var app = angular.module('mainApp', [
 
    return toastr;
 }])
-.service('login', ['$rootScope', 'api', '$state', function($rootScope, API, $state){
-   $rootScope.loggedUser = null;
-
+.service('login', ['$rootScope', 'api', '$state', function($rootScope, API, $state) {
    if (localStorage.user) {
       $rootScope.loggedUser = JSON.parse(localStorage.user);
       API.prss.get($rootScope.loggedUser.id)

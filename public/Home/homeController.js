@@ -81,31 +81,4 @@ app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'ap
       })
       .catch(toastr.doErrorMessage(function(err) {}));
    }
-
-   if ($state.params.ticket) {
-      console.log("Ticket time! Logging you in with", $state.params.ticket);
-      // Make call to our backend to validate ticket.
-
-      API.validate.post($state.params.ticket).then(function(response) {
-         if (window.smartlook) {
-            smartlook('tag', 'email', response.data.email);
-         }
-
-         var location = response.headers().location.split('/');
-         return API.Ssns.get(location[location.length - 1]);
-      })
-      .then(function(response) {
-         return API.prss.get(response.data.prsId);
-      })
-      .then(function(reponse) {
-         var user = reponse.data[0];
-         localStorage.user = JSON.stringify(user);
-         $rootScope.loggedUser = user;
-         $state.go('home');
-      })
-      .catch(toastr.doErrorMessage(function(err) {}));
-   }
-   else {
-      console.log("No ticket? no problem!");
-   }
 }])
