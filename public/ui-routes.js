@@ -33,7 +33,7 @@ app.config(['$stateProvider', '$urlRouterProvider',
          controller: 'loginController',
       })
       .state('ticket', {
-         url: '/ticket/{ticket}',
+         url: '/ticket/{ticket}?j={justVisiting}',
          templateUrl: 'Ticket/ticket.template.html',
          controller: 'ticketController',
       })
@@ -66,5 +66,10 @@ app.config(['$stateProvider', '$urlRouterProvider',
          url: '/activation?t={token}',
          templateUrl: 'Login/activate.template.html',
          controller: 'activateController'
+      })
+      .state('about', {
+         url: '/about',
+         templateUrl: 'About/about.template.html',
+         controller: 'aboutController'
       })
    }]);

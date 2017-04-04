@@ -56,6 +56,7 @@
 <script src="Courses/crsController.js"></script>
 <script src="Courses/crsTeacherController.js"></script>
 <script src="Admin/adminController.js"></script>
+<script src="About/aboutController.js"></script>
 <script src="Student/studentController.js"></script>
 <script src="Util/notifyDlg.js"></script>
 <script src="Util/confirm.js"></script>
@@ -71,12 +72,12 @@
       <div class="cover-container">
          <div class="masthead clearfix" id="header">
             <div class="inner">
-               <h3 class="masthead-brand">Commit</h3>
+               <h3 class="masthead-brand" ng-click="goHome()" style="cursor: pointer;">Commit</h3>
                <nav>
                   <ul class="nav masthead-nav">
                      <li ng-class="page === 'home' ? 'active' : ''" ng-show="loggedUser"><a href="#">Home</a></li>
-                     <li ng-class="page === 'login' ? 'active' : ''" ng-hide="loggedUser"><a href="#login">Log In</a></li>
-                     <li ng-class="page === 'register' ? 'active' : ''" ng-hide="loggedUser"><a href="#register">Register</a></li>
+                     <li ng-class="page === 'login' ? 'active' : ''" ng-hide="loggedUser"><a href="#about">About</a></li>
+                     <!-- <li ng-class="page === 'register' ? 'active' : ''" ng-hide="loggedUser"><a href="#register">Register</a></li> -->
                      <li ng-class="page === 'admin' ? 'active' : ''" ng-show="loggedUser && loggedUser.role === 2"><a href="#admin">Admin</a></li>
                      <!-- <li ng-repeat="course in " -->
                      <li ng-show="loggedUser"><a href="#" ng-click='logout(true)'>Log Out</a></li>

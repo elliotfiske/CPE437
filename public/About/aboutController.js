@@ -1,7 +1,7 @@
-app.controller('activateController',
+app.controller('aboutController',
 ['$scope', '$state', '$stateParams', 'login', '$rootScope', 'toasterror', 'api',
 function(scope, $state, $stateParams, login, $rootScope, toastr, API) {
-   $rootScope.page = 'activation';
+   $rootScope.page = 'about';
 
    if ($stateParams.justVisiting) {
       scope.hideButtons = true;

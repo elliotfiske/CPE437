@@ -56,6 +56,11 @@ var app = angular.module('mainApp', [
       globalCache = {};
    };
 
+   // This should go somewhere else, if I ever cared.
+   $rootScope.goHome = function() {
+      $state.go('home');
+   };
+
    return {
       login: function(email, password) {
          return API.Ssns.post({ email: email, password: password })
