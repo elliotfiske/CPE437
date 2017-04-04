@@ -87,8 +87,8 @@ var Person = sequelize.define('Person', {
       type: Sequelize.STRING
    },
    checkedDisclaimer: {
-      type: Sequelize.BOOLEAN,
-      defaultValue: false
+      type: Sequelize.INTEGER,
+      defaultValue: 0
    }
 }, {
    freezeTableName: true,
@@ -381,7 +381,7 @@ Challenge.belongsTo(Week);
 
 sequelize.sync().then(function() {
    return Person.scope(null).findOrCreate({
-      where: {email: 'Admin@11.com'},
+      where: {email: 'Admin@11.com', checkedDisclaimer: 1},
       defaults: {name: 'AdminMan', password: process.env.ADMIN_PASSWORD, role: 2}
    });
 })

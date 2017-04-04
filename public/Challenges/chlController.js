@@ -52,8 +52,13 @@ function(scope, $state, $stateParams, API, confirm, login, toastr) {
             toastr.success("Correct!", "Good job!");
             $state.go('course', {courseName: $stateParams.courseName});
          }
+         else if (attemptInfo.data.attsLeft > 0) {
+            var attempts = attemptInfo.data.attsLeft == 1 ? " attempt " : " attempts ";
+            toastr.error("Sorry! That's incorrect. You have " + attemptInfo.data.attsLeft + attempts + "left.");
+         }
          else {
-            toastr.error("Sorry! That's incorrect. You have ");
+            $state.go('course', {courseName: $stateParams.courseName});
+            toastr.error("Sorry! That's incorrect. Don't worry, you still got points for that question.");
          }
       })
       .catch(function(err) {

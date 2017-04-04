@@ -38,120 +38,123 @@ function(scope, $state, $stateParams, API, confirm, login, $location, toastr) {
                week.stateClass = "week-complete";
                week.panelClass = "panel-success";
                week.Challenges.forEach(function(chl) {
+                  chl.scoringAttempts = chl.Attempts.sort(function(a, b) {
+                     return b.pointsEarned - a.pointsEarned;
+                  });
                   var chlOpenDate = new Date(chl.openDate);
                   chlCloseDate.setDate(chlOpenDate.getDate() + 1);
 
-                  if (chlOpenDate > now) { // challenge isn't available yet
-                  chl.stateClass = "chl-disabled";
-               }
-               else if (chl.Attempts[0] && chl.Attempts[0].correct) {
-                  chl.stateClass = "chl-solved";
-               }
-               else if (chl.Attempts.length >= 1) {
-                  chl.stateClass = "chl-attempted";
-               }
-               else if (chlCloseDate > now) {
-                  chl.stateClass = "chl-overdue";
-                  week.stateClass ="week-open";
-                  week.panelClass = "panel-warning";
-               }
-               else {
-                  chl.stateClass = "chl-open";
-                  week.stateClass ="week-open";
-                  week.panelClass = "panel-warning";
-                  scope.weekStatuses[ndx] = {open: true};
-               }
+                  if (chlOpenDate > now) {
+                     chl.stateClass = "chl-disabled"; // challenge isn't available yet
+                  }
+                  else if (chl.scoringAttempts[0] && chl.scoringAttempts[0].correct) {
+                     chl.stateClass = "chl-solved";
+                  }
+                  else if (chl.Attempts.length >= 1) {
+                     chl.stateClass = "chl-attempted";
+                  }
+                  else if (chlCloseDate > now) {
+                     chl.stateClass = "chl-overdue";
+                     week.stateClass ="week-open";
+                     week.panelClass = "panel-warning";
+                  }
+                  else {
+                     chl.stateClass = "chl-open";
+                     week.stateClass ="week-open";
+                     week.panelClass = "panel-warning";
+                     scope.weekStatuses[ndx] = {open: true};
+                  }
 
-               if (week.Challenges.length === 0) {
-                  week.stateClass = 'week-disabled';
-                  week.panelClass = "panel-disabled";
-               }
+                  if (week.Challenges.length === 0) {
+                     week.stateClass = 'week-disabled';
+                     week.panelClass = "panel-disabled";
+                  }
+               });
+            }
+
+            saveToCache("courseweeks_" + scope.courseName, scope.weeks);
+         });
+      });
+   };
+
+   scope.refreshchls();
+
+   scope.isOpen = function(chl) {
+      if (scope.loggedUser.role == 0) {
+         return chl.openTime <= new Date();
+      }
+      else {
+         return true;
+      }
+   }
+
+   scope.addEnrollment = function() {
+      if (!scope.email)
+      return;
+
+      // Get prsId
+      API.prss.find(scope.email)
+      .then(function(response) {
+         var data = response.data;
+         if (data.length === 0) {
+            scope.errors = ['No user found for that email'];
+         }
+         else {
+            return API.crss.enrs.post(scope.courseName, data[0].id)
+            .then(function(data) {
+               return scope.refreshenrs();
             });
          }
-
-         saveToCache("courseweeks_" + scope.courseName, scope.weeks);
+      })
+      .catch(function(err) {
+         if (err.data[0].tag === 'dupName') {
+            scope.errors = ['User already enrolled'];
+         }
+         else
+         scope.errors = err.data;
       });
-   });
-};
+   };
 
-scope.refreshchls();
-
-scope.isOpen = function(chl) {
-   if (scope.loggedUser.role == 0) {
-      return chl.openTime <= new Date();
-   }
-   else {
-      return true;
-   }
-}
-
-scope.addEnrollment = function() {
-   if (!scope.email)
-   return;
-
-   // Get prsId
-   API.prss.find(scope.email)
-   .then(function(response) {
-      var data = response.data;
-      if (data.length === 0) {
-         scope.errors = ['No user found for that email'];
-      }
-      else {
-         return API.crss.enrs.post(scope.courseName, data[0].id)
-         .then(function(data) {
+   scope.deleteEnrollment = function(enrId) {
+      confirm(function() {
+         API.crss.enrs.delete(scope.courseName, enrId)
+         .then(function(res) {
             return scope.refreshenrs();
          });
-      }
-   })
-   .catch(function(err) {
-      if (err.data[0].tag === 'dupName') {
-         scope.errors = ['User already enrolled'];
-      }
-      else
-      scope.errors = err.data;
-   });
-};
-
-scope.deleteEnrollment = function(enrId) {
-   confirm(function() {
-      API.crss.enrs.delete(scope.courseName, enrId)
-      .then(function(res) {
-         return scope.refreshenrs();
       });
-   });
-};
+   };
 
-scope.createChallenge = function() {
-   $state.go('newchallenge', {courseName: $stateParams.courseName, week: 0, day: 0, type: "multchoice" });
-};
+   scope.createChallenge = function() {
+      $state.go('newchallenge', {courseName: $stateParams.courseName, week: 0, day: 0, type: "multchoice" });
+   };
 
-scope.viewChallenge = function(challengeName, stateClass) {
-   if (stateClass !== 'chl-disabled') {
-      $state.go('challenge', { courseName: scope.courseName, challengeName: challengeName});
+   scope.viewChallenge = function(challengeName, stateClass) {
+      if (stateClass !== 'chl-disabled') {
+         $state.go('challenge', { courseName: scope.courseName, challengeName: challengeName});
+      }
+   };
+
+   scope.goAdmin = function() {
+      $state.go('courseAdmin', {courseName: scope.courseName});
    }
-};
 
-scope.goAdmin = function() {
-   $state.go('courseAdmin', {courseName: scope.courseName});
-}
+   scope.getCourseData = function() {
+      API.crss.get($stateParams.courseName)
+      .then(function(course) {
+         scope.courseData = course.data;
+         scope.enrollment = course.data.Enrollments[0];
+         saveToCache("coursedata_" + scope.courseName, scope.courseData);
+      })
+      .catch(function(err) {
+         if (err.data.tag === "notFound") {
+            scope.we404now = true;
+         }
+         else {
+            toastr.error("Oh no!", err.message);
+         }
+      });
+   };
 
-scope.getCourseData = function() {
-   API.crss.get($stateParams.courseName)
-   .then(function(course) {
-      scope.courseData = course.data;
-      scope.enrollment = course.data.Enrollments[0];
-      saveToCache("coursedata_" + scope.courseName, scope.courseData);
-   })
-   .catch(function(err) {
-      if (err.data.tag === "notFound") {
-         scope.we404now = true;
-      }
-      else {
-         toastr.error("Oh no!", err.message);
-      }
-   });
-};
-
-scope.getCourseData();
+   scope.getCourseData();
 
 }])

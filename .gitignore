@@ -7,5 +7,5 @@ developmentKeys.json
 public/bower_components/
 sequelize-config/config.json
 dontGitMeMan.spf
-amazonDontGitMe.spf
 freeDontGitMe.spf
+stagingDontGitMe.spf

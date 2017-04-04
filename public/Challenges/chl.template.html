@@ -65,7 +65,7 @@
       <h1 ng-show="challengeClosed">This challenge is closed!</h1>
       <h2>Previous Attempts:</h2>
       <ul class="list-group">
-         <li class="list-group-item" ng-repeat="attempt in challenge.Attempts">{{attempt.input}}</li>
+         <li class="list-group-item" ng-repeat="attempt in challenge.Attempts" ng-class="{'list-group-item-success' : attempt.correct}">{{attempt.input}}</li>
       </ul>
    </div>
 </div>

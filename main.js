@@ -115,7 +115,7 @@ app.delete('/DB', function(req, res) {
    .then(function() {
       return sequelize.Person.scope(null).findOrCreate({
          where: {email: 'Admin@11.com'},
-         defaults: {name: 'AdminMan', password: process.env.ADMIN_PASSWORD, role: 2}
+         defaults: {name: 'AdminMan', password: process.env.ADMIN_PASSWORD, role: 2, checkedDisclaimer: 1}
       });
    })
    .then(function(admin) {

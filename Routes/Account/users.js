@@ -84,9 +84,11 @@ router.post('/', function(req, res) {
 
    if (!admin) {
       // delete body.password; // we have them make a password at activation time now
+
    }
 
    delete body.activationToken; // Don't even try it
+   delete body.checkedDisclaimer;
 
    // return vld.checkAdminOrTeacher()
    return vld.check(true)
@@ -113,7 +115,7 @@ router.post('/', function(req, res) {
    })
    .then(function(newGuy) {
       if (admin) {
-         return newGuy.update({activationToken: null});
+         return newGuy.update({activationToken: null, checkedDisclaimer: 1});
       }
       else {
          return Promise.resolve(newGuy);

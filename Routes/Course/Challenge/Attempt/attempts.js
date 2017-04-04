@@ -62,7 +62,7 @@ router.post('/', updateStreak, function(req, res) {
       return vld.check(!req.body.input.test || req.session.isTeacherOrAdmin(), Tags.noPermission, null, user, "You can't turn on test mode, you're not a teacher!");
    })
    .then(function(user) {
-      return vld.check(user.checkedDisclaimer, Tags.noTerms, null, user, "You haven't accepted the terms and conditions!");
+      return vld.check(user.checkedDisclaimer === 1, Tags.noTerms, null, user, "You haven't accepted the terms and conditions!");
    })
    .then(function(user) {
       return user.hasClass(req.course)
@@ -83,7 +83,7 @@ router.post('/', updateStreak, function(req, res) {
             }
          });
 
-         return vld.check(!alreadyGotItRight && req.challenge.attsAllowed > attempts.length, Tags.excessatts, null, attempts, "You already got this answer correct.");
+         return vld.check(!alreadyGotItRight && req.challenge.attsAllowed > attempts.length, Tags.excessatts, null, attempts, "You can't attempt that question anymore.");
       })
       .then(function(attempts) {
          // TODO: verify chl's start date is after today
@@ -91,10 +91,6 @@ router.post('/', updateStreak, function(req, res) {
 
          return sequelize.Enrollment.findOne({
             where: {personEmail: user.id, courseName: req.course.sanitizedName}
-         })
-         .then(function(enr) {
-            result.score += enr.streak;
-            return enr.increment({creditsEarned: result.score});
          })
          .then(function(enr) {
             // if lastStreakTime is in the PAST, that means we haven't earned a streak
@@ -112,17 +108,38 @@ router.post('/', updateStreak, function(req, res) {
             }
          })
          .then(function(enr) {
+            // Surprise, increments don't update the object. You have to reload it!
+            return enr.reload();
+         })
+         .then(function(enr) {
+            var netScore = 0; // Weird hack.. in the long run maybe we should just calculate score on the fly
+            if (result.correct) {
+               attempts.forEach(function(att) {
+                  netScore -= att.pointsEarned;
+               });
+            }
+            result.score += enr.streak;
+            return enr.increment({creditsEarned: result.score + netScore});
+         })
+         .then(function(enr) {
             return sequelize.Attempt.create({
                input: req.body.input,
                personId: prsId,
                challengeName: req.params.challengeName,
                correct: result.correct,
-               pointsEarned: result.score,
-               attsLeft: attempts.length - req.challenge.attsAllowed
+               pointsEarned: result.score
             });
          })
          .then(function() {
+            result.attsLeft = req.challenge.attsAllowed - attempts.length - 1;
             res.json(result);
+         })
+         .then(function() {
+            var attClear = [];
+            attempts.forEach(function(att) {
+               attClear.push(att.update({pointsEarned: 0}));
+            });
+            return Promise.all(attClear);
          });
       });
    })

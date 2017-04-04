@@ -30,7 +30,7 @@
                {{challenge.name}}
                <i class="pull-left glyphicon chl-status"
                ng-class="{'glyphicon-ok': challenge.stateClass == 'chl-solved', 'glyphicon-alert' : challenge.stateClass == 'chl-overdue' || challenge.stateClass == 'chl-open'}"></i>
-               <span ng-show="challenge.Attempts[0].pointsEarned > 0" class="badge pull-right">+{{challenge.Attempts[0].pointsEarned}}</span>
+               <span ng-show="challenge.scoringAttempts[0].pointsEarned > 0" class="badge pull-right">+{{challenge.scoringAttempts[0].pointsEarned}}</span>
             </a>
          </uib-accordion-group>
       </uib-accordion>
