@@ -9,6 +9,8 @@ function(scope, $state, $stateParams, API, confirm, login, toastr) {
    scope.challengeClosed = false;
    scope.challengeComplete = false;
 
+   scope.letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M'];
+
    scope.multChoice = {
       chosen: null
    };

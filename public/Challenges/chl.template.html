@@ -1,11 +1,9 @@
 <div class="container-white" ng-show="challengeOpen">
    <div class="row">
       <h1>{{ challenge.name }}</h1>
-      <p>{{ challenge.description }}</p>
+      <p style="font-size: 16px;">{{ challenge.description }}</p>
 
-      <img src="{{challenge.image}}" width="300" style="display:block;" class="centered-guy"></img>
-
-      <hr />
+      <img ng-show="challenge.image" src="{{challenge.image}}" width="300" style="display:block;" class="centered-guy"></img>
 
       <div ng-show="challenge.type == 'multchoice'">
          <form ng-submit="answerMultipleChoice()">
@@ -49,13 +47,13 @@
    <div class="row">
       <h1>{{ challenge.name }}</h1>
 
-      <p>{{ challenge.description }}</p>
-      <img src="{{challenge.image}}" width="300" style="display:block;" class="centered-guy"></img>
+      <p style="font-size: 16px;">{{ challenge.description }}</p>
+      <img ng-show="challenge.image"  src="{{challenge.image}}" width="300" style="display:block;" class="centered-guy"></img>
       <hr />
 
       <div ng-show="challenge.type == 'multchoice'">
          <div ng-repeat="possibility in challenge.Possibilities">
-            <label for="{{'radioguy' + $index}}">{{$index + " " + possibility.text}}</label>
+            <label for="{{'radioguy' + $index}}">{{letters[$index] + ": " + possibility.text}}</label>
          </div>
       </div>
    </div>
@@ -64,8 +62,11 @@
       <h1 ng-show="challengeComplete">You've already solved this challenge!</h1>
       <h1 ng-show="challengeClosed">This challenge is closed!</h1>
       <h2>Previous Attempts:</h2>
-      <ul class="list-group">
+      <ul class="list-group" ng-show="challenge.type !== 'multchoice'">
          <li class="list-group-item" ng-repeat="attempt in challenge.Attempts" ng-class="{'list-group-item-success' : attempt.correct}">{{attempt.input}}</li>
+      </ul>
+      <ul class="list-group" ng-show="challenge.type === 'multchoice'">
+         <li class="list-group-item" ng-repeat="attempt in challenge.Attempts" ng-class="{'list-group-item-success' : attempt.correct}">{{letters[attempt.input] + ": " + challenge.Possibilities[attempt.input].text}}</li>
       </ul>
    </div>
 </div>

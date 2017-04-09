@@ -73,10 +73,10 @@ body {
 
 .masthead-nav > li {
   display: inline-block;
+  margin-left: 10px;
+  margin-right: 10px;
 }
-.masthead-nav > li + li {
-  margin-left: 20px;
-}
+
 .masthead-nav > li > a {
   padding-right: 0;
   padding-left: 0;
@@ -320,6 +320,11 @@ body {
 .btn-calpoly {
    background-color: #005A45;
    color: white;
+}
+
+/* Course..? */
+small {
+  color: #a2a2a2;
 }
 
 /*#fix-tab-border>a {
