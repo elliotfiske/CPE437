@@ -69,6 +69,12 @@ router.get('/', function(req, res) {
   });
 });
 
+// Get how committed one person is
+router.get('/commitment', function(req, res) {
+   var vld = req.validator;
+   
+});
+
 router.post('/', function(req, res) {
    var vld = req.validator;  // Shorthands
    var body = req.body;
