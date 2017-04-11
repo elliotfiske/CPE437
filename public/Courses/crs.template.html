@@ -10,8 +10,9 @@
       <h1>{{ courseData.name }}</h1>
       <h3 ng-show="courseData.ownerId === loggedUser.id">You're the teacher of this class! <a ng-click="goAdmin()">See Teacher Page</a></h3>
       <div class="col-xs-12 col-sm-6"><h1>Points: {{enrollment.creditsEarned}}</h1></div>
-      <div class="col-xs-12 col-sm-6"><h1>Commitment: {{enrollment.streak}}</h1></div>
-      <a ng-click="console.log('Im tiny riiiick')" data-toggle="tooltip" style="float:right;" title="" data-original-title="Another one here too">?</a>
+      <div class="col-xs-12 col-sm-6" style="text-align:center">
+        <h1>Commitment: {{enrollment.streak}}</h1>
+      </div>
    </div>
 
    <div class="row" ng-hide="we404now">
@@ -28,11 +29,11 @@
                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': weekStatuses[$index].open, 'glyphicon-chevron-right': !weekStatuses[$index].open}"></i>
             </uib-accordion-heading>
             <a ng-repeat="challenge in week.Challenges" ng-click="viewChallenge(challenge.sanitizedName, challenge.stateClass)" class="list-group-item" ng-class="challenge.stateClass">
-               <h4 style="display:inline;">{{challenge.name}}</h4>
-               <i class="pull-left glyphicon chl-status"
-               ng-class="{'glyphicon-alert' : challenge.stateClass == 'chl-overdue' || challenge.stateClass == 'chl-open'}"></i>
-               <span ng-show="challenge.scoringAttempts[0].pointsEarned > 0" class="badge">+{{challenge.scoringAttempts[0].pointsEarned}}</span>
-               <small style="display:block;">Completed April 4th</small>
+              <span ng-show="challenge.scoringAttempts[0].pointsEarned > 0" class="badge">+{{challenge.scoringAttempts[0].pointsEarned}}</span>
+              <i class="pull-left glyphicon chl-status"
+              ng-class="{'glyphicon-alert fart' : challenge.stateClass == 'chl-overdue' || challenge.stateClass == 'chl-open'}"></i>
+               <div style="margin-top:-2px;">{{challenge.name}}</div>
+               <small style="display:block;">{{challenge.dateMessage}}</small>
             </a>
          </uib-accordion-group>
       </uib-accordion>
