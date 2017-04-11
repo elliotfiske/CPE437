@@ -367,7 +367,12 @@ var Enrollment = sequelize.define('Enrollment', {
       defaultValue: new Date(0)
    }
 }, {
-   freezeTableName: true
+   freezeTableName: true,
+   instanceMethods: {
+     getCommitment: function() {
+       return Attempt.findAll({where: {courseName : this.courseName}})
+     },
+   }
 });
 
 Course.belongsToMany(Person, {as: "EnrolledDudes", through: Enrollment, foreignKey: "courseName"});

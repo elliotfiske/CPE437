@@ -97,7 +97,6 @@ router.post('/', function(req, res) {
 
    if (!admin) {
       // delete body.password; // we have them make a password at activation time now
-
    }
 
    delete body.activationToken; // Don't even try it

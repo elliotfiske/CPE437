@@ -75,13 +75,17 @@ function validateChallengeData(vld, req) {
   });
 }
 
+function addDays(date, days) {
+    var result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+}
+
 /** Actually make that challenge, everything's good! **/
 function makeChallenge(week, req, res) {
   req.body.courseName = req.params.courseName;
 
-  var challengeDate = week.startDate;
-  challengeDate.setDate(challengeDate.getDate()+req.body.dayIndex);
-  req.body.openDate = challengeDate;
+  req.body.openDate = addDays(week.startDate, req.body.dayIndex);
 
   var makeChallenge = sequelize.Challenge.create(req.body);
   var promiseList = [makeChallenge];
