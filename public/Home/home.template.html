@@ -7,6 +7,9 @@
    <a ng-href="https://users.csc.calpoly.edu/~efiske/login{{local}}.php" class="btn btn-calpoly btn-lg" role="button">Login with Cal Poly</a>
 </div>
 
+<h4>You have <b>3</b> entries into the $20 gift card raffle!</h4>
+<h5>You get 1 entry every 50 points.</h5>
+
 <div class="container-white">
    <div class="row" ng-show="loggedUser.role >= 1">
       <h1>Classes</h1>
@@ -37,7 +40,7 @@
                   <div class="panel-body list-group class-display">
                      <div class="row list-group-item" style="border-bottom-width: 0px;">
                         <div class="col-xs-6"><b>Points: </b><div class="class-display-val">{{course.Enrollment.creditsEarned}}</div></div>
-                        <div class="col-xs-6"><b>Streak: </b><div class="class-display-val">{{course.Enrollment.streak}}</div></div>
+                        <div class="col-xs-6"><b>Commitment: </b><div class="class-display-val">{{loggedUser.commitment}}</div></div>
                      </div>
                   </div>
                </div>

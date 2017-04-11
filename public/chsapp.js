@@ -38,7 +38,7 @@ var app = angular.module('mainApp', [
       $rootScope.loggedUser = JSON.parse(localStorage.user);
       API.prss.get($rootScope.loggedUser.id)
       .then(function(response) {
-         var user = response.data[0];
+         var user = response.data;
          $rootScope.loggedUser = user;
          if (window.smartlook) smartlook('tag', 'email', user.email);
       })
@@ -71,7 +71,7 @@ var app = angular.module('mainApp', [
             return API.prss.get(response.data.prsId);
          })
          .then(function(reponse) {
-            var user = reponse.data[0];
+            var user = reponse.data;
             localStorage.user = JSON.stringify(user);
             $rootScope.loggedUser = user;
             return user;

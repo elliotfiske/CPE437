@@ -72,7 +72,14 @@ router.get('/', function(req, res) {
 // Get how committed one person is
 router.get('/commitment', function(req, res) {
    var vld = req.validator;
-   
+   return sequelize.do.query("SELECT COUNT(DISTINCT DATE_FORMAT(createdAt, '%c %d %Y')) FROM Attempt WHERE personId = :pid;", {
+      replacements: { pid: req.session.id }, type: sequelize.do.QueryTypes.SELECT
+   }).then(function(commitment) {
+      console.log()
+      var result = commitment[0]["COUNT(DISTINCT DATE_FORMAT(createdAt, '%c %d %Y'))"];
+      res.json(result);
+   })
+   .catch(doErrorResponse(res));
 });
 
 router.post('/', function(req, res) {
@@ -146,18 +153,35 @@ router.post('/', function(req, res) {
 });
 
 router.get('/:id', function(req, res) {
-  var vld = req._validator;
+   var vld = req.validator;
 
-  if (vld.checkPrsOK(req.params.id)) {
-    connections.getConnection(res, function(cnn) {
-      cnn.query('select id, email, name, createdAt, role, checkedDisclaimer from Person where id = ?', [req.params.id], function(err, prsArr) {
-        if (vld.check(prsArr.length, Tags.notFound)) {
-          res.json(prsArr);
-       }
-        cnn.release();
+   return vld.checkPrsOK(req.params.id)
+   .then(function() {
+      return sequelize.Person.findById(req.params.id);
+   })
+   .then(function(person) {
+      return vld.check(person, Tags.badValue, null, person, "You don't exist in the database???");
+   })
+   .then(function(person) {
+      var result = {
+         id: person.id,
+         email: person.email,
+         createdAt: person.created,
+         role: person.role,
+         checkedDisclaimer: person.checkedDisclaimer
+      }
+
+      return sequelize.do.query("SELECT COUNT(DISTINCT DATE_FORMAT(createdAt, '%c %d %Y')) FROM Attempt WHERE personId = :pid;", {
+         replacements: { pid: req.params.id }, type: sequelize.do.QueryTypes.SELECT
+      }).then(function(dumbObject) {
+         var commitment = dumbObject[0]["COUNT(DISTINCT DATE_FORMAT(createdAt, '%c %d %Y'))"];
+         result.commitment = commitment;
+      })
+      .then(function() {
+         res.json(result);
       });
-    });
-  }
+   })
+   .catch(doErrorResponse(res));
 });
 
 router.post('/activate', function(req, res) {
