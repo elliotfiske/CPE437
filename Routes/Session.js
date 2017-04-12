@@ -10,12 +10,7 @@ var cookieName = 'CHSAuth';
 exports.router = function(req, res, next) {
    if (req.cookies[cookieName]) {
       if (sessions[req.cookies[cookieName]]) {
-         if (sessions[req.cookies[cookieName]].lastUsed < new Date().getTime() - duration) {
-            delete sessions[req.cookies[cookieName]];
-         }
-         else {
-            req.session = sessions[req.cookies[cookieName]];
-         }
+         req.session = sessions[req.cookies[cookieName]];
       }
    }
    next();
