@@ -88,58 +88,45 @@ router.post('/', updateStreak, function(req, res) {
       .then(function(attempts) {
          // TODO: verify chl's start date is after today
          var result = checkAnswer(req);
+         return sequelize.do.query("SELECT COUNT(DISTINCT DATE_FORMAT(createdAt, '%c %d %Y')) FROM Attempt WHERE personId = :pid;", {
+            replacements: { pid: req.session.id }, type: sequelize.do.QueryTypes.SELECT
+         }).then(function(commitment) {
+            console.log()
+            var userCommitment = commitment[0]["COUNT(DISTINCT DATE_FORMAT(createdAt, '%c %d %Y'))"];
 
-         return sequelize.Enrollment.findOne({
-            where: {personEmail: user.id, courseName: req.course.sanitizedName}
-         })
-         .then(function(enr) {
-            // if lastStreakTime is in the PAST, that means we haven't earned a streak
-            //  point today.
-            if (enr.lastStreakTime < new Date() && attempts.length === 0) {
-               return enr.increment('streak')
-               .then(function(enr) {
-                  var tonightMidnight = new Date();
-                  tonightMidnight.setHours(24,0,0,0);
-                  return enr.updateAttributes({lastStreakTime: tonightMidnight});
+            return sequelize.Enrollment.findOne({
+               where: {personEmail: user.id, courseName: req.course.sanitizedName}
+            })
+            .then(function(enr) {
+               var netScore = 0; // Weird hack.. in the long run maybe we should just calculate score on the fly
+               if (result.correct) {
+                  attempts.forEach(function(att) {
+                     netScore -= att.pointsEarned;
+                  });
+               }
+               result.score += userCommitment;
+               return enr.increment({creditsEarned: result.score + netScore});
+            })
+            .then(function(enr) {
+               return sequelize.Attempt.create({
+                  input: req.body.input,
+                  personId: prsId,
+                  challengeName: req.params.challengeName,
+                  correct: result.correct,
+                  pointsEarned: result.score
                });
-            }
-            else {
-               return Promise.resolve(enr);
-            }
-         })
-         .then(function(enr) {
-            // Surprise, increments don't update the object. You have to reload it!
-            return enr.reload();
-         })
-         .then(function(enr) {
-            var netScore = 0; // Weird hack.. in the long run maybe we should just calculate score on the fly
-            if (result.correct) {
+            })
+            .then(function() {
+               result.attsLeft = req.challenge.attsAllowed - attempts.length - 1;
+               res.json(result);
+            })
+            .then(function() {
+               var attClear = [];
                attempts.forEach(function(att) {
-                  netScore -= att.pointsEarned;
+                  attClear.push(att.update({pointsEarned: 0}));
                });
-            }
-            result.score += enr.streak;
-            return enr.increment({creditsEarned: result.score + netScore});
-         })
-         .then(function(enr) {
-            return sequelize.Attempt.create({
-               input: req.body.input,
-               personId: prsId,
-               challengeName: req.params.challengeName,
-               correct: result.correct,
-               pointsEarned: result.score
+               return Promise.all(attClear);
             });
-         })
-         .then(function() {
-            result.attsLeft = req.challenge.attsAllowed - attempts.length - 1;
-            res.json(result);
-         })
-         .then(function() {
-            var attClear = [];
-            attempts.forEach(function(att) {
-               attClear.push(att.update({pointsEarned: 0}));
-            });
-            return Promise.all(attClear);
          });
       });
    })
