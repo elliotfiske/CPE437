@@ -7,7 +7,7 @@
    <a ng-href="https://users.csc.calpoly.edu/~efiske/login{{local}}.php" class="btn btn-calpoly btn-lg" role="button">Login with Cal Poly</a>
 </div>
 
-<div ng-show="numEntries !== undefined" style="margin-top: 40px;">
+<div ng-show="loggedUser" style="margin-top: 40px;">
    <h4 style="margin-bottom:0px;">You have <b>{{numEntries}}</b> <ng-pluralize count="numEntries"when="{'one': 'entry', 'other': 'entries'}"></ng-pluralize> into the $20 gift card raffle!</h4>
    <h5 style="margin-top:5px;">You get 1 entry every 50 points.</h5>
 </div>
