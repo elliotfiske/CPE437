@@ -15,6 +15,8 @@ app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'ap
    scope.availableCourses = getFromCache("available_courses") || [];
    scope.adminCourses = [];
    scope.encouragements = [];
+   scope.maxScore = Math.max.apply(Math,scope.enrolledCourses.map(function(crs){return crs.Enrollment.creditsEarned;}));
+   scope.numEntries = scope.maxScore > 0 ? Math.ceil(scope.maxScore / 50) : 1;
 
    scope.gotoCourse = function(courseName, asAdmin) {
       if (asAdmin) {

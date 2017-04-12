@@ -167,6 +167,9 @@ function(scope, $state, $stateParams, API, confirm, login, $location, toastr) {
 
    scope.getCourseData();
 
+   scope.toggleExplanation = function() {
+      $("#commit-explainer").slideToggle();
+   };
 
    function formatDate(date) {
      if (typeof date === 'string') {
