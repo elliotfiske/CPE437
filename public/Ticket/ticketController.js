@@ -14,13 +14,13 @@ app.controller('ticketController',
       return API.Ssns.get(location[location.length - 1]);
    })
    .then(function(response) {
-      $state.go('home');
       return API.prss.get(response.data.prsId);
    })
    .then(function(reponse) {
       var user = reponse.data;
       localStorage.user = JSON.stringify(user);
       $rootScope.loggedUser = user;
+      $state.go('home');
    })
    .catch(toastr.doErrorMessage(function(err) {}));
 }])
