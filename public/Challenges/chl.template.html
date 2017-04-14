@@ -1,7 +1,7 @@
 <div class="container-white" ng-show="challengeOpen">
    <div class="row">
       <h1>{{ challenge.name }}</h1>
-      <p style="font-size: 16px;">{{ challenge.description }}</p>
+      <p style="font-size: 16px;" ng-bind-html="challenge.description"></p>
 
       <img ng-show="challenge.image" src="{{challenge.image}}" width="500" style="display:block;" class="centered-guy"></img>
 
@@ -47,7 +47,7 @@
    <div class="row">
       <h1>{{ challenge.name }}</h1>
 
-      <p style="font-size: 16px;">{{ challenge.description }}</p>
+      <p style="font-size: 16px;" ng-bind-html="challenge.description"></p>
       <img ng-show="challenge.image"  src="{{challenge.image}}" width="300" style="display:block;" class="centered-guy"></img>
       <hr />
 

@@ -1,6 +1,6 @@
 app.controller('chlController',
-['$scope', '$state', '$stateParams', 'api', 'confirm', 'login', 'toasterror',
-function(scope, $state, $stateParams, API, confirm, login, toastr) {
+['$scope', '$state', '$stateParams', 'api', 'confirm', 'login', 'toasterror', '$sce',
+function(scope, $state, $stateParams, API, confirm, login, toastr, $sce) {
    var challengeName = $stateParams.challengeName;
 
    scope.challenge = {};

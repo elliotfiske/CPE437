@@ -81,8 +81,7 @@ var Person = sequelize.define('Person', {
       type: Sequelize.INTEGER
    },
    userSettings: {
-      type: Sequelize.STRING,
-      defaultValue: "{}"
+      type: Sequelize.STRING
    },
    activationToken: {
       type: Sequelize.STRING
@@ -344,8 +343,7 @@ var Week = sequelize.define('Week', {
 
 var SessionSaver = sequelize.define('SessionSaver', {
    session: {
-      type: Sequelize.TEXT('medium'),
-      defaultValue: ""
+      type: Sequelize.TEXT('medium')
    }
 });
 
