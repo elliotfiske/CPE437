@@ -183,7 +183,7 @@ function(scope, $state, $stateParams, API, confirm, login, $location, toastr) {
        "November", "December"
      ];
 
-     var day = date.getDate();
+     var day = date.getDate() + 1;
      var monthIndex = date.getMonth();
 
      return monthNames[monthIndex] + ' ' + day;
