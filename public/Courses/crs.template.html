@@ -13,7 +13,11 @@
       <div class="col-xs-12 col-sm-6" style="text-align: center"><h1 style="margin-bottom:0px;">Commitment: {{loggedUser.commitment}}</h1><a ng-click="toggleExplanation()">What is this?</a></div>
    </div>
 
-   <div class="row" style="text-align:center; display:none;" id="commit-explainer">
+   <div class="row" ng-hide="we404now">
+      You've used Commit for a total of <b>{{loggedUser.commitment}}</b> unique days now. You need 15 days to receive the extra credit for the class. That's only 4 more!
+   </div>
+
+   <div class="row" style="text-align:center; display:none;" id="commit-explainer" ng-hide="we404now">
       Every <b>day</b> you answer a question, your <b>Commitment</b> goes up! You get more points per question when your commitment is high.
    </div>
 

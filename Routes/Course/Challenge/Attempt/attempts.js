@@ -118,6 +118,7 @@ router.post('/', updateStreak, function(req, res) {
             })
             .then(function() {
                result.attsLeft = req.challenge.attsAllowed - attempts.length - 1;
+               result.commitment = userCommitment;
                res.json(result);
             })
             .then(function() {

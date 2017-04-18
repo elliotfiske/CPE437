@@ -62,6 +62,8 @@ function(scope, $state, $stateParams, API, confirm, login, toastr, $sce) {
             $state.go('course', {courseName: $stateParams.courseName});
             toastr.error("Sorry! That's incorrect. Don't worry, you still got points for that question.");
          }
+
+         scope.loggedUser.commitment = attemptInfo.data.newCommitment;
       })
       .catch(function(err) {
          toastr.error("Uh oh!", "Error: " + err.message);
