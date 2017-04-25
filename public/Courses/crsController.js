@@ -50,15 +50,15 @@ function(scope, $state, $stateParams, API, confirm, login, $location, toastr) {
                   }
                   else if (chl.scoringAttempts[0] && chl.scoringAttempts[0].correct) {
                      chl.stateClass = "chl-solved";
-                     chl.dateMessage = "Solved " + formatDate(chl.scoringAttempts[0].createdAt);
+                     chl.dateMessage = "Solved " + formatDate(chl.scoringAttempts[0].createdAt, -1);
                   }
                   else if (chl.scoringAttempts.length >= chl.attsAllowed) {
                      chl.stateClass = "chl-solved";
-                     chl.dateMessage = "Attempted " + formatDate(chl.Attempts[0].createdAt);
+                     chl.dateMessage = "Attempted " + formatDate(chl.Attempts[0].createdAt, -1);
                   }
                   else if (chl.Attempts.length >= 1) {
                      chl.stateClass = "chl-attempted";
-                     chl.dateMessage = "Attempted " + formatDate(chl.Attempts[0].createdAt);
+                     chl.dateMessage = "Attempted " + formatDate(chl.Attempts[0].createdAt, -1);
                   }
                   else if (chlCloseDate > now) {
                      chl.stateClass = "chl-overdue";
@@ -171,7 +171,7 @@ function(scope, $state, $stateParams, API, confirm, login, $location, toastr) {
       $("#commit-explainer").slideToggle();
    };
 
-   function formatDate(date) {
+   function formatDate(date, adjustment) {
      if (typeof date === 'string') {
        date = new Date(date);
      }
@@ -183,7 +183,9 @@ function(scope, $state, $stateParams, API, confirm, login, $location, toastr) {
        "November", "December"
      ];
 
-     var day = date.getDate() + 1;
+     adjustment = adjustment || 0;
+
+     var day = date.getDate() + 1 + adjustment;
      var monthIndex = date.getMonth();
 
      return monthNames[monthIndex] + ' ' + day;

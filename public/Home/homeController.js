@@ -64,6 +64,8 @@ app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'ap
 
    onlyShowAvailableCourses();
 
+   scope.extraCredit = Math.min(scope.loggedUser.commitment/15, 1.0) || 0;
+
    // Get courses and available courses
    if (scope.loggedUser) {
       if (!scope.loggedUser.checkedDisclaimer) {
@@ -75,6 +77,7 @@ app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'ap
          scope.adminCourses = response.data.owned;
          scope.loggedUser.commitment = response.data.commitment;
          saveToCache("enrolled_courses", scope.enrolledCourses);
+         scope.extraCredit = Math.min(scope.loggedUser.commitment/15, 1.0) || 0;
          return API.crss.get();
       })
       .then(function(response) {
