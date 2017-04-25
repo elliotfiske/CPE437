@@ -73,6 +73,7 @@ app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'ap
       API.prss.enrs.get(scope.loggedUser.id).then(function(response) {
          scope.enrolledCourses = response.data.enrolled;
          scope.adminCourses = response.data.owned;
+         scope.loggedUser.commitment = response.data.commitment;
          saveToCache("enrolled_courses", scope.enrolledCourses);
          return API.crss.get();
       })

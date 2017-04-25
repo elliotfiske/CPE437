@@ -276,11 +276,15 @@ router.get('/:id/enrs', function(req, res) {
    .then(function(me) {
       var enrollments = me.getClasses();
       var ownedClasses = sequelize.Course.findAll({where: {ownerId: req.session.id}});
+      var commitFinder = sequelize.do.query("SELECT COUNT(DISTINCT DATE_FORMAT(createdAt, '%c %d %Y')) FROM Attempt WHERE personId = :pid;", {
+         replacements: { pid: req.session.id }, type: sequelize.do.QueryTypes.SELECT
+      });
 
-      return Promise.all([enrollments, ownedClasses]);
+      return Promise.all([enrollments, ownedClasses, commitFinder]);
    })
-   .spread(function(enrolled, owned) {
-      res.json({enrolled: enrolled, owned: owned}).end();
+   .spread(function(enrolled, owned, commitment) {
+      var userCommitment = commitment[0]["COUNT(DISTINCT DATE_FORMAT(createdAt, '%c %d %Y'))"];
+      res.json({enrolled: enrolled, owned: owned, commitment: userCommitment}).end();
    })
    .catch(doErrorResponse(res));
 });

@@ -167,7 +167,7 @@ router.get('/:challengeName', function(req, res) {
   var vld = req.validator;
 
   var scope = 'defaultScope';
-  if (req.session.isAdminOrTeacher()) {
+  if (req.session.isAdminOrTeacher() || req.course.hidden === 1) {
     scope = 'teacherScope'; // let teachers see the answer
   }
 

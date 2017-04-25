@@ -16,7 +16,7 @@ function(scope, $state, $stateParams, API, confirm, login, toastr, $sce) {
    };
 
    if (!login.isLoggedIn()) {
-      $state.go('login');
+      $state.go('home');
    }
 
    API.crss.challenge.get($stateParams.courseName, challengeName)

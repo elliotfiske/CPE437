@@ -50,7 +50,7 @@ var app = angular.module('mainApp', [
       $rootScope.loggedUser = null;
       delete localStorage.user;
       if (goToLogin) {
-         $state.go('login');
+         $state.go('home');
       }
       globalCache = {};
    };

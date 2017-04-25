@@ -32,7 +32,7 @@ router.use('/:courseName/enrs', getCourseModel, enrollmentsRouter);
 router.get('/', function(req, res) {
   var vld = req.validator;
 
-  sequelize.Course.findAll({where: {hidden: 0}})
+  sequelize.Course.findAll()
   .then(function(courseList) {
     res.json(courseList);
   })

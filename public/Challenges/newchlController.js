@@ -24,7 +24,7 @@ function(scope, $state, $stateParams, API, confirm, login, toastr) {
   };
 
   if (!login.isLoggedIn()) {
-    $state.go('login');
+    $state.go('home');
   }
 
   scope.fuzzySearch = null;

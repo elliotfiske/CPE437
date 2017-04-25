@@ -4,7 +4,7 @@ function(scope, $state, $stateParams, API, confirm, login, $location, toastr, $q
   scope.courseName = $stateParams.courseName; // TODO: gonna need to make a network call here I think, unfortunately.
 
   if (!login.isLoggedIn()) {
-    $state.go('login');
+    $state.go('home');
   }
 
   scope.currDate = new Date();

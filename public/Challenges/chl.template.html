@@ -60,7 +60,8 @@
 
    <div class="row" ng-hide="challenge.Attempts.length === 0" style="margin-top: 50px;">
       <h1 ng-show="challengeComplete">You've already solved this challenge!</h1>
-      <h1 ng-show="challengeClosed">This challenge is closed!</h1>
+      <h1 ng-show="challengeClosed">Oh no! You answered this challenge incorrectly.</h1>
+      <h3 ng-show="challengeClosed">Don't worry, it still counts towards earning the extra credit.</h3>
       <h2>Previous Attempts:</h2>
       <ul class="list-group" ng-show="challenge.type !== 'multchoice'">
          <li class="list-group-item" ng-repeat="attempt in challenge.Attempts" ng-class="{'list-group-item-success' : attempt.correct}">{{attempt.input}}</li>
