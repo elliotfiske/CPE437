@@ -64,10 +64,10 @@ app.controller('homeController', ['$scope', '$state', 'login', '$rootScope', 'ap
 
    onlyShowAvailableCourses();
 
-   scope.extraCredit = Math.min(scope.loggedUser.commitment/15, 1.0) || 0;
 
    // Get courses and available courses
    if (scope.loggedUser) {
+      scope.extraCredit = Math.min(scope.loggedUser.commitment/15, 1.0) || 0;
       if (!scope.loggedUser.checkedDisclaimer) {
          $state.go('activation');
          return;
