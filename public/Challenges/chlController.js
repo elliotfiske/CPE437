@@ -55,9 +55,11 @@ function(scope, $state, $stateParams, API, confirm, login, toastr, $sce) {
    };
 
    scope.createAttempt = function() {
+      scope.disableAtt = true;
       scope.attempt.test = $stateParams.test;
       API.crss.challenge.attempt.post($stateParams.courseName, $stateParams.challengeName, scope.attempt)
       .then(function(attemptInfo) {
+         scope.disableAtt = false;
          if (attemptInfo.data.correct) {
             toastr.success("Correct!", "Good job!");
             $state.go('course', {courseName: $stateParams.courseName});
@@ -80,8 +82,8 @@ function(scope, $state, $stateParams, API, confirm, login, toastr, $sce) {
 
          scope.loggedUser.commitment = attemptInfo.data.newCommitment;
       })
-      .catch(function(err) {
-         toastr.error("Uh oh!", "Error: " + err.message);
-      });
+      .catch(toastr.doErrorMessage(function(err) {
+         // whatever
+      }));
    }
 }])

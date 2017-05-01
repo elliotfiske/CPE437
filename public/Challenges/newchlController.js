@@ -1,5 +1,5 @@
 app.controller('newchlController',
-['$scope', '$state', '$stateParams', 'api', 'confirm', 'login', 'toastr',
+['$scope', '$state', '$stateParams', 'api', 'confirm', 'login', 'toasterror',
 function(scope, $state, $stateParams, API, confirm, login, toastr) {
 
   scope.challenge = {
@@ -109,9 +109,9 @@ function(scope, $state, $stateParams, API, confirm, login, toastr) {
     .then(function() {
       $state.go('courseAdmin', { courseName: $stateParams.courseName });
     })
-    .catch(function(err) {
-      toastr.error("Oh no!", err.errMsg);
-    });
+    .catch(toastr.doErrorMessage(function(err) {
+      // whatever
+    }));
   }
 
   scope.createMultChoice = function() {

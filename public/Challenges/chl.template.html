@@ -14,7 +14,7 @@
                   <label for="{{'radioguy' + $index}}">{{possibility.text}}</label>
                </label>
             </div>
-            <button type="submit" class="btn btn-primary" ng-disabled="multChoice.chosen === null">Submit</button>
+            <button type="submit" class="btn btn-primary" ng-disabled="multChoice.chosen === null || disableAtt">Submit</button>
          </form>
       </div>
 
@@ -22,7 +22,7 @@
          <form ng-submit="answerNumerical()">
             <label for="attempt-input">Your answer:</label>
             <input type="number" class="form-control" ng-model="attempt.numInput" step="any"></input><br />
-            <button type="submit" class="btn btn-primary" ng-disabled="attempt.numInput === null">Submit</button>
+            <button type="submit" class="btn btn-primary" ng-disabled="attempt.numInput === null || disableAtt">Submit</button>
          </form>
       </div>
 
@@ -30,7 +30,7 @@
          <form ng-submit="createAttempt()">
             <label for="attempt-input">Your answer:</label>
             <input type="text" class="form-control" rows="3" ng-model="attempt.input"></input><br />
-            <button type="submit" class="btn btn-primary" ng-disabled="!attempt.input.trim()">Submit</button>
+            <button type="submit" class="btn btn-primary" ng-disabled="!attempt.input.trim() || disableAtt">Submit</button>
          </form>
       </div>
 
