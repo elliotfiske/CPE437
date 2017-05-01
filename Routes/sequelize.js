@@ -188,50 +188,53 @@ var Course = sequelize.define('Course', {
 });
 
 var Challenge = sequelize.define('Challenge', {
-  name: {
-    type: Sequelize.STRING
-  },
-  sanitizedName: {
-    type: Sequelize.STRING,
-    primaryKey: true
-  },
-  description: {
-    type: Sequelize.TEXT
-  },
-  attsAllowed: {
-    type: Sequelize.INTEGER,
-    defaultValue: 1,
-    validate: {
-      min: {
-        args: [1],
-        msg: "AttsAllowed must be greater than 1"
+   name: {
+      type: Sequelize.STRING
+   },
+   sanitizedName: {
+      type: Sequelize.STRING,
+      primaryKey: true
+   },
+   description: {
+      type: Sequelize.TEXT
+   },
+   attsAllowed: {
+      type: Sequelize.INTEGER,
+      defaultValue: 1,
+      validate: {
+         min: {
+            args: [1],
+            msg: "AttsAllowed must be greater than 1"
+         }
       }
-    }
-  },
-  type: {
-    type: Sequelize.ENUM('multchoice', 'shortanswer', 'number'),
-    validate: {
-      isIn: {
-        args: [['multchoice', 'shortanswer', 'number']],
-        msg: "Challenge type must be one of ['multchoice', 'shortanswer', 'number']"
+   },
+   type: {
+      type: Sequelize.ENUM('multchoice', 'shortanswer', 'number'),
+      validate: {
+         isIn: {
+            args: [['multchoice', 'shortanswer', 'number']],
+            msg: "Challenge type must be one of ['multchoice', 'shortanswer', 'number']"
+         }
       }
-    }
-  },
-  image: {
-    type: Sequelize.STRING
-  },
-  openDate: {
-    type: Sequelize.DATE
-  },
-  answer: {
-    type: Sequelize.STRING
-  },
-  courseName: {
-    type: Sequelize.STRING,
-  },
-  dayIndex: {
-    type: Sequelize.INTEGER
-  }
+   },
+   image: {
+      type: Sequelize.STRING
+   },
+   openDate: {
+      type: Sequelize.DATE
+   },
+   answer: {
+      type: Sequelize.STRING
+   },
+   courseName: {
+      type: Sequelize.STRING,
+   },
+   dayIndex: {
+      type: Sequelize.INTEGER
+   },
+   explanation: {
+      type: Sequelize.TEXT
+   }
 }, {
   freezeTableName: true,
   // By default, hide answer

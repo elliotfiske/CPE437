@@ -47,4 +47,11 @@ app.controller('adminController',
    scope.viewCourse = function(courseName) {
       $state.go('course', { courseName: courseName });
    };
+
+   // WHAT YEAR IS IT
+   API.timeTest.get()
+   .then(function(daTime) {
+      scope.daTime = (new Date(daTime.data)).toLocaleString();
+   })
+   .catch(toastr.doErrorMessage(function() {}));
 }])

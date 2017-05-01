@@ -46,6 +46,9 @@ angular.module('mainApp')
    }
 
    return {
+      timeTest: {
+         get: typicalGet('admin/time')
+      },
       validate: {
          post: function(ticketToValidate) {
             return post('prss/validateTicket', {ticket: ticketToValidate});
