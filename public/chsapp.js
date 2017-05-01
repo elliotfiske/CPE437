@@ -19,16 +19,21 @@ var app = angular.module('mainApp', [
       return items.slice().reverse();
    };
 })
-.service('toasterror', ['toastr', function(toastr) {
+.service('toasterror', ['toastr', '$state', function(toastr, $state) {
    toastr.doErrorMessage = function(callback) {
       return function(err) {
          console.warn("Error! " + err);
-         if (err.data.humanMessage) {
+
+         if (err.data.tag === "noLogin") {
+            $state.go('home');
+         }
+         else if (err.data.humanMessage) {
             toastr.error(err.data.humanMessage, 'Oh no!');
          }
          else {
             callback(err);
          }
+
       };
    };
 

@@ -19,26 +19,30 @@ function(scope, $state, $stateParams, API, confirm, login, toastr, $sce) {
       $state.go('home');
    }
 
-   API.crss.challenge.get($stateParams.courseName, challengeName)
-   .then(function(response) {
-      scope.challenge = response.data;
-      if (scope.challenge.Attempts[0] && scope.challenge.Attempts[0].correct) {
-         scope.challengeComplete = true;
-      }
-      else if (scope.challenge.Attempts.length >= scope.challenge.attsAllowed) {
-         scope.challengeClosed = true;
-      }
-      else {
-         scope.challengeOpen = true;
-      }
-      return API.crss.get($stateParams.courseName);
-   })
-   .then(function(crs) {
-      scope.course = crs.data;
-   })
-   .catch(toastr.doErrorMessage(function(err) {
-      // whatever
-   }));
+   scope.refreshAtts = function() {
+      API.crss.challenge.get($stateParams.courseName, challengeName)
+      .then(function(response) {
+         scope.challenge = response.data;
+         if (scope.challenge.Attempts[0] && scope.challenge.Attempts[0].correct) {
+            scope.challengeComplete = true;
+         }
+         else if (scope.challenge.Attempts.length >= scope.challenge.attsAllowed) {
+            scope.challengeClosed = true;
+         }
+         else {
+            scope.challengeOpen = true;
+         }
+         return API.crss.get($stateParams.courseName);
+      })
+      .then(function(crs) {
+         scope.course = crs.data;
+      })
+      .catch(toastr.doErrorMessage(function(err) {
+         // whatever
+      }));
+   };
+
+   scope.refreshAtts();
 
    scope.answerNumerical = function() {
       scope.attempt.input = scope.attempt.numInput.toString();
@@ -63,6 +67,7 @@ function(scope, $state, $stateParams, API, confirm, login, toastr, $sce) {
             toastr.error("Sorry! That's incorrect. You have " + attemptInfo.data.attsLeft + attempts + "left.");
          }
          else {
+            scope.refreshAtts();
             if (scope.challenge.type === 'shortanswer') {
                $state.go('course', {courseName: $stateParams.courseName});
                toastr.error("Sorry! That's incorrect. Don't worry, you still got points for that question.");
