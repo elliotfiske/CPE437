@@ -239,7 +239,7 @@ var Challenge = sequelize.define('Challenge', {
   freezeTableName: true,
   // By default, hide answer
   defaultScope: {
-     attributes: { exclude: ['answer'] }
+     attributes: { exclude: [] }
   },
   scopes: {
      teacherScope: {

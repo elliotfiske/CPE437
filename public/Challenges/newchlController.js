@@ -6,6 +6,7 @@ function(scope, $state, $stateParams, API, confirm, login, toastr) {
     name: "",
     description: "",
     courseName: $stateParams.courseName,
+    explanation: "",
     type: "number",
     openTime: new Date(),
     attsAllowed: 3,

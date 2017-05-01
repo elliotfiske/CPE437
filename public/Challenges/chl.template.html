@@ -1,3 +1,4 @@
+<h3><a style="cursor: pointer" onclick="window.history.back();">Back to Course</a></h3>
 <div class="container-white" ng-show="challengeOpen">
    <div class="row">
       <h1>{{ challenge.name }}</h1>
@@ -69,5 +70,13 @@
       <ul class="list-group" ng-show="challenge.type === 'multchoice'">
          <li class="list-group-item" ng-repeat="attempt in challenge.Attempts" ng-class="{'list-group-item-success' : attempt.correct}">{{letters[attempt.input] + ": " + challenge.Possibilities[attempt.input].text}}</li>
       </ul>
+   </div>
+
+   <div ng-if="challenge.explanation">
+      <p style="font-size: 16px;" ng-bind-html="challenge.description"></p>
+   </div>
+
+   <div ng-if="!challenge.explanation">
+      <h2>Correct answer: {{challenge.answer}}</h2>
    </div>
 </div>

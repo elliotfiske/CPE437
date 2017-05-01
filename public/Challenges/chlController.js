@@ -31,6 +31,10 @@ function(scope, $state, $stateParams, API, confirm, login, toastr, $sce) {
       else {
          scope.challengeOpen = true;
       }
+      return API.crss.get($stateParams.courseName);
+   })
+   .then(function(crs) {
+      scope.course = crs.data;
    })
    .catch(toastr.doErrorMessage(function(err) {
       // whatever
@@ -59,8 +63,14 @@ function(scope, $state, $stateParams, API, confirm, login, toastr, $sce) {
             toastr.error("Sorry! That's incorrect. You have " + attemptInfo.data.attsLeft + attempts + "left.");
          }
          else {
-            $state.go('course', {courseName: $stateParams.courseName});
-            toastr.error("Sorry! That's incorrect. Don't worry, you still got points for that question.");
+            if (scope.challenge.type === 'shortanswer') {
+               $state.go('course', {courseName: $stateParams.courseName});
+               toastr.error("Sorry! That's incorrect. Don't worry, you still got points for that question.");
+            }
+            else {
+               toastr.error("Sorry! That's incorrect. Check out the answer below:");
+               scope.challengeOpen = false;
+            }
          }
 
          scope.loggedUser.commitment = attemptInfo.data.newCommitment;
