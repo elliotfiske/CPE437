@@ -104,7 +104,7 @@ router.post('/', updateStreak, function(req, res) {
                      netScore -= att.pointsEarned;
                   });
                }
-               result.score += userCommitment;
+               result.score += Math.min(userCommitment, 15);
                return enr.increment({creditsEarned: result.score + netScore});
             })
             .then(function(enr) {
