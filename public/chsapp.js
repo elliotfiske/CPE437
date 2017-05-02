@@ -24,11 +24,11 @@ var app = angular.module('mainApp', [
       return function(err) {
          console.warn("Error! " + err);
 
-         if (err.data.tag === "noLogin") {
+         if (err.data[0].tag === "noLogin") {
             $state.go('home');
          }
          else if (err.data.humanMessage) {
-            toastr.error(err.data.humanMessage, 'Oh no!');
+            toastr.error(err.data.humanMessage, 'Oh no!!');
          }
          else {
             callback(err);

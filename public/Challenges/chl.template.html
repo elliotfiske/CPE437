@@ -76,7 +76,11 @@
       <p style="font-size: 16px;" ng-bind-html="challenge.explanation"></p>
    </div>
 
-   <div ng-if="!challenge.explanation">
+   <div ng-if="!challenge.explanation && challenge.type === 'multchoice'">
+      <h2>Correct answer: {{['A', 'B', 'C', 'D', 'E', 'F'][challenge.answer]}}</h2>
+   </div>
+
+   <div ng-if="!challenge.explanation && challenge.type !== 'multchoice' && challenge.type !== 'shortanswer'">
       <h2>Correct answer: {{challenge.answer}}</h2>
    </div>
 </div>

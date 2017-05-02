@@ -194,7 +194,7 @@ if __name__ == '__main__':
 
    # for p in range(numProcesses):
    #    processes.append(process("P"+str(p),random.randint(0,ganttRange[0]),random.randint(burstRange[0],burstRange[1]),random.randint(priorityRange[0],priorityRange[1])*10))
-   processes = [process("P0", 0, 5, 50), process("P1", 0, 5, 20), process("P2", 1, 1, 40), process("P3", 4, 4, 20), process("P4", 0, 6, 40)]
+   processes = [process("P0", 0, 5, 50), process("P1", 0, 5, 20), process("P2", 1, 1, 40), process("P3", 4, 4, 20)] #, process("P4", 0, 6, 40)]
 
    print("\n\nSCHEDULING PROBLEM\n\nUse the following process table as reference for scheduling questions. Note that T stands for a generic time unit and that lower quanta means higher priority.\n")
    print("\tProcess\tarrival\tburst\tpriority",end="\n")

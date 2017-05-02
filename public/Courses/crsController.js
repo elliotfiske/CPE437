@@ -155,14 +155,11 @@ function(scope, $state, $stateParams, API, confirm, login, $location, toastr) {
          scope.enrollment = course.data.Enrollments[0];
          saveToCache("coursedata_" + scope.courseName, scope.courseData);
       })
-      .catch(function(err) {
+      .catch(toastr.doErrorMessage(function(err) {
          if (err.data.tag === "notFound") {
             scope.we404now = true;
          }
-         else {
-            toastr.error("Oh no!", err.message);
-         }
-      });
+      }));
    };
 
    scope.getCourseData();
