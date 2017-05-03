@@ -1,5 +1,5 @@
 app.controller('crsController',
-['$scope', '$state', '$stateParams', 'api', 'confirm', 'login', '$location', 'toastr',
+['$scope', '$state', '$stateParams', 'api', 'confirm', 'login', '$location', 'toasterror',
 function(scope, $state, $stateParams, API, confirm, login, $location, toastr) {
    scope.courseName = $stateParams.courseName;
 
