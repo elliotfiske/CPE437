@@ -73,7 +73,9 @@ router.post('/', updateStreak, function(req, res) {
          });
       })
       .then(function(attempts) {
-         if (req.body.test === true)
+         if (req.body.test === true) {
+            return Promise.resolve(attempts);
+         }
 
          var alreadyGotItRight = false;
          attempts.forEach(function(att) {
@@ -97,6 +99,11 @@ router.post('/', updateStreak, function(req, res) {
                where: {personEmail: user.id, courseName: req.course.sanitizedName}
             })
             .then(function(enr) {
+               if (req.body.test === true) {
+                  result.score = 0;
+                  return Promise.resolve();
+               }
+
                var netScore = 0; // Weird hack.. in the long run maybe we should just calculate score on the fly
                if (result.correct) {
                   attempts.forEach(function(att) {
@@ -112,7 +119,8 @@ router.post('/', updateStreak, function(req, res) {
                   personId: prsId,
                   challengeName: req.params.challengeName,
                   correct: result.correct,
-                  pointsEarned: result.score
+                  pointsEarned: result.score,
+                  review: !!req.body.test
                });
             })
             .then(function() {
@@ -121,6 +129,9 @@ router.post('/', updateStreak, function(req, res) {
                res.json(result);
             })
             .then(function() {
+               if (req.body.test === true) {
+                  return;
+               }
                var attClear = [];
                attempts.forEach(function(att) {
                   attClear.push(att.update({pointsEarned: 0}));

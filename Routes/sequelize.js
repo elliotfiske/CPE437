@@ -287,7 +287,10 @@ var Attempt = sequelize.define('Attempt', {
   },
   input: {
     type: Sequelize.STRING
-  }
+},
+review: {
+   type: Sequelize.BOOLEAN
+}
 }, {
   freezeTableName: true
 });
