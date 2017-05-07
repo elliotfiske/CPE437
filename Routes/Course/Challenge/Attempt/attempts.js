@@ -59,9 +59,6 @@ router.post('/', updateStreak, function(req, res) {
       return sequelize.Person.findById(prsId);
    })
    .then(function(user) {
-      return vld.check(!req.body.input.test || req.session.isTeacherOrAdmin(), Tags.noPermission, null, user, "You can't turn on test mode, you're not a teacher!");
-   })
-   .then(function(user) {
       return vld.check(user.checkedDisclaimer === 1, Tags.noTerms, null, user, "You haven't accepted the terms and conditions!");
    })
    .then(function(user) {
@@ -76,6 +73,8 @@ router.post('/', updateStreak, function(req, res) {
          });
       })
       .then(function(attempts) {
+         if (req.body.test === true)
+
          var alreadyGotItRight = false;
          attempts.forEach(function(att) {
             if (att.correct) {

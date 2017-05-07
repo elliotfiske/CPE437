@@ -193,6 +193,7 @@ function(scope, $state, $stateParams, API, confirm, login, $location, toastr) {
         if (scope.doneDateList.indexOf(key) == -1) {
            scope.manualCommitment ++;
            scope.doneDateList.push(key);
+           scope.loggedUser.commitment = Math.max(scope.manualCommitment, scope.loggedUser.commitment);
         }
      }
 
