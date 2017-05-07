@@ -12,6 +12,7 @@ function(scope, $state, $stateParams, API, confirm, login, $location, toastr) {
    scope.weeks = getFromCache("courseweeks_" + scope.courseName)|| [];
 
    scope.weekStatuses = [];
+   scope.manualCommitment = 0;
 
    scope.refreshchls = function() {
       return API.crss.challenge.get(scope.courseName)
@@ -50,15 +51,15 @@ function(scope, $state, $stateParams, API, confirm, login, $location, toastr) {
                   }
                   else if (chl.scoringAttempts[0] && chl.scoringAttempts[0].correct) {
                      chl.stateClass = "chl-solved";
-                     chl.dateMessage = "Solved " + formatDate(chl.scoringAttempts[0].createdAt, -1);
+                     chl.dateMessage = "Solved " + formatDate(chl.scoringAttempts[0].createdAt, -1, true);
                   }
                   else if (chl.scoringAttempts.length >= chl.attsAllowed) {
                      chl.stateClass = "chl-solved";
-                     chl.dateMessage = "Attempted " + formatDate(chl.Attempts[0].createdAt, -1);
+                     chl.dateMessage = "Attempted " + formatDate(chl.Attempts[0].createdAt, -1, true);
                   }
                   else if (chl.Attempts.length >= 1) {
                      chl.stateClass = "chl-attempted";
-                     chl.dateMessage = "Attempted " + formatDate(chl.Attempts[0].createdAt, -1);
+                     chl.dateMessage = "Attempted " + formatDate(chl.Attempts[0].createdAt, -1, true);
                   }
                   else if (chlCloseDate > now) {
                      chl.stateClass = "chl-overdue";
@@ -168,7 +169,9 @@ function(scope, $state, $stateParams, API, confirm, login, $location, toastr) {
       $("#commit-explainer").slideToggle();
    };
 
-   function formatDate(date, adjustment) {
+   scope.doneDateList = [];
+
+   function formatDate(date, adjustment, addToCommitment) {
      if (typeof date === 'string') {
        date = new Date(date);
      }
@@ -184,6 +187,14 @@ function(scope, $state, $stateParams, API, confirm, login, $location, toastr) {
 
      var day = date.getDate() + 1 + adjustment;
      var monthIndex = date.getMonth();
+
+     if (addToCommitment) {
+        var key = (monthNames[monthIndex] + ' ' + day);
+        if (scope.doneDateList.indexOf(key) == -1) {
+           scope.manualCommitment ++;
+           scope.doneDateList.push(key);
+        }
+     }
 
      return monthNames[monthIndex] + ' ' + day;
    }
